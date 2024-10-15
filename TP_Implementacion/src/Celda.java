@@ -17,4 +17,5 @@ public class Celda<T> {
     public void asignarValor(T valor) {
         this.valor = valor;
     }
+    
 }
