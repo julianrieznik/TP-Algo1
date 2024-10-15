@@ -32,7 +32,7 @@ public class Columna<E> {
         return esValida;
     }
 
-    private List<Celda> generarColumna(List<E> lista){
+    protected List<Celda> generarColumna(List<E> lista){
         List<Celda> columna = new ArrayList<>();
         for (E elemento : lista){
             Celda c = new Celda(elemento);

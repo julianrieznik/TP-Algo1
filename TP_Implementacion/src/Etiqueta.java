@@ -1,8 +1,13 @@
-public abstract class Etiqueta<T extends Integer,String,Bool> {
-    public T Nombre;
+import javax.management.RuntimeErrorException;
+
+public class Etiqueta<T> {
+    public T nombre;
 
     public Etiqueta(T nombre) {
-        Nombre = nombre;
+        if (nombre instanceof String || nombre instanceof Number){
+        this.nombre = nombre;
+        }
+        //HACER EXCEPCION PROPIA
+        else throw new IllegalArgumentException("La etiqueta debe ser string o number");
     }
-
 }
