@@ -16,8 +16,19 @@ public class Celda<T> {
         return valor;
     }
 
+    private boolean chequeartipo(T valor) {
+        return valor.getClass().getSimpleName().equals(this.tipo);
+    }
+    
     public void asignarValor(T valor) {
-        this.valor = valor;
+        if (chequeartipo(valor)){
+            this.valor = valor;
+        }
+        else{
+            //HACER EXEPCION PROPIA
+            throw new IllegalArgumentException("El valor debe ser de tipo " + tipo());
+        }
+        
     }
 
     public String tipo() {
@@ -25,7 +36,9 @@ public class Celda<T> {
     }
 
     public static void main(String[] args) {
-        Celda celda = new Celda<Integer>(3);
+        Celda<Integer> celda = new Celda<Integer>(3);
         System.out.println(celda.tipo());
     }
+
+
 }

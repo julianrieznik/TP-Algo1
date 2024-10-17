@@ -14,11 +14,20 @@ public class Tabla{
         etiquetas_fila = new ArrayList<>();
     }
 
-    public <E> Tabla(E[] etiquetafilas, E[] etiquetacolumnas, E[][] columnas) {
+    public <E> Tabla(E[] etiquetaFilas, E[] etiquetaColumnas, E[][] columnas) {
         this();
-        for (E elemento : etiquetafilas){
+
+        //Etiquetas
+        for (E elemento : etiquetaFilas){
             Etiqueta<E> etiqueta = new Etiqueta(elemento);
             etiquetas_fila.add(etiqueta);
+        }
+
+           // Inicializar columnas asociadas a etiquetas de columnas
+        for (int i = 0; i < etiquetaColumnas.length; i++) {
+            Etiqueta<E> etiquetaColumna = new Etiqueta<>(etiquetaColumnas[i]);
+            Columna<E> columna = columna.generarColumna(columnas[i]);
+            tabla.put(etiquetaColumna, columna);
         }
     }
 

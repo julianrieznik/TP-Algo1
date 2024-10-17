@@ -6,8 +6,8 @@ public class Columna<E> {
     private String tipo;
 
 
-    public Columna(List<E> celdas){
-        if (celdas.isEmpty()){
+    public Columna(E[] celdas){
+        if (celdas.length == 0){
             //HACER EXCEPCION PROPIA
             throw new RuntimeException("Debe haber al menos un valor");
         }
@@ -20,9 +20,9 @@ public class Columna<E> {
         }
     }
     
-    private boolean chequearTipo(List<E> lista){
+    private boolean chequearTipo(E[] lista){
         Boolean esValida = true;
-        String tipo = lista.get(0).getClass().getSimpleName();
+        String tipo = lista[0].getClass().getSimpleName();
         for (E elemento : lista){
             if (elemento.getClass().getSimpleName() != tipo) {
                 esValida = false;
@@ -32,7 +32,7 @@ public class Columna<E> {
         return esValida;
     }
 
-    protected List<Celda> generarColumna(List<E> lista){
+    public List<Celda> generarColumna(E[] lista){
         List<Celda> columna = new ArrayList<>();
         for (E elemento : lista){
             Celda c = new Celda(elemento);
