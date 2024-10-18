@@ -26,7 +26,7 @@ public class Tabla{
            // Inicializar columnas asociadas a etiquetas de columnas
         for (int i = 0; i < etiquetaColumnas.length; i++) {
             Etiqueta<E> etiquetaColumna = new Etiqueta<>(etiquetaColumnas[i]);
-            Columna<E> columna = columna.generarColumna(columnas[i]);
+            Columna<E> columna = (Columna<E>) columna.generarColumna(columnas[i]);
             tabla.put(etiquetaColumna, columna);
         }
     }
