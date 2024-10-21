@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Columna<E> {
-    private List<Celda> columna; 
+    private List<Celda<E>> columna; 
     private String tipo;
 
 
@@ -32,10 +32,10 @@ public class Columna<E> {
         return esValida;
     }
 
-    public List<Celda> generarColumna(E[] lista){
-        List<Celda> columna = new ArrayList<>();
-        for (E elemento : lista){
-            Celda c = new Celda(elemento);
+    public List<Celda<E>> generarColumna(E[] lista) {
+        List<Celda<E>> columna = new ArrayList<>();
+        for (E elemento : lista) {
+            Celda<E> c = new Celda<>(elemento);
             columna.add(c);
         }
         return columna;
