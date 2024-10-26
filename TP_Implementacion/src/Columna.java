@@ -24,7 +24,7 @@ public class Columna<E> {
         Boolean esValida = true;
         String tipo = lista[0].getClass().getSimpleName();
         for (E elemento : lista){
-            if (elemento.getClass().getSimpleName() != tipo) {
+            if (!elemento.getClass().getSimpleName().equals(tipo)) {
                 esValida = false;
                 break;
             }
