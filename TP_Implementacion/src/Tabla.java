@@ -40,10 +40,12 @@ public class Tabla{
             tabla.put(etiquetaColumna, columna);
         }
     }
+
+    //Constructor con etiquetas de filas personalizadas
     public <E> Tabla(E[] etiquetaFilas, E[] etiquetaColumnas, E[][] columnas) {
         this();
 
-        if (etiquetaColumnas.length != columnas.length) {
+        if (!chequearLargoDeColumnas(columnas)) {
             //HACER EXCEPCION PROPIA
             throw new IllegalArgumentException("La cantidad de etiquetas de columnas debe coincidir con la cantidad de columnas.");
         }
@@ -64,4 +66,31 @@ public class Tabla{
             tabla.put(etiquetaColumna, columna);
         }
     }
+
+    private <E> boolean chequearLargoDeColumnas(E[][] columnas) {
+        int largo = columnas[0].length;
+        for(E[] col : columnas){
+            if (col.length != largo) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public Integer nfilas(){
+        return etiquetas_fila.size();
+    }
+
+    public Integer ncols(){
+        return tabla.size();
+    }
+
+    public List<Etiqueta> etiquetas_filas(){
+        return etiquetas_fila;
+    }
+
+    public <E> List<Etiqueta<E>> etiquetas_columnas() {
+        return new ArrayList<>(tabla.keySet());
+    }
+
 }

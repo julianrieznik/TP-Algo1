@@ -43,5 +43,9 @@ public class Columna<E> {
 
     public String tipo() {
         return tipo;
+    } 
+
+    public Integer cantidadCeldas(){
+        return columna.size();
     }
 }

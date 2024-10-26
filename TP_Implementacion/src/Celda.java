@@ -20,7 +20,7 @@ public class Celda<T> {
         return valor.getClass().getSimpleName().equals(this.tipo);
     }
     
-    public void asignarValor(T valor) {
+    public void modificar(T valor) {
         if (chequeartipo(valor)){
             this.valor = valor;
         }
