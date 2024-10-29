@@ -1,5 +1,5 @@
 package interfaces;
 import java.util.List;
-public interface Ordenable<T,E> {
-    T ordenar(List<E> lista, boolean asc_desc);
+public interface Ordenable<T,K> {
+    T ordenar(List<K> lista, boolean asc_desc); //True -> Ascendente
 }

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import excepciones.FormatoTablaInvalido;
 
-public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>{ 
+public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>, interfaces.Proyectable<Tabla<K,F>,Etiqueta<F>,Etiqueta<K>>, interfaces.Ordenable<Tabla<K,F>,Etiqueta<F>>{ 
     //GENERICS
     // K -> Etiqueta de Columna
     // F -> Etiqueta de fila
@@ -181,5 +181,36 @@ public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>{
         // Retornar la columna casteada a String
         return new Columna<>(listaCasteada);
     }
+
+    @Override
+    public Tabla<K, F> head(int n) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Tabla<K, F> subtabla(List<Etiqueta<K>> listFilas, List<Etiqueta<F>> listColumnas) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Tabla<K, F> subtabla(List<Etiqueta<F>> list, boolean FoC) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Tabla<K, F> tail(int n) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Tabla<K, F> ordenar(List<Etiqueta<F>> lista, boolean asc_desc) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
 
