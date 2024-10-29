@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import excepciones.CeldaInvalida;
@@ -9,8 +10,9 @@ public class Columna<E> {
     private String tipo;
 
 
-    public Columna(E[] celdas){
-        Columna(generarColumna(celdas));
+    public Columna(E[] lista){
+        List<Celda<E>> columna = generarColumna(lista);
+        this.columna = columna;
     }
 
     public Columna(List<Celda<E>> celdas){
