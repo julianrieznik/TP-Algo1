@@ -5,7 +5,7 @@ import java.util.Map;
 
 import excepciones.FormatoTablaInvalido;
 
-public class Tabla<K,F,C>{ 
+public class Tabla<K,F,C> implements interfaces.Copiable<Tabla<K,F,C>>{ 
     //GENERICS
     // K -> Etiqueta de Columna
     // F -> Etiqueta de fila
@@ -99,6 +99,30 @@ public class Tabla<K,F,C>{
 
     public List<Etiqueta<K>> etiquetas_columnas() {
         return new ArrayList<>(tabla.keySet());
+    }
+
+    @Override
+    public Tabla<K, F, C> copiar(Tabla<K,F,C> a_copiar) {
+        Tabla<K,F,C> copia = new Tabla<>();
+
+        // Copiar Etiquetas de fila
+        for (Etiqueta<F> etiquetaFila : a_copiar.etiquetas_filas()) {
+            copia.etiquetas_fila.add(new Etiqueta<>(etiquetaFila.nombre));
+    }
+        // Itero sobre la tabla
+        for (Map.Entry<Etiqueta<K>, Columna<C>> entrada : a_copiar.tabla.entrySet()) {
+            //Copio Etiquetas de columna
+            Etiqueta<K> etiquetaColumna = new Etiqueta<>(entrada.getKey().nombre);
+
+        // 
+        Columna<C> columnaOriginal = entrada.getValue();
+        List<Celda<C>> celdas = columnaOriginal.obtenerValores();
+        Columna<C> columnaCopia = new Columna<>(celdas);
+
+        copia.tabla.put(etiquetaColumna, columnaCopia);
+    }
+
+        return copia;
     }
 
 }

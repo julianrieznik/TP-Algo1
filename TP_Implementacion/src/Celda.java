@@ -1,3 +1,5 @@
+import excepciones.CeldaInvalida;
+
 public class Celda<T> {
     private T valor;
     private String tipo;
@@ -7,8 +9,7 @@ public class Celda<T> {
             this.valor = valor;
             this.tipo = valor.getClass().getSimpleName();  
         } else {
-            //HACER EXEPCION PROPIA
-            throw new IllegalArgumentException("El valor debe ser de tipo String, Number o Boolean");
+            throw new CeldaInvalida("El valor debe ser de tipo String, Number o Boolean");
         }
     }
 
@@ -26,7 +27,7 @@ public class Celda<T> {
         }
         else{
             //HACER EXEPCION PROPIA
-            throw new IllegalArgumentException("El valor debe ser de tipo " + tipo());
+            throw new CeldaInvalida("El valor debe ser de tipo " + tipo());
         }
         
     }
