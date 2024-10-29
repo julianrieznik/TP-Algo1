@@ -10,18 +10,7 @@ public class Columna<E> {
 
 
     public Columna(E[] celdas){
-        if (celdas.length == 0){
-
-            throw new CeldaInvalida("Debe haber al menos un valor en cada celda");
-        }
-        if(this.chequearTipo(celdas)) {
-            this.columna = generarColumna(celdas);
-            this.tipo = celdas[0].getClass().getSimpleName();
-        }
-        else{
-
-            throw new ColumnaInvalida("Las celdas de una columna deben ser del mismo tipo");
-        }
+        Columna(generarColumna(celdas));
     }
 
     public Columna(List<Celda<E>> celdas){
@@ -39,15 +28,7 @@ public class Columna<E> {
     
     
     private boolean chequearTipo(E[] lista){
-        Boolean esValida = true;
-        String tipo = lista[0].getClass().getSimpleName();
-        for (E elemento : lista){
-            if (!elemento.getClass().getSimpleName().equals(tipo)) {
-                esValida = false;
-                break;
-            }
-        }
-        return esValida;
+        return chequearTipo(generarColumna(lista));
     }
 
     private boolean chequearTipo(List<Celda<E>> lista){
