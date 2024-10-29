@@ -1,4 +1,4 @@
-import javax.management.RuntimeErrorException;
+import excepciones.EtiquetaInvalida;
 
 public class Etiqueta<T> {
     public T nombre;
@@ -8,6 +8,6 @@ public class Etiqueta<T> {
         this.nombre = nombre;
         }
         //HACER EXCEPCION PROPIA
-        else throw new IllegalArgumentException("La etiqueta debe ser string o number");
+        else throw new EtiquetaInvalida("La etiqueta debe ser string o number");
     }
 }
