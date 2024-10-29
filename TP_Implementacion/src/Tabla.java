@@ -3,6 +3,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import excepciones.FormatoTablaInvalido;
+
 public class Tabla<K,F,C>{ 
     //GENERICS
     // K -> Etiqueta de Columna
@@ -23,7 +25,7 @@ public class Tabla<K,F,C>{
 
         if (!chequearLargoDeColumnas(etiquetaColumnas, columnas)) {
             //HACER EXCEPCION PROPIA
-            throw new IllegalArgumentException("La cantidad de etiquetas de columnas debe coincidir con la cantidad de columnas.");
+            throw new FormatoTablaInvalido("La cantidad de etiquetas de columnas debe coincidir con la cantidad de columnas.");
         }
         
         //Inicializar etiquetas numeradas
@@ -52,8 +54,8 @@ public class Tabla<K,F,C>{
         this();
 
         if (!chequearLargoDeColumnas(etiquetaColumnas, columnas)) {
-            //HACER EXCEPCION PROPIA
-            throw new IllegalArgumentException("La cantidad de etiquetas de columnas debe coincidir con la cantidad de columnas.");
+
+            throw new FormatoTablaInvalido("La cantidad de etiquetas de columnas debe coincidir con la cantidad de columnas.");
         }
 
         for (F elemento : etiquetaFilas){

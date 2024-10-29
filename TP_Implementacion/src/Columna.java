@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import excepciones.CeldaInvalida;
+import excepciones.ColumnaInvalida;
+
 public class Columna<E> {
     private List<Celda<E>> columna; 
     private String tipo;
@@ -8,15 +11,15 @@ public class Columna<E> {
 
     public Columna(E[] celdas){
         if (celdas.length == 0){
-            //HACER EXCEPCION PROPIA
-            throw new RuntimeException("Debe haber al menos un valor");
+
+            throw new CeldaInvalida("Debe haber al menos un valor en cada celda");
         }
         if(this.chequearTipo(celdas)) {
             this.columna = generarColumna(celdas);
         }
         else{
-            //HACER EXCEPCION PROPIA
-            throw new RuntimeException("Las lista deben ser del mismo tipo");
+
+            throw new ColumnaInvalida("Las celdas de una columna deben ser del mismo tipo");
         }
     }
     
