@@ -5,13 +5,13 @@ import java.util.Map;
 
 import excepciones.FormatoTablaInvalido;
 
-public class Tabla<K,F,C> implements interfaces.Copiable<Tabla<K,F,C>>{ 
+public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>{ 
     //GENERICS
     // K -> Etiqueta de Columna
     // F -> Etiqueta de fila
-    // C -> Columna
+    // ? -> Columna
     
-    private Map<Etiqueta<K>, Columna<C>> tabla;
+    private Map<Etiqueta<K>, Columna<?>> tabla;
     private List<Etiqueta<F>> etiquetas_fila;
 
     public Tabla() {
@@ -20,7 +20,7 @@ public class Tabla<K,F,C> implements interfaces.Copiable<Tabla<K,F,C>>{
     }
 
     //Constructor sin etiqueas de filas, numeradas
-    public Tabla(K[] etiquetaColumnas, C[][] columnas) {
+    public Tabla(K[] etiquetaColumnas, Object[][] columnas) {
         this();
 
         if (!chequearLargoDeColumnas(etiquetaColumnas, columnas)) {
@@ -42,42 +42,42 @@ public class Tabla<K,F,C> implements interfaces.Copiable<Tabla<K,F,C>>{
             Etiqueta<K> etiquetaColumna = new Etiqueta<>(etiquetaColumnas[i]);
             
             // Crear  Columna para la etiqueta actual
-            Columna<C> columna = new Columna<>(columnas[i]);
+            Columna<?> columna = castearColumna(columnas[i]);
             
             // Agregar la columna a la tabla
             tabla.put(etiquetaColumna, columna);
         }
     }
 
-    //Constructor con etiquetas de filas personalizadas
-    public Tabla(F[] etiquetaFilas, K[] etiquetaColumnas, C[][] columnas) {
+    // Constructor con etiquetas de filas personalizadas
+    public Tabla(F[] etiquetaFilas, K[] etiquetaColumnas, Object[][] columnas) {
         this();
 
         if (!chequearLargoDeColumnas(etiquetaColumnas, columnas)) {
-
             throw new FormatoTablaInvalido("La cantidad de etiquetas de columnas debe coincidir con la cantidad de columnas.");
         }
 
-        for (F elemento : etiquetaFilas){
+        // Inicializar etiquetas de filas
+        for (F elemento : etiquetaFilas) {
             Etiqueta<F> etiqueta = new Etiqueta<>(elemento);
             etiquetas_fila.add(etiqueta);
         }
-    
+
         // Inicializar columnas asociadas a etiquetas de columnas
         for (int i = 0; i < etiquetaColumnas.length; i++) {
             Etiqueta<K> etiquetaColumna = new Etiqueta<>(etiquetaColumnas[i]);
             
-            // Crear  Columna para la etiqueta actual
-            Columna<C> columna = new Columna<>(columnas[i]);
+            Columna<?> columna = castearColumna(columnas[i]);
             
-            // Agregar la columna a la tabla
-            tabla.put(etiquetaColumna, columna);
+            tabla.put(etiquetaColumna, columna); // Agregar la columna casteada
         }
+        
     }
 
-    private boolean chequearLargoDeColumnas(K[] etiquetaColumnas, C[][] columnas) {
+
+    private boolean chequearLargoDeColumnas(K[] etiquetaColumnas, Object[][] columnas) {
         int cantidadEtiquetas = etiquetaColumnas.length;
-        for(C[] col : columnas){
+        for(Object[] col : columnas){
             if (col.length != cantidadEtiquetas) {
                 return false;
             }
@@ -102,27 +102,84 @@ public class Tabla<K,F,C> implements interfaces.Copiable<Tabla<K,F,C>>{
     }
 
     @Override
-    public Tabla<K, F, C> copiar(Tabla<K,F,C> a_copiar) {
-        Tabla<K,F,C> copia = new Tabla<>();
-
+    public Tabla<K, F> copiar(Tabla<K, F> a_copiar) {
+        Tabla<K, F> copia = new Tabla<>();
+    
         // Copiar Etiquetas de fila
         for (Etiqueta<F> etiquetaFila : a_copiar.etiquetas_filas()) {
             copia.etiquetas_fila.add(new Etiqueta<>(etiquetaFila.nombre));
-    }
-        // Itero sobre la tabla
-        for (Map.Entry<Etiqueta<K>, Columna<C>> entrada : a_copiar.tabla.entrySet()) {
-            //Copio Etiquetas de columna
+        }
+    
+        // Iterar sobre la tabla
+        for (Map.Entry<Etiqueta<K>, Columna<?>> entrada : a_copiar.tabla.entrySet()) {
+            // Copiar Etiquetas de columna
             Etiqueta<K> etiquetaColumna = new Etiqueta<>(entrada.getKey().nombre);
-
-        // 
-        Columna<C> columnaOriginal = entrada.getValue();
-        List<Celda<C>> celdas = columnaOriginal.obtenerValores();
-        Columna<C> columnaCopia = new Columna<>(celdas);
-
-        copia.tabla.put(etiquetaColumna, columnaCopia);
-    }
-
+    
+            // Inferir tipo de dato y crear columna copia
+            Columna<?> columnaOriginal = entrada.getValue();
+            Columna<?> columnaCopia = castearColumna(columnaOriginal.obtenerValores().toArray());
+    
+            // Agregar la columna copiada a la nueva tabla
+            copia.tabla.put(etiquetaColumna, columnaCopia);
+        }
+    
         return copia;
     }
 
+    private boolean esNumerica(Object[] columna) {
+        for (Object elemento : columna) {
+            try {
+                // Casteo a number
+                Number numero = (Number) elemento; 
+            } catch (ClassCastException e) {
+                // Si hay excepcion, no es Number, devuelvo false
+                return false;
+            }
+        }
+        // Si todos los elementos son convertibles a Number, devolvemos true
+        return true;
+    }
+
+    private boolean esBooleana(Object[] columna) {
+        for (Object elemento : columna) {
+            try {
+                // Casteo a number
+                Boolean bool = (Boolean) elemento; 
+            } catch (ClassCastException e) {
+                // Si hay excepcion, no es Boolean, devuelvo false
+                return false;
+            }
+        }
+        // Si todos los elementos son convertibles a Boolean, devolvemos true
+        return true;
+    }
+
+    private Columna<?> castearColumna(Object[] lista) {
+        if (esNumerica(lista)) {
+            Number[] listaCasteada = new Number[lista.length]; 
+            for (int j = 0; j < lista.length; j++) {
+                listaCasteada[j] = (Number) lista[j]; // Castear cada elemento
+            }
+            // Retornar la columna casteada a Number
+            return new Columna<>(listaCasteada);
+        }
+    
+        if (esBooleana(lista)) {
+            Boolean[] listaCasteada = new Boolean[lista.length]; 
+            for (int j = 0; j < lista.length; j++) {
+                listaCasteada[j] = (Boolean) lista[j]; 
+            }
+            // Retornar la columna casteada a Boolean
+            return new Columna<>(listaCasteada);
+        }
+    
+        // Si no es numérica ni booleana, asumimos que es String
+        String[] listaCasteada = new String[lista.length]; 
+        for (int j = 0; j < lista.length; j++) {
+            listaCasteada[j] = (String) lista[j]; 
+        }
+        // Retornar la columna casteada a String
+        return new Columna<>(listaCasteada);
+    }
 }
+
