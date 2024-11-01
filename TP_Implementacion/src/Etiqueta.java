@@ -10,4 +10,9 @@ public class Etiqueta<T> {
         //HACER EXCEPCION PROPIA
         else throw new EtiquetaInvalida("La etiqueta debe ser string o number");
     }
+
+    public T getNombre() {
+        return nombre;
+    }
+    
 }

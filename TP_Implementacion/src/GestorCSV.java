@@ -3,11 +3,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
+import excepciones.EtiquetaInvalida;
 import excepciones.FormatoTablaInvalido;
+import interfaces.Escritura;
 import interfaces.Lectura;
 
-public class GestorCSV implements Lectura {
+public class GestorCSV implements Lectura, Escritura<Tabla> {
     @Override
     public Tabla leer(String rutaArchivo) throws IOException, FormatoTablaInvalido {
         try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
@@ -59,4 +63,58 @@ public class GestorCSV implements Lectura {
         } 
         return transpuesta; 
     }
+
+    @Override
+    public void escribirCSV(Tabla tabla, String ruta) {
+        try {
+            // Especifica el nombre del archivo
+            String nombreArchivo = ruta + "/Output.csv";
+            
+            // Crea un OutputStream para escribir en el archivo
+            OutputStream outputStream = new FileOutputStream(nombreArchivo);
+
+            String contenido = "";
+            for(int i = 0 ; i < tabla.getEtiquetas_columna().size() ; i++){
+                if (tabla.getEtiquetas_columna().get(i) instanceof Etiqueta){
+                    contenido += ((Etiqueta) tabla.getEtiquetas_columna().get(i)).getNombre() + ",";
+                }else{
+                    throw new EtiquetaInvalida("La lista: " + tabla.getEtiquetas_columna() + " no es una lista de etiquetas");
+                }
+            }
+
+            /*
+            Object[][] transpuesta = transponer((List<Object[]>) tabla.getTabla());
+            for (int i = 0 ; i < transpuesta.length ; i++){
+                contenido += "\n";
+                for (int j = 0 ; j < transpuesta[i].length ; j++){
+                    contenido += transpuesta[i][j] + ",";
+                }
+            }
+             */
+
+            /*
+            for(int i = 0 ; i < tabla.getCantidadFilas() ; i++){
+                Object[] array  = tabla.getListaColumnas().toArray();
+                for(int j = 0 ; j < array.length ; j++){
+                    contenido += array[j] + ",";
+                }
+                contenido += "\n";
+            }
+            */
+            
+            
+
+
+
+            byte[] datos = contenido.getBytes();
+            outputStream.write(datos);
+            
+            
+            // Cierra el OutputStream
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

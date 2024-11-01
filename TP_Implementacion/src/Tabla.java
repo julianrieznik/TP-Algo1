@@ -1,7 +1,10 @@
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import excepciones.FormatoTablaInvalido;
 
@@ -11,7 +14,7 @@ public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>, interfaces.P
     // F -> Etiqueta de fila
     // ? -> Columna
     
-    private Map<Etiqueta<K>, Columna<?>> tabla;
+    private LinkedHashMap<Etiqueta<K>, Columna<?>> tabla;
     private List<Etiqueta<F>> etiquetas_fila;
 
     public Tabla() {
@@ -224,6 +227,39 @@ public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>, interfaces.P
         // TODO Auto-generated method stub
         return null;
     }
+    
+    @Override
+    public String toString() {
+        return "Tabla [tabla=" + tabla + ", etiquetas_fila=" + etiquetas_fila + "]";
+    }
 
+    public Collection<Columna<?>> getListaColumnas() {
+        return tabla.values();
+    }
+
+    public List<Etiqueta<F>> getEtiquetas_fila() {
+        return etiquetas_fila;
+    }
+
+    public List<Etiqueta<K>> getEtiquetas_columna() {
+        return new ArrayList<>(tabla.keySet());
+    }
+
+    public LinkedHashMap<Etiqueta<K>, Columna<?>> getTabla() {
+        return tabla;
+    }
+
+    public Integer getCantidadColumnas(){
+        return getEtiquetas_columna().size();
+    }
+
+    public Integer getCantidadFilas(){
+        Collection<Columna<?>> columnas = getListaColumnas();
+        Iterator<Columna<?>> iterador = columnas.iterator();
+        Columna<?> primer = iterador.hasNext() ? iterador.next() : null;
+
+        return primer.cantidadCeldas();
+    }
+    
 }
 

@@ -5,5 +5,7 @@ public class App {
         GestorCSV gestor = new GestorCSV() ;
 
         Tabla tabla = gestor.leer("TP_Implementacion/src/prueba.csv");
+
+        gestor.escribirCSV(tabla, "TP_Implementacion/src");
     }
 }
