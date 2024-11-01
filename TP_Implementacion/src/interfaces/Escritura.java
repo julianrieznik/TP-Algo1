@@ -1,5 +1,7 @@
 package interfaces;
 
-public interface Escritura {
+import excepciones.FormatoTablaInvalido;
 
+public interface Escritura<T>{
+    void escribirCSV(T ruta);
 }

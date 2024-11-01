@@ -23,9 +23,13 @@ public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>, interfaces.P
     public Tabla(K[] etiquetaColumnas, Object[][] columnas) {
         this();
 
-        if (!chequearLargoDeColumnas(etiquetaColumnas, columnas)) {
+        if (!chequearLargoDeFilas(etiquetaColumnas, columnas)) {
             //HACER EXCEPCION PROPIA
-            throw new FormatoTablaInvalido("La cantidad de etiquetas de columnas debe coincidir con la cantidad de columnas.");
+            throw new FormatoTablaInvalido("La cantidad de etiquetas de columnas debe coincidir con el largo de las filas.");
+        }
+        if (!chequearLargoDeColumnas(columnas)) {
+            //HACER EXCEPCION PROPIA
+            throw new FormatoTablaInvalido("El largo de las columnas debe ser el mismo para todas las columnas.");
         }
         
         //Inicializar etiquetas numeradas
@@ -53,8 +57,13 @@ public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>, interfaces.P
     public Tabla(F[] etiquetaFilas, K[] etiquetaColumnas, Object[][] columnas) {
         this();
 
-        if (!chequearLargoDeColumnas(etiquetaColumnas, columnas)) {
-            throw new FormatoTablaInvalido("La cantidad de etiquetas de columnas debe coincidir con la cantidad de columnas.");
+        if (!chequearLargoDeFilas(etiquetaColumnas, columnas)) {
+            //HACER EXCEPCION PROPIA
+            throw new FormatoTablaInvalido("La cantidad de etiquetas de columnas debe coincidir con el largo de las filas.");
+        }
+        if (!chequearLargoDeColumnas(columnas)) {
+            //HACER EXCEPCION PROPIA
+            throw new FormatoTablaInvalido("El largo de las columnas debe ser el mismo para todas las columnas.");
         }
 
         // Inicializar etiquetas de filas
@@ -75,14 +84,18 @@ public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>, interfaces.P
     }
 
 
-    private boolean chequearLargoDeColumnas(K[] etiquetaColumnas, Object[][] columnas) {
-        int cantidadEtiquetas = etiquetaColumnas.length;
+    private boolean chequearLargoDeColumnas(Object[][] columnas) {
+        int largoColumna = columnas[0].length;
         for(Object[] col : columnas){
-            if (col.length != cantidadEtiquetas) {
+            if (col.length != largoColumna) {
                 return false;
             }
         }
         return true;
+    }
+
+    private boolean chequearLargoDeFilas(K[] etiquetaColumnas, Object[][] columnas) {
+        return etiquetaColumnas.length == columnas.length;
     }
 
     public Integer nfilas(){
