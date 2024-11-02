@@ -8,7 +8,7 @@ import java.util.Set;
 
 import excepciones.FormatoTablaInvalido;
 
-public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>, interfaces.Proyectable<Tabla<K,F>,Etiqueta<F>,Etiqueta<K>>, interfaces.Ordenable<Tabla<K,F>,Etiqueta<F>>{ 
+public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>,interfaces.Visualizable<Tabla<K,F>>, interfaces.Proyectable<Tabla<K,F>,Etiqueta<F>,Etiqueta<K>>, interfaces.Ordenable<Tabla<K,F>,Etiqueta<F>>{ 
     //GENERICS
     // K -> Etiqueta de Columna
     // F -> Etiqueta de fila
@@ -259,6 +259,78 @@ public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>, interfaces.P
         Columna<?> primer = iterador.hasNext() ? iterador.next() : null;
 
         return primer.cantidadCeldas();
+    }
+
+    // ----- VISUALIZABLE------    
+    @Override
+    public void ver() {
+        // IMPRESION DE ETIQUETAS DE COLUMNA
+        StringBuilder sb = new StringBuilder();
+        sb.append(" ".repeat(5)); //Agrego espacios iniciales
+        
+        // Etiquetas de columnas con espacio definido por cantidad_caracteres
+        for (Etiqueta<K> etiqueta : tabla.keySet()) {
+            String nombreColumna = String.valueOf(etiqueta.getNombre());
+            // Añadir el nombre de la columna y rellenar hasta cantidad_caracteres
+            sb.append(nombreColumna);
+            sb.append(" ".repeat(5)); //Minimo 5 espacios
+        }
+        System.out.println(sb.toString());
+        
+        // IMPRESION DE FILAS
+        int cantidadFilas = getCantidadFilas();
+        for (int i = 0; i < cantidadFilas; i++) {
+            verFila(i);
+        }
+    }
+    
+    @Override
+    public void verFila(Integer indice_fila) {
+        StringBuilder sb = new StringBuilder();
+        String etiqueta = String.valueOf(etiquetas_fila.get(indice_fila).getNombre());
+        
+        // Agregar la etiqueta de la fila
+        sb.append(etiqueta).append(" ".repeat(5)); // Agrego espacios iniciales dsp de etiqueta
+    
+        // Iterar sobre columnas para obtener el valor
+        for (Map.Entry<Etiqueta<K>, Columna<?>> entry : this.tabla.entrySet()) {
+            String etiquetaColumna = String.valueOf(entry.getKey().getNombre()); // Etiqueta de la columna
+            String valor = String.valueOf(entry.getValue().valorCelda(indice_fila));
+            
+            if (valor.length() > etiquetaColumna.length()) {
+                valor = valor.substring(0, etiquetaColumna.length()); // Cortar si es necesario
+                sb.append(valor);
+                sb.append(".".repeat(3)); // 3 puntos ... p indicarnque fue cortada
+                sb.append(" ".repeat(2)); // 2 espacios de separacion
+            }
+            if (valor.length() < etiquetaColumna.length()) {
+                sb.append(valor);
+                int diferencia = etiquetaColumna.length() - valor.length();
+                sb.append(" ".repeat(diferencia+5)); // Relleno con espacios lo que falta
+            }
+
+        }
+    
+        // Imprimir la fila construida
+        System.out.println(sb.toString());
+    }
+
+    @Override
+    public void verColumna(String etiqueta_columna) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'verColumna'");
+    }
+
+    @Override
+    public void verColumna(Integer indice_columna) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'verColumna'");
+    }
+
+    @Override
+    public void verFila(String etiqueta_fila) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'verFila'");
     }
     
 }

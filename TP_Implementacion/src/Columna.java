@@ -65,6 +65,10 @@ public class Columna<E> {
     public List<Celda<E>> obtenerValores(){
         return this.columna;
     }
+
+    public E valorCelda(Integer idx){
+        return columna.get(idx).obtenerValor();
+    }
 }
 
 
