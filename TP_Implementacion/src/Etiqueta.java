@@ -14,5 +14,17 @@ public class Etiqueta<T> {
     public T getNombre() {
         return nombre;
     }
-    
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Etiqueta<?> etiqueta = (Etiqueta<?>) obj;
+        return nombre.equals(etiqueta.nombre);
+    }
+
+    @Override
+    public int hashCode() {
+        return nombre.hashCode();
+    }
 }

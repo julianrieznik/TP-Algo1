@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import excepciones.FormatoTablaInvalido;
+import excepciones.IndiceInexistente;
 
 public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>,interfaces.Visualizable<Tabla<K,F>>, interfaces.Proyectable<Tabla<K,F>,Etiqueta<F>,Etiqueta<K>>, interfaces.Ordenable<Tabla<K,F>,Etiqueta<F>>{ 
     //GENERICS
@@ -17,6 +18,8 @@ public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>,interfaces.Vi
     private LinkedHashMap<Etiqueta<K>, Columna<?>> tabla;
     private List<Etiqueta<F>> etiquetas_fila;
 
+
+// ----------------------------------------- CONSTRUCTORES ------------------------------------- 
     public Tabla() {
         tabla = new LinkedHashMap<>();
         etiquetas_fila = new ArrayList<>();
@@ -87,6 +90,36 @@ public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>,interfaces.Vi
     }
 
 
+// ----------------------------------------- GETTERS ------------------------------------- 
+    public Collection<Columna<?>> getListaColumnas() {
+        return tabla.values();
+    }
+    
+    public List<Etiqueta<F>> getEtiquetas_fila() {
+        return etiquetas_fila;
+    }
+    
+    public List<Etiqueta<K>> getEtiquetas_columna() {
+        return new ArrayList<>(tabla.keySet());
+    }
+    
+    public LinkedHashMap<Etiqueta<K>, Columna<?>> getTabla() {
+        return tabla;
+    }
+
+    public Integer getCantidadColumnas(){
+        return getEtiquetas_columna().size();
+    }
+ 
+    public Integer getCantidadFilas(){
+        Collection<Columna<?>> columnas = getListaColumnas();
+        Iterator<Columna<?>> iterador = columnas.iterator();
+        Columna<?> primer = iterador.hasNext() ? iterador.next() : null;
+
+        return primer.cantidadCeldas();
+    }
+
+// ----------------------------------------- METODOS PRIVADOS INTERNOS ------------------------------------- 
     private boolean chequearLargoDeColumnas(Object[][] columnas) {
         int largoColumna = columnas[0].length;
         for(Object[] col : columnas){
@@ -101,6 +134,8 @@ public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>,interfaces.Vi
         return etiquetaColumnas.length == columnas.length;
     }
 
+
+// ----------------------------------------- INFORMACION DE TABLA ------------------------------------- 
     public Integer nfilas(){
         return etiquetas_fila.size();
     }
@@ -117,6 +152,44 @@ public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>,interfaces.Vi
         return new ArrayList<>(tabla.keySet());
     }
 
+    @Override
+    public Tabla<K, F> head(int n) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+// ----------------------------------------- PROYECTABLE ------------------------------------- 
+    @Override
+    public Tabla<K, F> subtabla(List<Etiqueta<K>> listFilas, List<Etiqueta<F>> listColumnas) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Tabla<K, F> subtabla(List<Etiqueta<F>> list, boolean FoC) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Tabla<K, F> tail(int n) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Tabla<K, F> ordenar(List<Etiqueta<F>> lista, boolean asc_desc) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public String toString() {
+        return "Tabla [tabla=" + tabla + ", etiquetas_fila=" + etiquetas_fila + "]";
+    }
+
+
+// ----------------------------------------- COPIABLE ------------------------------------- 
     @Override
     public Tabla<K, F> copiar(Tabla<K, F> a_copiar) {
         Tabla<K, F> copia = new Tabla<>();
@@ -198,94 +271,61 @@ public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>,interfaces.Vi
         return new Columna<>(listaCasteada);
     }
 
+    // ----------------------------------------- VISUALIZABLE-------------------------------------    
     @Override
-    public Tabla<K, F> head(int n) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Tabla<K, F> subtabla(List<Etiqueta<K>> listFilas, List<Etiqueta<F>> listColumnas) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Tabla<K, F> subtabla(List<Etiqueta<F>> list, boolean FoC) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Tabla<K, F> tail(int n) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Tabla<K, F> ordenar(List<Etiqueta<F>> lista, boolean asc_desc) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    @Override
-    public String toString() {
-        return "Tabla [tabla=" + tabla + ", etiquetas_fila=" + etiquetas_fila + "]";
-    }
-
-    public Collection<Columna<?>> getListaColumnas() {
-        return tabla.values();
-    }
-
-    public List<Etiqueta<F>> getEtiquetas_fila() {
-        return etiquetas_fila;
-    }
-
-    public List<Etiqueta<K>> getEtiquetas_columna() {
-        return new ArrayList<>(tabla.keySet());
-    }
-
-    public LinkedHashMap<Etiqueta<K>, Columna<?>> getTabla() {
-        return tabla;
-    }
-
-    public Integer getCantidadColumnas(){
-        return getEtiquetas_columna().size();
-    }
-
-    public Integer getCantidadFilas(){
-        Collection<Columna<?>> columnas = getListaColumnas();
-        Iterator<Columna<?>> iterador = columnas.iterator();
-        Columna<?> primer = iterador.hasNext() ? iterador.next() : null;
-
-        return primer.cantidadCeldas();
-    }
-
-    // ----- VISUALIZABLE------    
-    @Override
-    public void ver() {
+    public void ver(Integer cantidad_caracteres) {
         // IMPRESION DE ETIQUETAS DE COLUMNA
         StringBuilder sb = new StringBuilder();
-        sb.append(" ".repeat(5)); //Agrego espacios iniciales
+        int cantidad_espacios_iniciales = etiquetaMasGrandeFila() + 5;
+                sb.append(" ".repeat(cantidad_espacios_iniciales)); //Agrego espacios iniciales
+                
+                // Etiquetas de columnas con espacio definido por cantidad_caracteres
+                for (Etiqueta<K> etiqueta : tabla.keySet()) {
+                    String nombre_columna = String.valueOf(etiqueta.getNombre());
         
-        // Etiquetas de columnas con espacio definido por cantidad_caracteres
-        for (Etiqueta<K> etiqueta : tabla.keySet()) {
-            String nombreColumna = String.valueOf(etiqueta.getNombre());
-            // Añadir el nombre de la columna y rellenar hasta cantidad_caracteres
-            sb.append(nombreColumna);
-            sb.append(" ".repeat(5)); //Minimo 5 espacios
+                    if (nombre_columna.length() > cantidad_caracteres){
+                        nombre_columna = nombre_columna.substring(0, cantidad_caracteres); // Cortar si es necesario
+                        sb.append(nombre_columna);
+                        sb.append(".".repeat(3)); // 3 puntos ... p indicarnque fue cortada
+                        sb.append(" ".repeat(2)); // 2 espacios de separacion
+                    }
+                    else if (nombre_columna.length() < cantidad_caracteres){
+                        Integer diferencia = cantidad_caracteres - nombre_columna.length();
+                        sb.append(nombre_columna);
+                        sb.append(" ".repeat(diferencia + 5));
+
+                    }
+                    else {
+                        sb.append(nombre_columna);
+                        sb.append(" ".repeat(5));
+                    }
+                }
+                System.out.println(sb.toString());
+                
+                // IMPRESION DE FILAS
+                int cantidadFilas = getCantidadFilas();
+                for (int i = 0; i < cantidadFilas; i++) {
+                    verFila(i, cantidad_caracteres);
+                }
+            }
+            
+    private Integer etiquetaMasGrandeFila() {
+        Integer max = 0;
+        for (Etiqueta<F> etiqueta : etiquetas_fila){
+            String nombre_etiqueta = String.valueOf(etiqueta.getNombre());
+            int largo = nombre_etiqueta.length();
+            if (largo > max){
+                max = largo;
+            }
         }
-        System.out.println(sb.toString());
-        
-        // IMPRESION DE FILAS
-        int cantidadFilas = getCantidadFilas();
-        for (int i = 0; i < cantidadFilas; i++) {
-            verFila(i);
-        }
+        return max;
     }
-    
+        
     @Override
-    public void verFila(Integer indice_fila) {
+    public void verFila(Integer indice_fila, Integer cantidad_caracteres) {
+        if (indice_fila >= etiquetas_fila.size()){
+            throw new IndiceInexistente("No existe la fila " + String.valueOf(indice_fila));
+        }
         StringBuilder sb = new StringBuilder();
         String etiqueta = String.valueOf(etiquetas_fila.get(indice_fila).getNombre());
         
@@ -293,45 +333,86 @@ public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>,interfaces.Vi
         sb.append(etiqueta).append(" ".repeat(5)); // Agrego espacios iniciales dsp de etiqueta
     
         // Iterar sobre columnas para obtener el valor
-        for (Map.Entry<Etiqueta<K>, Columna<?>> entry : this.tabla.entrySet()) {
-            String etiquetaColumna = String.valueOf(entry.getKey().getNombre()); // Etiqueta de la columna
-            String valor = String.valueOf(entry.getValue().valorCelda(indice_fila));
-            
-            if (valor.length() > etiquetaColumna.length()) {
-                valor = valor.substring(0, etiquetaColumna.length()); // Cortar si es necesario
+        for (Columna<?> columna : this.tabla.values()) {
+            String valor = String.valueOf(columna.valorCelda(indice_fila));
+
+            if (valor.length() > cantidad_caracteres) {
+                valor = valor.substring(0, cantidad_caracteres); // Cortar si es necesario
                 sb.append(valor);
                 sb.append(".".repeat(3)); // 3 puntos ... p indicarnque fue cortada
                 sb.append(" ".repeat(2)); // 2 espacios de separacion
             }
-            if (valor.length() < etiquetaColumna.length()) {
+            else if (valor.length() < cantidad_caracteres) {
                 sb.append(valor);
-                int diferencia = etiquetaColumna.length() - valor.length();
+                int diferencia = cantidad_caracteres  - valor.length();
                 sb.append(" ".repeat(diferencia+5)); // Relleno con espacios lo que falta
             }
+            else {
+                sb.append(valor);
+                sb.append(" ".repeat(5)); // Relleno con espacios lo que falta
+            }
 
-        }
-    
+        }    
         // Imprimir la fila construida
         System.out.println(sb.toString());
     }
 
     @Override
-    public void verColumna(String etiqueta_columna) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'verColumna'");
+    public void verFila(String etiqueta_fila, Integer cantidad_caracteres) {
+        int indice = -1;
+        // Iterar sobre la lista de etiquetas_fila
+        for (int i = 0; i < etiquetas_fila.size(); i++) {
+            // Obtener el nombre de la etiqueta
+            String nombreEtiqueta = String.valueOf(etiquetas_fila.get(i).getNombre());
+            
+            // Comparar con la etiqueta buscada
+            if (nombreEtiqueta.equals(etiqueta_fila)) {
+                indice = i;
+                break; 
+            }
+        }
+    
+        // Verificar si se encontró el índice
+        if (indice == -1) {
+            System.out.println("La etiqueta de fila '" + etiqueta_fila + "' no fue encontrada.");
+            return;
+        }
+    
+        // Llamar al método verFila con el índice encontrado
+        verFila(indice, cantidad_caracteres);
     }
-
     @Override
     public void verColumna(Integer indice_columna) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'verColumna'");
-    }
+        if (indice_columna > this.tabla.size()){
+            throw new IndiceInexistente("No existe la columna " + String.valueOf(indice_columna));
+        }
 
-    @Override
-    public void verFila(String etiqueta_fila) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'verFila'");
+        int contador = 0;
+        for (Map.Entry<Etiqueta<K>, Columna<?>> entrada : tabla.entrySet()) {
+            if (contador == indice_columna) {
+                String etiqueta = String.valueOf(entrada.getKey().getNombre());
+                Columna<?> columna = entrada.getValue();
+                System.out.println(etiqueta);
+                System.out.println(columna.toString());
+                break;
+            }
+            contador++;
+        }
+        
     }
-    
+    @Override
+    public void verColumna(String etiqueta_columna) {
+    // Convertir la etiqueta a tipo Etiqueta<String>
+    Etiqueta<String> etiquetaKey = new Etiqueta<>(etiqueta_columna);
+        
+    // Obtener la columna correspondiente
+    Columna<?> columna = tabla.get(etiquetaKey);
+        if (columna == null){
+            throw new IndiceInexistente("No existe la columna " + etiqueta_columna);
+        }
+        System.out.println(etiqueta_columna);
+        System.out.println(columna.toString());
+        
+    }
 }
 

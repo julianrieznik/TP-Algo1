@@ -69,6 +69,17 @@ public class Columna<E> {
     public E valorCelda(Integer idx){
         return columna.get(idx).obtenerValor();
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Celda<E> celda : obtenerValores()){
+            String valor = String.valueOf(celda.obtenerValor());
+            sb.append(valor);
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
 }
 
 
