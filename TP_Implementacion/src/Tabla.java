@@ -112,11 +112,7 @@ public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>,interfaces.Vi
     }
  
     public Integer getCantidadFilas(){
-        Collection<Columna<?>> columnas = getListaColumnas();
-        Iterator<Columna<?>> iterador = columnas.iterator();
-        Columna<?> primer = iterador.hasNext() ? iterador.next() : null;
-
-        return primer.cantidadCeldas();
+        return etiquetas_filas().size();
     }
 
 // ----------------------------------------- METODOS PRIVADOS INTERNOS ------------------------------------- 
@@ -132,87 +128,6 @@ public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>,interfaces.Vi
 
     private boolean chequearLargoDeFilas(K[] etiquetaColumnas, Object[][] columnas) {
         return etiquetaColumnas.length == columnas.length;
-    }
-
-
-// ----------------------------------------- INFORMACION DE TABLA ------------------------------------- 
-    public Integer nfilas(){
-        return etiquetas_fila.size();
-    }
-
-    public Integer ncols(){
-        return tabla.size();
-    }
-
-    public List<Etiqueta<F>> etiquetas_filas(){
-        return etiquetas_fila;
-    }
-
-    public List<Etiqueta<K>> etiquetas_columnas() {
-        return new ArrayList<>(tabla.keySet());
-    }
-
-    @Override
-    public Tabla<K, F> head(int n) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-// ----------------------------------------- PROYECTABLE ------------------------------------- 
-    @Override
-    public Tabla<K, F> subtabla(List<Etiqueta<K>> listFilas, List<Etiqueta<F>> listColumnas) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Tabla<K, F> subtabla(List<Etiqueta<F>> list, boolean FoC) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Tabla<K, F> tail(int n) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Tabla<K, F> ordenar(List<Etiqueta<F>> lista, boolean asc_desc) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    @Override
-    public String toString() {
-        return "Tabla [tabla=" + tabla + ", etiquetas_fila=" + etiquetas_fila + "]";
-    }
-
-
-// ----------------------------------------- COPIABLE ------------------------------------- 
-    @Override
-    public Tabla<K, F> copiar(Tabla<K, F> a_copiar) {
-        Tabla<K, F> copia = new Tabla<>();
-    
-        // Copiar Etiquetas de fila
-        for (Etiqueta<F> etiquetaFila : a_copiar.etiquetas_filas()) {
-            copia.etiquetas_fila.add(new Etiqueta<>(etiquetaFila.nombre));
-        }
-    
-        // Iterar sobre la tabla
-        for (Map.Entry<Etiqueta<K>, Columna<?>> entrada : a_copiar.tabla.entrySet()) {
-            // Copiar Etiquetas de columna
-            Etiqueta<K> etiquetaColumna = new Etiqueta<>(entrada.getKey().nombre);
-    
-            // Inferir tipo de dato y crear columna copia
-            Columna<?> columnaOriginal = entrada.getValue();
-            Columna<?> columnaCopia = castearColumna(columnaOriginal.obtenerValores().toArray());
-    
-            // Agregar la columna copiada a la nueva tabla
-            copia.tabla.put(etiquetaColumna, columnaCopia);
-        }
-    
-        return copia;
     }
 
     private boolean esNumerica(Object[] columna) {
@@ -244,70 +159,162 @@ public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>,interfaces.Vi
     }
 
     private Columna<?> castearColumna(Object[] lista) {
-        if (esNumerica(lista)) {
-            Number[] listaCasteada = new Number[lista.length]; 
-            for (int j = 0; j < lista.length; j++) {
-                listaCasteada[j] = (Number) lista[j]; // Castear cada elemento
+        // Extraer los valores de tipo Celda si corresponde
+        Object[] valoresReales = new Object[lista.length];
+        for (int i = 0; i < lista.length; i++) {
+            if (lista[i] instanceof Celda) {
+                // Si el elemento es una celda (como en copiar), le extraigo el valor
+                valoresReales[i] = ((Celda) lista[i]).obtenerValor();
+            } else {
+                valoresReales[i] = lista[i]; // Si no, simplemente asigna el valor
             }
-            // Retornar la columna casteada a Number
+        }
+        
+        if (esNumerica(valoresReales)) {
+            Number[] listaCasteada = new Number[valoresReales.length]; 
+            for (int j = 0; j < valoresReales.length; j++) {
+                listaCasteada[j] = (Number) valoresReales[j]; // Castear cada elemento a Number
+            }
             return new Columna<>(listaCasteada);
         }
     
-        if (esBooleana(lista)) {
-            Boolean[] listaCasteada = new Boolean[lista.length]; 
-            for (int j = 0; j < lista.length; j++) {
-                listaCasteada[j] = (Boolean) lista[j]; 
+        if (esBooleana(valoresReales)) {
+            Boolean[] listaCasteada = new Boolean[valoresReales.length]; 
+            for (int j = 0; j < valoresReales.length; j++) {
+                listaCasteada[j] = (Boolean) valoresReales[j];
             }
-            // Retornar la columna casteada a Boolean
             return new Columna<>(listaCasteada);
         }
     
-        // Si no es numérica ni booleana, asumimos que es String
-        String[] listaCasteada = new String[lista.length]; 
-        for (int j = 0; j < lista.length; j++) {
-            listaCasteada[j] = (String) lista[j]; 
+        // Asumir que es String si no es numérica ni booleana
+        String[] listaCasteada = new String[valoresReales.length]; 
+        for (int j = 0; j < valoresReales.length; j++) {
+            listaCasteada[j] = (String) valoresReales[j];
         }
-        // Retornar la columna casteada a String
         return new Columna<>(listaCasteada);
     }
+
+
+// ----------------------------------------- INFORMACION DE TABLA ------------------------------------- 
+    public Integer nfilas(){
+        return etiquetas_fila.size();
+    }
+
+    public Integer ncols(){
+        return tabla.size();
+    }
+
+    public List<Etiqueta<F>> etiquetas_filas(){
+        return etiquetas_fila;
+    }
+
+    public List<Etiqueta<K>> etiquetas_columnas() {
+        return new ArrayList<>(tabla.keySet());
+    }
+
+
+// ----------------------------------------- PROYECTABLE ------------------------------------- 
+    @Override
+    public Tabla<K, F> subtabla(List<Etiqueta<K>> listFilas, List<Etiqueta<F>> listColumnas) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Tabla<K, F> subtabla(List<Etiqueta<F>> list, boolean FoC) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Tabla<K, F> head(int n) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public Tabla<K, F> tail(int n) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Tabla<K, F> ordenar(List<Etiqueta<F>> lista, boolean asc_desc) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public String toString() {
+        return "Tabla [tabla=" + tabla + ", etiquetas_fila=" + etiquetas_fila + "]";
+    }
+
+
+// ----------------------------------------- COPIABLE ------------------------------------- 
+@Override
+public void copiar(Tabla<K, F> a_copiar) {
+
+    // Copiar Etiquetas de fila
+    for (Etiqueta<F> etiquetaFila : a_copiar.etiquetas_filas()) {
+        this.etiquetas_fila.add(new Etiqueta<>(etiquetaFila.getNombre()));
+    }
+
+    // Iterar sobre la tabla
+    for (Map.Entry<Etiqueta<K>, Columna<?>> entrada : a_copiar.tabla.entrySet()) {
+        // Copiar Etiquetas de columna
+        Etiqueta<K> etiquetaColumna = new Etiqueta<>(entrada.getKey().getNombre());
+
+        // Inferir tipo de dato y crear columna copia
+        Columna<?> columnaOriginal = entrada.getValue();
+        Columna<?> columnaCopia = castearColumna(columnaOriginal.obtenerValores().toArray());
+
+        // Agregar la columna copiada a la nueva tabla
+        this.tabla.put(etiquetaColumna, columnaCopia);
+    }
+}
+
 
     // ----------------------------------------- VISUALIZABLE-------------------------------------    
     @Override
     public void ver(Integer cantidad_caracteres) {
+        if (tabla.isEmpty()) {
+            System.out.println("La tabla está vacía.");
+            return;
+        }
         // IMPRESION DE ETIQUETAS DE COLUMNA
         StringBuilder sb = new StringBuilder();
         int cantidad_espacios_iniciales = etiquetaMasGrandeFila() + 5;
-                sb.append(" ".repeat(cantidad_espacios_iniciales)); //Agrego espacios iniciales
+        sb.append(" ".repeat(cantidad_espacios_iniciales)); //Agrego espacios iniciales
                 
-                // Etiquetas de columnas con espacio definido por cantidad_caracteres
-                for (Etiqueta<K> etiqueta : tabla.keySet()) {
-                    String nombre_columna = String.valueOf(etiqueta.getNombre());
+        // Etiquetas de columnas con espacio definido por cantidad_caracteres
+        for (Etiqueta<K> etiqueta : tabla.keySet()) {
+            String nombre_columna = String.valueOf(etiqueta.getNombre());
         
-                    if (nombre_columna.length() > cantidad_caracteres){
-                        nombre_columna = nombre_columna.substring(0, cantidad_caracteres); // Cortar si es necesario
-                        sb.append(nombre_columna);
-                        sb.append(".".repeat(3)); // 3 puntos ... p indicarnque fue cortada
-                        sb.append(" ".repeat(2)); // 2 espacios de separacion
-                    }
-                    else if (nombre_columna.length() < cantidad_caracteres){
-                        Integer diferencia = cantidad_caracteres - nombre_columna.length();
-                        sb.append(nombre_columna);
-                        sb.append(" ".repeat(diferencia + 5));
-
-                    }
-                    else {
-                        sb.append(nombre_columna);
-                        sb.append(" ".repeat(5));
-                    }
-                }
-                System.out.println(sb.toString());
-                
-                // IMPRESION DE FILAS
-                int cantidadFilas = getCantidadFilas();
-                for (int i = 0; i < cantidadFilas; i++) {
-                    verFila(i, cantidad_caracteres);
-                }
+            if (nombre_columna.length() > cantidad_caracteres){
+                nombre_columna = nombre_columna.substring(0, cantidad_caracteres); // Cortar si es necesario
+                sb.append(nombre_columna);
+                sb.append(".".repeat(3)); // 3 puntos ... p indicarnque fue cortada
+                sb.append(" ".repeat(2)); // 2 espacios de separacion
             }
+            else if (nombre_columna.length() < cantidad_caracteres){
+                Integer diferencia = cantidad_caracteres - nombre_columna.length();
+                sb.append(nombre_columna);
+                sb.append(" ".repeat(diferencia + 5));
+
+            }
+            else {
+                sb.append(nombre_columna);
+                sb.append(" ".repeat(5));
+            }
+        }
+        System.out.println(sb.toString());
+                
+        // IMPRESION DE FILAS
+        int cantidadFilas = getCantidadFilas();
+        for (int i = 0; i < cantidadFilas; i++) {
+            verFila(i, cantidad_caracteres);
+            }
+        }
             
     private Integer etiquetaMasGrandeFila() {
         Integer max = 0;
@@ -402,7 +409,7 @@ public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>,interfaces.Vi
     }
     @Override
     public void verColumna(String etiqueta_columna) {
-    // Convertir la etiqueta a tipo Etiqueta<String>
+    // Generar Etiqueta
     Etiqueta<String> etiquetaKey = new Etiqueta<>(etiqueta_columna);
         
     // Obtener la columna correspondiente

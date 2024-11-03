@@ -22,9 +22,14 @@ public class App {
         };
 
         Tabla<String, String> nombres = new Tabla<>(etiquetasFilas, etiquetasColumnas, columnas);
-        nombres.ver(20);
+        
         nombres.verFila("Fila 2", 3);
         nombres.verColumna("Nombre");
+
+        Tabla<String, String> copianombres = new Tabla<>();
+        copianombres.copiar(nombres);
+        nombres.ver(20);
+        copianombres.ver(20);
 
     }
 }
