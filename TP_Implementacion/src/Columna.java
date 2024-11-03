@@ -80,6 +80,10 @@ public class Columna<E> {
         }
         return sb.toString();
     }
+
+    public void eliminarValor(int indice_valor){
+        columna.remove(indice_valor);
+    }
 }
 
 

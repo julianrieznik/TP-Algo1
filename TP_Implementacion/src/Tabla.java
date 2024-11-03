@@ -276,42 +276,18 @@ public void copiar(Tabla<K, F> a_copiar) {
 
     // ----------------------------------------- VISUALIZABLE-------------------------------------    
     @Override
-    public void ver(Integer cantidad_caracteres) {
+    public void ver(Integer cantidad_caracteres, Integer cantidad_filas) {
         if (tabla.isEmpty()) {
             System.out.println("La tabla está vacía.");
             return;
         }
-        // IMPRESION DE ETIQUETAS DE COLUMNA
-        StringBuilder sb = new StringBuilder();
-        int cantidad_espacios_iniciales = etiquetaMasGrandeFila() + 5;
-        sb.append(" ".repeat(cantidad_espacios_iniciales)); //Agrego espacios iniciales
-                
-        // Etiquetas de columnas con espacio definido por cantidad_caracteres
-        for (Etiqueta<K> etiqueta : tabla.keySet()) {
-            String nombre_columna = String.valueOf(etiqueta.getNombre());
-        
-            if (nombre_columna.length() > cantidad_caracteres){
-                nombre_columna = nombre_columna.substring(0, cantidad_caracteres); // Cortar si es necesario
-                sb.append(nombre_columna);
-                sb.append(".".repeat(3)); // 3 puntos ... p indicarnque fue cortada
-                sb.append(" ".repeat(2)); // 2 espacios de separacion
-            }
-            else if (nombre_columna.length() < cantidad_caracteres){
-                Integer diferencia = cantidad_caracteres - nombre_columna.length();
-                sb.append(nombre_columna);
-                sb.append(" ".repeat(diferencia + 5));
 
-            }
-            else {
-                sb.append(nombre_columna);
-                sb.append(" ".repeat(5));
-            }
+        imprimirEtiquetasDeColumnas(cantidad_caracteres);
+
+        if (cantidad_filas > getCantidadFilas()){
+            cantidad_filas = getCantidadFilas();
         }
-        System.out.println(sb.toString());
-                
-        // IMPRESION DE FILAS
-        int cantidadFilas = getCantidadFilas();
-        for (int i = 0; i < cantidadFilas; i++) {
+        for (int i = 0; i < cantidad_filas; i++) {
             verFila(i, cantidad_caracteres);
             }
         }
@@ -421,5 +397,54 @@ public void copiar(Tabla<K, F> a_copiar) {
         System.out.println(columna.toString());
         
     }
-}
 
+    private void imprimirEtiquetasDeColumnas(Integer cantidad_caracteres){
+        StringBuilder sb = new StringBuilder();
+        int cantidad_espacios_iniciales = etiquetaMasGrandeFila() + 5;
+        sb.append(" ".repeat(cantidad_espacios_iniciales)); //Agrego espacios iniciales
+                
+        // Etiquetas de columnas con espacio definido por cantidad_caracteres
+        for (Etiqueta<K> etiqueta : tabla.keySet()) {
+            String nombre_columna = String.valueOf(etiqueta.getNombre());
+        
+            if (nombre_columna.length() > cantidad_caracteres){
+                nombre_columna = nombre_columna.substring(0, cantidad_caracteres); // Cortar si es necesario
+                sb.append(nombre_columna);
+                sb.append(".".repeat(3)); // 3 puntos ... p indicarnque fue cortada
+                sb.append(" ".repeat(2)); // 2 espacios de separacion
+            }
+            else if (nombre_columna.length() < cantidad_caracteres){
+                Integer diferencia = cantidad_caracteres - nombre_columna.length();
+                sb.append(nombre_columna);
+                sb.append(" ".repeat(diferencia + 5));
+
+            }
+            else {
+                sb.append(nombre_columna);
+                sb.append(" ".repeat(5));
+            }
+        }
+        System.out.println(sb.toString());
+    }   
+
+//-------------------------ELIMINACION----------------------------
+    public void eliminarColumna(String etiqueta_columna){
+        Etiqueta<String> etiqueta = new Etiqueta<>(etiqueta_columna);
+
+        Columna<?> eliminada = tabla.remove(etiqueta);
+        if(eliminada == null){
+            System.out.println("Nombre de columna incorrecto: " + etiqueta_columna);
+        }
+    }
+
+    public void eliminarFila(int indice_fila){
+
+        if (indice_fila >= getCantidadFilas()){
+            throw new IndiceInexistente("No existe la fila " + String.valueOf(indice_fila));
+        }
+
+        for (Columna<?> columna : tabla.values()){
+            columna.eliminarValor(indice_fila);
+        }
+    }
+}

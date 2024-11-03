@@ -8,7 +8,7 @@ public class App {
         //gestor.escribirCSV(tabla, "TP_Implementacion/src");
 
         // Etiquetas de filas
-        String[] etiquetasFilas = { "Fila 1", "Fila 2", "Fila 3", "Fila 4" };
+        String[] etiquetasFilas = { "Fila 0", "Fila 1", "Fila 2", "Fila 3" };
         
         // Etiquetas de columnas
         String[] etiquetasColumnas = { "Nombre", "Apellido", "Edad", "Numero" };
@@ -28,8 +28,13 @@ public class App {
 
         Tabla<String, String> copianombres = new Tabla<>();
         copianombres.copiar(nombres);
-        nombres.ver(20);
-        copianombres.ver(20);
-
+        //nombres.ver(20,2);
+        copianombres.ver(20,2);
+        copianombres.eliminarColumna("Nombre");
+        System.out.println();
+        copianombres.ver(20,2);
+        copianombres.eliminarFila(1);
+        System.out.println();
+        copianombres.ver(20,2);
     }
 }
