@@ -49,20 +49,7 @@ public class GestorCSV implements Lectura, Escritura<Tabla> {
         }
     }
 
-    public static Object[][] transponer(List<Object[]> matriz) { 
-        // Obtener el tamaño de la matriz original 
-        int filas = matriz.size(); 
-        int columnas = matriz.get(0).length; 
-        // Crear una nueva matriz para la transpuesta 
-        Object[][] transpuesta = new Object[columnas][filas]; 
-        
-        for (int i = 0; i < columnas; i++) { 
-            for (int j = 0; j < filas; j++) { 
-                transpuesta[i][j] = matriz.get(j)[i]; 
-            } 
-        } 
-        return transpuesta; 
-    }
+    
 
     @Override
     public void escribirCSV(Tabla tabla, String ruta) {
@@ -81,28 +68,16 @@ public class GestorCSV implements Lectura, Escritura<Tabla> {
                     throw new EtiquetaInvalida("La lista: " + tabla.getEtiquetas_columna() + " no es una lista de etiquetas");
                 }
             }
-
-            /*
-            Object[][] transpuesta = transponer((List<Object[]>) tabla.getTabla());
-            for (int i = 0 ; i < transpuesta.length ; i++){
-                contenido += "\n";
-                for (int j = 0 ; j < transpuesta[i].length ; j++){
-                    contenido += transpuesta[i][j] + ",";
-                }
-            }
-             */
-
-            /*
-            for(int i = 0 ; i < tabla.getCantidadFilas() ; i++){
-                Object[] array  = tabla.getListaColumnas().toArray();
-                for(int j = 0 ; j < array.length ; j++){
-                    contenido += array[j] + ",";
-                }
-                contenido += "\n";
-            }
-            */
+            contenido = contenido.substring(0,contenido.length()-1);
             
-            
+            List<Columna<?>> lista_columnas = tabla.getListaColumnas();
+            for( int i = 0 ; i < tabla.getCantidadFilas() ; i++){
+                String fila = "";
+                for ( int j = 0 ; j < tabla.getCantidadColumnas(); j ++){
+                    fila += lista_columnas.get(j).valorCelda(i) + ",";
+                }
+                contenido += "\n" + fila.substring(0,fila.length()-1);
+            }
 
 
 
@@ -115,6 +90,21 @@ public class GestorCSV implements Lectura, Escritura<Tabla> {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static Object[][] transponer(List<Object[]> matriz) { 
+        // Obtener el tamaño de la matriz original 
+        int filas = matriz.size(); 
+        int columnas = matriz.get(0).length; 
+        // Crear una nueva matriz para la transpuesta 
+        Object[][] transpuesta = new Object[columnas][filas]; 
+        
+        for (int i = 0; i < columnas; i++) { 
+            for (int j = 0; j < filas; j++) { 
+                transpuesta[i][j] = matriz.get(j)[i]; 
+            } 
+        } 
+        return transpuesta; 
     }
 
 }

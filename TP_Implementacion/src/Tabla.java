@@ -463,13 +463,7 @@ public void copiar(Tabla<K, F> a_copiar) {
             columna.eliminarValor(indice_fila);
         }
     }
-//----------------------------AGREGABLE----------------------
-    @Override
-    public void agregarFila(Object[] fila) {
-        for(Object o : fila){
-            castearDato(o);
-        }
-    }
+    //----------------------------AGREGABLE----------------------
 
     @Override
     public void agregarColumna(Object[] columna) {

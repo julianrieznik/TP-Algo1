@@ -2,10 +2,12 @@ public class App {
     public static void main(String[] args) throws Exception {
         GestorCSV gestor = new GestorCSV() ;
 
-       //  Tabla<Integer, String> tabla = gestor.leer("TP_Implementacion/src/prueba.csv");
-        // tabla.verFila(1,8);
+        Tabla<Integer, String> tabla = gestor.leer("TP_Implementacion/src/prueba.csv");
+        tabla.verFila(1,8);
 
-        //gestor.escribirCSV(tabla, "TP_Implementacion/src");
+        gestor.escribirCSV(tabla, "TP_Implementacion/src");
+
+        /*
 
         // Etiquetas de filas
         String[] etiquetasFilas = { "Fila 0", "Fila 1", "Fila 2", "Fila 3" };
@@ -36,5 +38,8 @@ public class App {
         copianombres.eliminarFila(1);
         System.out.println();
         copianombres.ver(20,2);
+
+         */
+
     }
 }
