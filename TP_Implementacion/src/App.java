@@ -1,13 +1,13 @@
 public class App {
     public static void main(String[] args) throws Exception {
-        GestorCSV gestor = new GestorCSV() ;
+       // GestorCSV gestor = new GestorCSV() ;
 
-        Tabla<Integer, String> tabla = gestor.leer("TP_Implementacion/src/prueba.csv");
-        tabla.verFila(1,8);
+        //Tabla<Integer, String> tabla = gestor.leer("TP_Implementacion/src/prueba.csv");
+        //tabla.verFila(1,8);
 
-        gestor.escribirCSV(tabla, "TP_Implementacion/src");
+        //gestor.escribirCSV(tabla, "TP_Implementacion/src");
 
-        /*
+        
 
         // Etiquetas de filas
         String[] etiquetasFilas = { "Fila 0", "Fila 1", "Fila 2", "Fila 3" };
@@ -24,22 +24,11 @@ public class App {
         };
 
         Tabla<String, String> nombres = new Tabla<>(etiquetasFilas, etiquetasColumnas, columnas);
-        
-        nombres.verFila("Fila 2", 3);
-        nombres.verColumna("Nombre");
-
-        Tabla<String, String> copianombres = new Tabla<>();
-        copianombres.copiar(nombres);
-        //nombres.ver(20,2);
-        copianombres.ver(20,4);
-        copianombres.eliminarColumna("Nombre");
-        System.out.println();
-        copianombres.ver(20,2);
-        copianombres.eliminarFila(1);
-        System.out.println();
-        copianombres.ver(20,2);
-
-         */
+        nombres.ver(20, 20);
+        Object[] filaNueva = { "Pepe", "Luis", "aa", " "};
+        nombres.agregarFila("Fila 4",filaNueva);
+        nombres.ver(20, 20);
+         
 
     }
 }

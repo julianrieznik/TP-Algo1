@@ -1,10 +1,11 @@
-import java.lang.classfile.constantpool.IntegerEntry;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import excepciones.CeldaInvalida;
 import excepciones.ColumnaInvalida;
+import excepciones.ValorNoAgregable;
 
 public class Columna<E> {
     private List<Celda<E>> columna; 
@@ -84,6 +85,16 @@ public class Columna<E> {
 
     public void eliminarValor(int indice_valor){
         columna.remove(indice_valor);
+    }
+
+    public void agregarValor(Object o) {
+        try {
+            E valorCasteado = (E) o;
+            columna.add(new Celda<>(valorCasteado));
+        } catch (ClassCastException e) {
+            throw new ValorNoAgregable(
+                "No se puede agregar el tipo " + o.getClass().getSimpleName() + " a una columna de tipo " + tipo());
+        }
     }
 
     public Columna<E> subColumna(List<Integer> indices){
