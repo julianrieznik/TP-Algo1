@@ -9,7 +9,7 @@ import java.util.Set;
 import excepciones.FormatoTablaInvalido;
 import excepciones.IndiceInexistente;
 
-public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>,interfaces.Visualizable<Tabla<K,F>>, interfaces.Proyectable<Tabla<K,F>,Etiqueta<F>,Etiqueta<K>>, interfaces.Ordenable<Tabla<K,F>,Etiqueta<F>>{ 
+public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.Copiable<Tabla<K,F>>,interfaces.Visualizable<Tabla<K,F>>, interfaces.Proyectable<Tabla<K,F>,Etiqueta<F>,Etiqueta<K>>, interfaces.Ordenable<Tabla<K,F>,Etiqueta<F>>{ 
     //GENERICS
     // K -> Etiqueta de Columna
     // F -> Etiqueta de fila
@@ -91,8 +91,15 @@ public class Tabla<K,F> implements interfaces.Copiable<Tabla<K,F>>,interfaces.Vi
 
 
 // ----------------------------------------- GETTERS ------------------------------------- 
-    public Collection<Columna<?>> getListaColumnas() {
-        return tabla.values();
+    public List<Columna<?>> getListaColumnas() {
+
+        List<Columna<?>> lista_columnas = new ArrayList<Columna<?>>();
+
+        for(Columna<?> columna : tabla.values()){
+            lista_columnas.add(columna);
+        }
+        
+        return lista_columnas;
     }
     
     public List<Etiqueta<F>> getEtiquetas_fila() {
@@ -313,7 +320,7 @@ public void copiar(Tabla<K, F> a_copiar) {
         String etiqueta = String.valueOf(etiquetas_fila.get(indice_fila).getNombre());
         
         // Agregar la etiqueta de la fila
-        sb.append(etiqueta).append(" ".repeat(5)); // Agrego espacios iniciales dsp de etiqueta
+        sb.append(etiqueta).append(repeat(" ", 5)); // Agrego espacios iniciales dsp de etiqueta
     
         // Iterar sobre columnas para obtener el valor
         for (Columna<?> columna : this.tabla.values()) {
@@ -322,17 +329,17 @@ public void copiar(Tabla<K, F> a_copiar) {
             if (valor.length() > cantidad_caracteres) {
                 valor = valor.substring(0, cantidad_caracteres); // Cortar si es necesario
                 sb.append(valor);
-                sb.append(".".repeat(3)); // 3 puntos ... p indicarnque fue cortada
-                sb.append(" ".repeat(2)); // 2 espacios de separacion
+                sb.append(repeat(".",3)); // 3 puntos ... p indicarnque fue cortada
+                sb.append(repeat(" ",2)); // 2 espacios de separacion
             }
             else if (valor.length() < cantidad_caracteres) {
                 sb.append(valor);
                 int diferencia = cantidad_caracteres  - valor.length();
-                sb.append(" ".repeat(diferencia+5)); // Relleno con espacios lo que falta
+                sb.append(repeat(" ",diferencia+5)); // Relleno con espacios lo que falta
             }
             else {
                 sb.append(valor);
-                sb.append(" ".repeat(5)); // Relleno con espacios lo que falta
+                sb.append(repeat(" ",5)); // Relleno con espacios lo que falta
             }
 
         }    
@@ -401,7 +408,7 @@ public void copiar(Tabla<K, F> a_copiar) {
     private void imprimirEtiquetasDeColumnas(Integer cantidad_caracteres){
         StringBuilder sb = new StringBuilder();
         int cantidad_espacios_iniciales = etiquetaMasGrandeFila() + 5;
-        sb.append(" ".repeat(cantidad_espacios_iniciales)); //Agrego espacios iniciales
+        sb.append(repeat(" ",cantidad_espacios_iniciales)); //Agrego espacios iniciales
                 
         // Etiquetas de columnas con espacio definido por cantidad_caracteres
         for (Etiqueta<K> etiqueta : tabla.keySet()) {
@@ -410,22 +417,31 @@ public void copiar(Tabla<K, F> a_copiar) {
             if (nombre_columna.length() > cantidad_caracteres){
                 nombre_columna = nombre_columna.substring(0, cantidad_caracteres); // Cortar si es necesario
                 sb.append(nombre_columna);
-                sb.append(".".repeat(3)); // 3 puntos ... p indicarnque fue cortada
-                sb.append(" ".repeat(2)); // 2 espacios de separacion
+                sb.append(repeat(".", 3)); // 3 puntos ... p indicarnque fue cortada
+                sb.append(repeat(" ", 2)); // 2 espacios de separacion
             }
             else if (nombre_columna.length() < cantidad_caracteres){
                 Integer diferencia = cantidad_caracteres - nombre_columna.length();
                 sb.append(nombre_columna);
-                sb.append(" ".repeat(diferencia + 5));
+                sb.append(repeat(" ",diferencia + 5));
 
             }
             else {
                 sb.append(nombre_columna);
-                sb.append(" ".repeat(5));
+                sb.append(repeat(" ",5));
             }
         }
         System.out.println(sb.toString());
     }   
+
+    private String repeat(String caracter, int cantidad) {
+        //Replico el metodo String.repeat(int cantidad) de Java 11 para mas portabilidad
+        StringBuilder string = new StringBuilder();
+        for (int i = 0; i < cantidad; i++) {
+            string.append(caracter);
+        }
+        return string.toString();
+    }
 
 //-------------------------ELIMINACION----------------------------
     public void eliminarColumna(String etiqueta_columna){
@@ -446,5 +462,18 @@ public void copiar(Tabla<K, F> a_copiar) {
         for (Columna<?> columna : tabla.values()){
             columna.eliminarValor(indice_fila);
         }
+    }
+//----------------------------AGREGABLE----------------------
+    @Override
+    public void agregarFila(Object[] fila) {
+        for(Object o : fila){
+            castearDato(o);
+        }
+    }
+
+    @Override
+    public void agregarColumna(Object[] columna) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'agregarColumna'");
     }
 }

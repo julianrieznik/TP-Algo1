@@ -29,7 +29,7 @@ public class App {
         Tabla<String, String> copianombres = new Tabla<>();
         copianombres.copiar(nombres);
         //nombres.ver(20,2);
-        copianombres.ver(20,2);
+        copianombres.ver(20,4);
         copianombres.eliminarColumna("Nombre");
         System.out.println();
         copianombres.ver(20,2);
