@@ -89,6 +89,21 @@ public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.
         
     }
 
+    public Tabla(List<Etiqueta<F>> etiquetasFilas,List<Etiqueta<K>> etiquetasColumnas, List<Columna<?>> listColumnas){
+        this();
+
+        if (etiquetasColumnas.size() != listColumnas.size()) throw new FormatoTablaInvalido("La cantidad de etiquetas de columnas debe coincidir con el largo de las filas.");
+        if (!chequearLargoDeColumnas(listColumnas)) throw new FormatoTablaInvalido("El largo de las columnas debe ser el mismo para todas las columnas.");
+        if (etiquetasFilas.size() != listColumnas.get(0).cantidadCeldas()) throw new FormatoTablaInvalido("La cantidad de etiquetas de filas debe coincidir con el largo de columnas.");
+
+        this.etiquetas_fila = etiquetasFilas;
+
+        for( int i = 0; i < etiquetasColumnas.size(); i++){
+            tabla.put(etiquetasColumnas.get(i),listColumnas.get(i));
+        }
+        
+    }
+
 
 // ----------------------------------------- GETTERS ------------------------------------- 
     public List<Columna<?>> getListaColumnas() {
@@ -114,6 +129,16 @@ public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.
         return tabla;
     }
 
+    public Columna<?> getColumna(Integer indice_columna) throws IndiceInexistente{
+        int contador = 0;
+        for (Map.Entry<Etiqueta<K>, Columna<?>> entrada : tabla.entrySet()) {
+            if (contador == indice_columna) return entrada.getValue();
+            contador++;
+        }
+        throw new IndiceInexistente("No existe la columna " + String.valueOf(indice_columna));
+        
+    }
+
     public Integer getCantidadColumnas(){
         return getEtiquetas_columna().size();
     }
@@ -127,6 +152,18 @@ public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.
         int largoColumna = columnas[0].length;
         for(Object[] col : columnas){
             if (col.length != largoColumna) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean chequearLargoDeColumnas(List<Columna<?>> columnas) {
+        int largoColumna = columnas.get(0).cantidadCeldas();
+        
+        
+        for(Columna<?> col : columnas){
+            if (col.cantidadCeldas() != largoColumna) {
                 return false;
             }
         }
@@ -222,9 +259,49 @@ public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.
 
 // ----------------------------------------- PROYECTABLE ------------------------------------- 
     @Override
-    public Tabla<K, F> subtabla(List<Etiqueta<K>> listFilas, List<Etiqueta<F>> listColumnas) {
-        // TODO Auto-generated method stub
-        return null;
+    public Tabla<K, F> subtabla(List<Etiqueta<K>> listColumnas, List<Etiqueta<F>> listFilas) {
+        if (listColumnas.size() == 0 ) listColumnas = getEtiquetas_columna();
+
+        Tabla<K, F> tablaNueva = subtablaColumnas(listColumnas);
+
+        if (listFilas.size() == 0 ) return tablaNueva;
+        else return tablaNueva.subtablaFilas(listFilas);
+    }
+
+    private Tabla<K, F> subtablaColumnas(List<Etiqueta<K>> listColumnas){
+        LinkedHashMap<Etiqueta<K>, Columna<?>> tablaNueva ;
+        List<Columna<?>> listaColumnasNueva = new ArrayList<Columna<?>>();
+
+        List<Etiqueta<K>> etiquetasColumnasOriginal = getEtiquetas_columna();
+
+        for (int i = 0 ; i < listColumnas.size() ; i++){
+            for (int j = 0 ; j < etiquetasColumnasOriginal.size() ; j++){
+                if(listColumnas.get(i).equals(etiquetasColumnasOriginal.get(j))) listaColumnasNueva.add(getColumna(j));
+            }
+        }
+        return new Tabla<K,F>(getEtiquetas_fila(), listColumnas, listaColumnasNueva);
+    }
+
+    private Tabla<K, F> subtablaFilas(List<Etiqueta<F>> listFilas){
+        List<Integer> indices = indiceFilas(listFilas);
+        List<Columna<?>> listaColumnasNueva = new ArrayList<Columna<?>>();
+
+        for (Columna<?> col : getListaColumnas()){
+            listaColumnasNueva.add(col.subColumna(indices));   
+        }
+        return new Tabla<K,F>(listFilas, getEtiquetas_columna(), listaColumnasNueva);
+    }
+
+    private List<Integer> indiceFilas(List<Etiqueta<F>> listFilas){
+        List<Etiqueta<F>> etiquetasFilasOriginal = getEtiquetas_fila();
+        List<Integer> indices = new ArrayList<Integer>();
+
+        for ( Integer i = 0 ; i < etiquetasFilasOriginal.size() ; i++ ){
+            for (Integer j = 0 ; j < listFilas.size() ; j++){
+                if (etiquetasFilasOriginal.get(i).equals(listFilas.get(j))) indices.add(i);
+            }
+        }
+        return indices;
     }
 
     @Override

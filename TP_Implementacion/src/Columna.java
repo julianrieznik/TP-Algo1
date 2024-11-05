@@ -1,3 +1,4 @@
+import java.lang.classfile.constantpool.IntegerEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -83,6 +84,15 @@ public class Columna<E> {
 
     public void eliminarValor(int indice_valor){
         columna.remove(indice_valor);
+    }
+
+    public Columna<E> subColumna(List<Integer> indices){
+        List<Celda<E>> celdasNuevas = new ArrayList<Celda<E>>();
+
+        for(Integer indice : indices){
+            celdasNuevas.add(new Celda<E>(valorCelda(indice)));
+        }
+        return new Columna<>(celdasNuevas);
     }
 }
 
