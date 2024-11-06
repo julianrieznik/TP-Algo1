@@ -26,7 +26,7 @@ public class App {
         Tabla<String, String> nombres = new Tabla<>(etiquetasColumnas, columnas);
         nombres.ver(20, 20);
 
-        Object[] filaNueva = { "Pepe", "Luis", 22, 22};
+        Object[] filaNueva = { "Pepe", "Luis", 22.0, 22};
         nombres.agregarFila(filaNueva);
 
         nombres.ver(20, 20);
