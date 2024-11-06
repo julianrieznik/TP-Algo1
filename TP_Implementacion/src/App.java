@@ -3,11 +3,15 @@ import java.util.List;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        GestorCSV gestor = new GestorCSV() ;
+       // GestorCSV gestor = new GestorCSV() ;
+
+        //Tabla<Integer, String> tabla = gestor.leer("TP_Implementacion/src/prueba.csv");
+        //tabla.verFila(1,8);
 
         /*
         Tabla<String, String> tabla = gestor.leer("TP_Implementacion/src/prueba.csv");
         tabla.verFila(1,8);
+        //gestor.escribirCSV(tabla, "TP_Implementacion/src");
 
         List<Etiqueta<String>> list_etiq_col = new ArrayList<Etiqueta<String>>();
         List<Etiqueta<String>> list_etiq_fil = new ArrayList<Etiqueta<String>>();
@@ -16,6 +20,8 @@ public class App {
         gestor.escribirCSV( tabla.subtabla(list_etiq_fil,list_etiq_col ), "TP_Implementacion/src");
 
          */
+        
+
         // Etiquetas de filas
         String[] etiquetasFilas = { "Fila 0", "Fila 1", "Fila 2", "Fila 3" };
         
@@ -57,5 +63,15 @@ public class App {
 
          */
 
+        Tabla<String, String> nombres = new Tabla<>(etiquetasColumnas, columnas);
+        nombres.ver(20, 20);
+
+        Object[] filaNueva = { "Pepe", "Luis", 22.0, 22};
+        nombres.agregarFila(filaNueva);
+
+        nombres.ver(20, 20);
+        Object[] columnaNueva = {true, false,true,2,true};
+        nombres.agregarColumna("boolean", columnaNueva);
+        nombres.ver(20, 20);
     }
 }
