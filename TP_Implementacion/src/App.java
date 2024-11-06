@@ -3,6 +3,7 @@ import java.util.List;
 
 public class App {
     public static void main(String[] args) throws Exception {
+          /*
         GestorCSV gestor = new GestorCSV() ;
 
         
@@ -20,8 +21,8 @@ public class App {
         gestor.escribirCSV( tabla.head(3), "TP_Implementacion/src","headTest");
         gestor.escribirCSV( tabla.tail(2), "TP_Implementacion/src","TailTest");
 
-         
-        /*
+          */
+      
 
         // Etiquetas de filas
         String[] etiquetasFilas = { "Fila 0", "Fila 1", "Fila 2", "Fila 3" };
@@ -36,6 +37,7 @@ public class App {
             {25,44,33,21},
             {2,4,3,1},
         };
+       
 
         Tabla<String, String> nombres = new Tabla<>(etiquetasFilas, etiquetasColumnas, columnas);
         List<Etiqueta<String>> list_etiq_col = new ArrayList<Etiqueta<String>>();
@@ -45,11 +47,11 @@ public class App {
         list_etiq_fil.add(new Etiqueta<String>("Fila 0"));
         list_etiq_fil.add(new Etiqueta<String>("Fila 2"));
         
-        gestor.escribirCSV(nombres.subtabla(list_etiq_fil,list_etiq_col ), "TP_Implementacion/src");
+       // gestor.escribirCSV(nombres.subtabla(list_etiq_fil,list_etiq_col ), "TP_Implementacion/src");
 
-        */
         
-        /*
+        
+       
         nombres.verFila("Fila 2", 3);
         nombres.verColumna("Nombre");
 
@@ -63,12 +65,6 @@ public class App {
         copianombres.eliminarFila(1);
         System.out.println();
         copianombres.ver(20,2);
-
-         */
-
-         /*
-
-        Tabla<String, String> nombres = new Tabla<>(etiquetasColumnas, columnas);
         nombres.ver(20, 20);
 
         Object[] filaNueva = { "Pepe", "Luis", 22.0, 22};
@@ -78,6 +74,6 @@ public class App {
         Object[] columnaNueva = {true, false,true,2,true};
         nombres.agregarColumna("boolean", columnaNueva);
         nombres.ver(20, 20);
-        */
+
     }
 }

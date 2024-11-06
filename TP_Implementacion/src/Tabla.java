@@ -601,23 +601,26 @@ public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.
     }
 
     @Override
-    public void agregarColumna(String etiq, Object[] columna) {
+    public void agregarColumna(Object etiq, Object[] columna) {
         if (columna.length != getCantidadFilas()){
             throw new ColumnaInvalida("La columna nueva deber ser de largo " + String.valueOf(getCantidadFilas()));
         }
-    
-        Etiqueta<String> etiqueta = new Etiqueta<>(etiq); 
-        Columna<?> columnaCasteada = castearColumna(columna);
-
-        tabla.put((Etiqueta<K>)etiqueta, columnaCasteada);
+        try {
+            K etiqueta_col = (K) etiq;
+            Etiqueta<K> etiqueta = new Etiqueta<>(etiqueta_col);
+            Columna<?> columnaCasteada = castearColumna(columna);
+            tabla.put((Etiqueta<K>) etiqueta, columnaCasteada);
+        } catch (ClassCastException e) {
+            throw new EtiquetaInvalida("Etiqueta de columna invalida");
+        }
     }
 
 
 //--------------------------------SOBREESCRITURA---------
-    public <E> void modificar(K columna, F fila, Object valor_nuevo){
+    public <E> void modificar(String columna, F fila, Object valor_nuevo){
         Etiqueta<F> etiqueta_fila = new Etiqueta<>(fila);
         Integer indice_fila = etiquetas_filas().indexOf(etiqueta_fila);
-        Etiqueta<K> etiqueta_columna = new Etiqueta<>(columna);
+        Etiqueta<String> etiqueta_columna = new Etiqueta<>(columna);
         tabla.get(etiqueta_columna).modificarValorCelda(indice_fila, valor_nuevo);
 
     }   
