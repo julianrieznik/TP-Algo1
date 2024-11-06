@@ -52,10 +52,10 @@ public class GestorCSV implements Lectura, Escritura<Tabla> {
     
 
     @Override
-    public void escribirCSV(Tabla tabla, String ruta) {
+    public void escribirCSV(Tabla tabla, String ruta, String archivo) {
         try {
             // Especifica el nombre del archivo
-            String nombreArchivo = ruta + "/Output.csv";
+            String nombreArchivo = ruta + "/" + archivo + ".csv";
             
             // Crea un OutputStream para escribir en el archivo
             OutputStream outputStream = new FileOutputStream(nombreArchivo);

@@ -14,7 +14,11 @@ public class App {
         list_etiq_col.add(new Etiqueta<String>("Columna2"));
         list_etiq_col.add(new Etiqueta<String>("Columna3"));
         list_etiq_fil.add(new Etiqueta<Integer>(1));
-        gestor.escribirCSV( tabla.subtabla(list_etiq_fil,list_etiq_col ), "TP_Implementacion/src");
+
+
+        gestor.escribirCSV( tabla.subtabla(list_etiq_fil, list_etiq_col), "TP_Implementacion/src","SubtablaTest");
+        gestor.escribirCSV( tabla.head(3), "TP_Implementacion/src","headTest");
+        gestor.escribirCSV( tabla.tail(2), "TP_Implementacion/src","TailTest");
 
          
         /*

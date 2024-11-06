@@ -331,15 +331,19 @@ public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.
     }
 
     @Override
-    public Tabla<K, F> head(int n) {
-        // TODO Auto-generated method stub
-        return null;
+    public Tabla<K, F> head(int n) throws IndiceInexistente{
+        if(n == 0) throw new IndiceInexistente("El indice 0 no es válido");
+        if ( n > getCantidadFilas()) throw new IndiceInexistente("La tabla posee menos de " + n + " filas." );
+
+        return subtablaFilas(getEtiquetas_fila().subList(0, n));
     }
 
     @Override
-    public Tabla<K, F> tail(int n) {
-        // TODO Auto-generated method stub
-        return null;
+    public Tabla<K, F> tail(int n) throws IndiceInexistente{
+        if(n == 0) throw new IndiceInexistente("El indice 0 no es válido"); 
+        if ( n > getCantidadFilas()) throw new IndiceInexistente("La tabla posee menos de " + n + " filas." );
+
+        return subtablaFilas(getEtiquetas_fila().subList(getCantidadFilas() - n, getCantidadFilas()));
     }
 
     @Override
