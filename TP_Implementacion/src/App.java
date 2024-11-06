@@ -1,14 +1,21 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class App {
     public static void main(String[] args) throws Exception {
         GestorCSV gestor = new GestorCSV() ;
 
-        Tabla<Integer, String> tabla = gestor.leer("TP_Implementacion/src/prueba.csv");
+        /*
+        Tabla<String, String> tabla = gestor.leer("TP_Implementacion/src/prueba.csv");
         tabla.verFila(1,8);
 
-        gestor.escribirCSV(tabla, "TP_Implementacion/src");
+        List<Etiqueta<String>> list_etiq_col = new ArrayList<Etiqueta<String>>();
+        List<Etiqueta<String>> list_etiq_fil = new ArrayList<Etiqueta<String>>();
+        list_etiq_col.add(new Etiqueta<String>("Columna2"));
+        list_etiq_col.add(new Etiqueta<String>("Columna3"));
+        gestor.escribirCSV( tabla.subtabla(list_etiq_fil,list_etiq_col ), "TP_Implementacion/src");
 
-        /*
-
+         */
         // Etiquetas de filas
         String[] etiquetasFilas = { "Fila 0", "Fila 1", "Fila 2", "Fila 3" };
         
@@ -24,7 +31,16 @@ public class App {
         };
 
         Tabla<String, String> nombres = new Tabla<>(etiquetasFilas, etiquetasColumnas, columnas);
+        List<Etiqueta<String>> list_etiq_col = new ArrayList<Etiqueta<String>>();
+        List<Etiqueta<String>> list_etiq_fil = new ArrayList<Etiqueta<String>>();
+        list_etiq_col.add(new Etiqueta<String>("Apellido"));
+        list_etiq_col.add(new Etiqueta<String>("Edad"));
+        list_etiq_fil.add(new Etiqueta<String>("Fila 0"));
+        list_etiq_fil.add(new Etiqueta<String>("Fila 2"));
         
+        gestor.escribirCSV(nombres.subtabla(list_etiq_fil,list_etiq_col ), "TP_Implementacion/src");
+        
+        /*
         nombres.verFila("Fila 2", 3);
         nombres.verColumna("Nombre");
 

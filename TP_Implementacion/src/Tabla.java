@@ -9,7 +9,7 @@ import java.util.Set;
 import excepciones.FormatoTablaInvalido;
 import excepciones.IndiceInexistente;
 
-public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.Copiable<Tabla<K,F>>,interfaces.Visualizable<Tabla<K,F>>, interfaces.Proyectable<Tabla<K,F>,Etiqueta<F>,Etiqueta<K>>, interfaces.Ordenable<Tabla<K,F>,Etiqueta<F>>{ 
+public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.Copiable<Tabla<K,F>>,interfaces.Visualizable<Tabla<K,F>>, interfaces.Proyectable<Tabla<K,F>,Etiqueta<K>,Etiqueta<F>>, interfaces.Ordenable<Tabla<K,F>,Etiqueta<F>>{ 
     //GENERICS
     // K -> Etiqueta de Columna
     // F -> Etiqueta de fila
@@ -259,7 +259,7 @@ public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.
 
 // ----------------------------------------- PROYECTABLE ------------------------------------- 
     @Override
-    public Tabla<K, F> subtabla(List<Etiqueta<K>> listColumnas, List<Etiqueta<F>> listFilas) {
+    public Tabla<K, F> subtabla(List<Etiqueta<F>> listFilas, List<Etiqueta<K>> listColumnas ) {
         if (listColumnas.size() == 0 ) listColumnas = getEtiquetas_columna();
 
         Tabla<K, F> tablaNueva = subtablaColumnas(listColumnas);
@@ -302,12 +302,6 @@ public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.
             }
         }
         return indices;
-    }
-
-    @Override
-    public Tabla<K, F> subtabla(List<Etiqueta<F>> list, boolean FoC) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @Override
