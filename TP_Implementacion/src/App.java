@@ -6,14 +6,14 @@ public class App {
         GestorCSV gestor = new GestorCSV() ;
 
         
-        Tabla<String, String> tabla = gestor.leer("TP_Implementacion/src/prueba.csv");
+        Tabla<String, Integer> tabla = gestor.leer("TP_Implementacion/src/prueba.csv");
         //gestor.escribirCSV(tabla, "TP_Implementacion/src");
 
         List<Etiqueta<String>> list_etiq_col = new ArrayList<Etiqueta<String>>();
-        List<Etiqueta<String>> list_etiq_fil = new ArrayList<Etiqueta<String>>();
+        List<Etiqueta<Integer>> list_etiq_fil = new ArrayList<Etiqueta<Integer>>();
         list_etiq_col.add(new Etiqueta<String>("Columna2"));
         list_etiq_col.add(new Etiqueta<String>("Columna3"));
-        //list_etiq_fil.add(new Etiqueta<String>("Fila 0"));
+        list_etiq_fil.add(new Etiqueta<Integer>(1));
         gestor.escribirCSV( tabla.subtabla(list_etiq_fil,list_etiq_col ), "TP_Implementacion/src");
 
          

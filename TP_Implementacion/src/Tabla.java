@@ -1,4 +1,5 @@
 import excepciones.ColumnaInvalida;
+import excepciones.EtiquetaInvalida;
 import excepciones.FilaInvalida;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -93,6 +94,7 @@ public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.
 
     }
 
+    //Constructor con lista de etiqFilas, etiqColumnas y lista de Columnas. Uso interno
     public Tabla(List<Etiqueta<F>> etiquetasFilas, List<Etiqueta<K>> etiquetasColumnas, List<Columna<?>> listColumnas) {
         this();
 
@@ -280,22 +282,27 @@ public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.
             return tablaNueva.subtablaFilas(listFilas);
     }
 
-    private Tabla<K, F> subtablaColumnas(List<Etiqueta<K>> listColumnas) {
+    public Tabla<K, F> subtablaColumnas(List<Etiqueta<K>> listColumnas) throws EtiquetaInvalida{
         LinkedHashMap<Etiqueta<K>, Columna<?>> tablaNueva;
         List<Columna<?>> listaColumnasNueva = new ArrayList<Columna<?>>();
 
         List<Etiqueta<K>> etiquetasColumnasOriginal = getEtiquetas_columna();
 
         for (int i = 0; i < listColumnas.size(); i++) {
+            boolean existe = false;
             for (int j = 0; j < etiquetasColumnasOriginal.size(); j++) {
-                if (listColumnas.get(i).equals(etiquetasColumnasOriginal.get(j)))
+                if (listColumnas.get(i).equals(etiquetasColumnasOriginal.get(j))){
                     listaColumnasNueva.add(getColumna(j));
+                    existe = true;
+                    break;
+                }   
             }
+            if (!existe) throw new EtiquetaInvalida("La etiqueta " + listColumnas.get(i).getNombre() + " no existe en el encabezado.");
         }
         return new Tabla<K, F>(getEtiquetas_fila(), listColumnas, listaColumnasNueva);
     }
 
-    private Tabla<K, F> subtablaFilas(List<Etiqueta<F>> listFilas) {
+    public Tabla<K, F> subtablaFilas(List<Etiqueta<F>> listFilas) throws EtiquetaInvalida {
         List<Integer> indices = indiceFilas(listFilas);
         List<Columna<?>> listaColumnasNueva = new ArrayList<Columna<?>>();
 
@@ -305,15 +312,20 @@ public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.
         return new Tabla<K, F>(listFilas, getEtiquetas_columna(), listaColumnasNueva);
     }
 
-    private List<Integer> indiceFilas(List<Etiqueta<F>> listFilas) {
+    private List<Integer> indiceFilas(List<Etiqueta<F>> listFilas) throws EtiquetaInvalida {
         List<Etiqueta<F>> etiquetasFilasOriginal = getEtiquetas_fila();
+        if (etiquetasFilasOriginal.size() == 0) throw new EtiquetaInvalida("La tabla no posee etiquetas de fila.");
         List<Integer> indices = new ArrayList<Integer>();
 
-        for (Integer i = 0; i < etiquetasFilasOriginal.size(); i++) {
-            for (Integer j = 0; j < listFilas.size(); j++) {
-                if (etiquetasFilasOriginal.get(i).equals(listFilas.get(j)))
+        for (Integer j = 0; j < listFilas.size(); j++) {
+            boolean existe = false;
+            for (Integer i = 0; i < etiquetasFilasOriginal.size(); i++) {
+                if (etiquetasFilasOriginal.get(i).equals(listFilas.get(j))){
                     indices.add(i);
+                    existe = true;
+                }
             }
+            if (!existe) throw new EtiquetaInvalida("La etiqueta " + listFilas.get(j).getNombre() + " no existe en las etiquetas de fila.");
         }
         return indices;
     }
