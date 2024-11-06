@@ -8,7 +8,9 @@ public class App {
 
         
         Tabla<String, Integer> tabla = gestor.leer("TP_Implementacion/src/prueba.csv");
-        //gestor.escribirCSV(tabla, "TP_Implementacion/src");
+        System.out.println(tabla.getColumna(0).tipo());
+        
+        gestor.escribirCSV(tabla, "TP_Implementacion/src","Output");
 
         List<Etiqueta<String>> list_etiq_col = new ArrayList<Etiqueta<String>>();
         List<Etiqueta<Integer>> list_etiq_fil = new ArrayList<Etiqueta<Integer>>();
