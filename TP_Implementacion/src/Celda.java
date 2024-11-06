@@ -17,13 +17,13 @@ public class Celda<T> {
         return valor;
     }
 
-    private boolean chequeartipo(T valor) {
+    private boolean chequeartipo(Object valor) {
         return valor.getClass().getSimpleName().equals(this.tipo);
     }
     
-    public void modificar(T valor) {
+    public void modificar(Object valor) {
         if (chequeartipo(valor)){
-            this.valor = valor;
+            this.valor = (T) valor;
         }
         else{
             //HACER EXEPCION PROPIA

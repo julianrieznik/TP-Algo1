@@ -108,6 +108,15 @@ public class Columna<E> {
         return new Columna<>(celdasNuevas);
     }
 
+    public void modificarValorCelda(int idx, Object valor){
+        try {
+            E valorCasteado = (E) valor; 
+            columna.get(idx).modificar(valorCasteado);
+        } catch (ClassCastException e) {
+            throw new ValorNoAgregable("El nuevo valor debe ser de tipo " + tipo());
+        }
+        
+    }
     public static void main(String[] args) {
         String[] s = { "Pepe", "Luis", "aa", " "};
         Columna<String> col = new Columna<>(s);
