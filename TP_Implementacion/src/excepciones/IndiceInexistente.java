@@ -1,6 +1,5 @@
 package excepciones;
 
-import javax.management.RuntimeErrorException;
 
 public class IndiceInexistente extends RuntimeException {
 

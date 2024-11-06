@@ -612,4 +612,13 @@ public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.
         tabla.put((Etiqueta<K>)etiqueta, columnaCasteada);
     }
 
+
+//--------------------------------SOBREESCRITURA---------
+    public <E> void modificar(K columna, F fila, Object valor_nuevo){
+        Etiqueta<F> etiqueta_fila = new Etiqueta<>(fila);
+        Integer indice_fila = etiquetas_filas().indexOf(etiqueta_fila);
+        Etiqueta<K> etiqueta_columna = new Etiqueta<>(columna);
+        tabla.get(etiqueta_columna).modificarValorCelda(indice_fila, valor_nuevo);
+
+    }   
 }
