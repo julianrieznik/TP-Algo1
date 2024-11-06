@@ -15,6 +15,7 @@ public class Columna<E> {
     public Columna(E[] lista){
         List<Celda<E>> columna = generarColumna(lista);
         this.columna = columna;
+        this.tipo = columna.get(0).tipo();
     }
 
     public Columna(List<Celda<E>> celdas){
@@ -23,7 +24,7 @@ public class Columna<E> {
         }
         if(this.chequearTipo(celdas)) {
             this.columna = celdas;
-            this.tipo = celdas.get(0).getClass().getSimpleName();
+            this.tipo = celdas.get(0).tipo();
         }
         else{
             throw new ColumnaInvalida("Las celdas de una columna deben ser del mismo tipo");
@@ -88,12 +89,13 @@ public class Columna<E> {
     }
 
     public void agregarValor(Object o) {
-        try {
-            E valorCasteado = (E) o;
-            columna.add(new Celda<>(valorCasteado));
-        } catch (ClassCastException e) {
-            throw new ValorNoAgregable(
-                "No se puede agregar el tipo " + o.getClass().getSimpleName() + " a una columna de tipo " + tipo());
+        if (!columna.isEmpty() && !columna.get(0).obtenerValor().getClass().isInstance(o)) { 
+            throw new ValorNoAgregable( "No se puede agregar el tipo " + o.getClass().getSimpleName() + " a una columna de tipo " + tipo()); } 
+        try { 
+            E valorCasteado = (E) o; columna.add(new Celda<>(valorCasteado));
+        } 
+        catch (ClassCastException e) { 
+            throw new ValorNoAgregable( "No se puede agregar el tipo " + o.getClass().getSimpleName() + " a una columna de tipo " + tipo()); 
         }
     }
 
@@ -104,6 +106,19 @@ public class Columna<E> {
             celdasNuevas.add(new Celda<E>(valorCelda(indice)));
         }
         return new Columna<>(celdasNuevas);
+    }
+
+    public static void main(String[] args) {
+        String[] s = { "Pepe", "Luis", "aa", " "};
+        Columna<String> col = new Columna<>(s);
+
+        Double[] f = { 1.2,3.3,4.4};
+        Columna<Double> col1 = new Columna<>(f);
+
+        System.out.println(col.tipo());
+        System.out.println(col1.tipo());
+
+        col1.agregarValor(1);
     }
 }
 

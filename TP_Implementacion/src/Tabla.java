@@ -1,3 +1,4 @@
+import excepciones.ColumnaInvalida;
 import excepciones.FilaInvalida;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,6 +10,7 @@ import java.util.Set;
 
 import excepciones.FormatoTablaInvalido;
 import excepciones.IndiceInexistente;
+import excepciones.ValorNoAgregable;
 
 public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interfaces.Copiable<Tabla<K, F>>,
         interfaces.Visualizable<Tabla<K, F>>, interfaces.Proyectable<Tabla<K, F>, Etiqueta<F>, Etiqueta<K>>,
@@ -243,7 +245,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
         // Asumir que es String si no es numérica ni booleana
         String[] listaCasteada = new String[valoresReales.length];
         for (int j = 0; j < valoresReales.length; j++) {
-            listaCasteada[j] = (String) valoresReales[j];
+            listaCasteada[j] = String.valueOf(valoresReales[j]);
         }
         return new Columna<>(listaCasteada);
     }
@@ -561,6 +563,24 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
         //FALTA MANEJO SI ETIQUETAS SON NUMEROS
         Etiqueta<F> etiqueta_fila = new Etiqueta<>((F)etiqueta);
         this.etiquetas_fila.add(etiqueta_fila);
+        agregarFila(fila);
+    }
+    
+    @Override
+    public void agregarFila(Object[] fila) {
+        try { 
+            F num = etiquetas_fila.get(etiquetas_fila.size() -1).getNombre(); // Obtengo valor de ultima etiqueta de numero
+            Integer valor = (Integer) num;
+            Etiqueta<Integer> etiqueta = new Etiqueta<>(valor+1);
+            etiquetas_fila.add((Etiqueta<F>) etiqueta);
+            
+        } 
+        catch (ClassCastException e) { 
+            throw new FilaInvalida("Las etiquetas de fila son Strings, usar metodo agregarFila(String etiqueta, Object[] fila)");
+        }
+        
+        
+
         if (fila.length != getCantidadColumnas()) {
             throw new FilaInvalida("La cantidad de elementos en la fila no coincide con la cantidad de columnas.");
         }
@@ -572,12 +592,17 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
             lista_columnas.get(i).agregarValor(dato);
         }
     }
-    
 
     @Override
-    public void agregarColumna(String etiqueta, Object[] columna) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'agregarColumna'");
+    public void agregarColumna(String etiq, Object[] columna) {
+        if (columna.length != getCantidadFilas()){
+            throw new ColumnaInvalida("La columna nueva deber ser de largo " + String.valueOf(getCantidadFilas()));
+        }
+    
+        Etiqueta<String> etiqueta = new Etiqueta<>(etiq); 
+        Columna<?> columnaCasteada = castearColumna(columna);
+
+        tabla.put((Etiqueta<K>)etiqueta, columnaCasteada);
     }
 
 }

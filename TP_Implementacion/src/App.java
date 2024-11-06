@@ -23,12 +23,15 @@ public class App {
             {2,4,3,1},
         };
 
-        Tabla<String, String> nombres = new Tabla<>(etiquetasFilas, etiquetasColumnas, columnas);
+        Tabla<String, String> nombres = new Tabla<>(etiquetasColumnas, columnas);
         nombres.ver(20, 20);
-        Object[] filaNueva = { "Pepe", "Luis", "aa", " "};
-        nombres.agregarFila("Fila 4",filaNueva);
-        nombres.ver(20, 20);
-         
 
+        Object[] filaNueva = { "Pepe", "Luis", 22, 22};
+        nombres.agregarFila(filaNueva);
+
+        nombres.ver(20, 20);
+        Object[] columnaNueva = {true, false,true,2,true};
+        nombres.agregarColumna("boolean", columnaNueva);
+        nombres.ver(20, 20);
     }
 }
