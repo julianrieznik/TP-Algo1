@@ -69,6 +69,10 @@ public class Columna<E> {
         return this.columna;
     }
 
+    public Celda<E> obtenerCelda(Integer idx){
+        return columna.get(idx);
+    }
+    
     public E valorCelda(Integer idx){
         return columna.get(idx).obtenerValor();
     }
