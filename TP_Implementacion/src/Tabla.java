@@ -1,17 +1,12 @@
 import excepciones.ColumnaInvalida;
 import excepciones.EtiquetaInvalida;
 import excepciones.FilaInvalida;
+import excepciones.FormatoTablaInvalido;
+import excepciones.IndiceInexistente;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import excepciones.FormatoTablaInvalido;
-import excepciones.IndiceInexistente;
-import excepciones.ValorNoAgregable;
 
 public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.Copiable<Tabla<K,F>>,interfaces.Visualizable<Tabla<K,F>>, interfaces.Proyectable<Tabla<K,F>,Etiqueta<K>,Etiqueta<F>>, interfaces.Ordenable<Tabla<K,F>,Etiqueta<F>>{ 
     //GENERICS
@@ -119,7 +114,7 @@ public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.
     // -------------------------------------
     public List<Columna<?>> getListaColumnas() {
 
-        List<Columna<?>> lista_columnas = new ArrayList<Columna<?>>();
+        List<Columna<?>> lista_columnas = new ArrayList<>();
 
         for (Columna<?> columna : tabla.values()) {
             lista_columnas.add(columna);
@@ -272,19 +267,20 @@ public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.
     // -------------------------------------
     @Override
     public Tabla<K, F> subtabla(List<Etiqueta<F>> listFilas, List<Etiqueta<K>> listColumnas ) {
-        if (listColumnas.size() == 0 ) listColumnas = getEtiquetas_columna();
+        if (listColumnas.isEmpty()) listColumnas = getEtiquetas_columna();
 
         Tabla<K, F> tablaNueva = subtablaColumnas(listColumnas);
 
-        if (listFilas.size() == 0)
+        if (listFilas.isEmpty())
             return tablaNueva;
         else
             return tablaNueva.subtablaFilas(listFilas);
     }
 
+    @Override
     public Tabla<K, F> subtablaColumnas(List<Etiqueta<K>> listColumnas) throws EtiquetaInvalida{
         LinkedHashMap<Etiqueta<K>, Columna<?>> tablaNueva;
-        List<Columna<?>> listaColumnasNueva = new ArrayList<Columna<?>>();
+        List<Columna<?>> listaColumnasNueva = new ArrayList<>();
 
         List<Etiqueta<K>> etiquetasColumnasOriginal = getEtiquetas_columna();
 
@@ -299,23 +295,24 @@ public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.
             }
             if (!existe) throw new EtiquetaInvalida("La etiqueta " + listColumnas.get(i).getNombre() + " no existe en el encabezado.");
         }
-        return new Tabla<K, F>(getEtiquetas_fila(), listColumnas, listaColumnasNueva);
+        return new Tabla<>(getEtiquetas_fila(), listColumnas, listaColumnasNueva);
     }
 
+    @Override
     public Tabla<K, F> subtablaFilas(List<Etiqueta<F>> listFilas) throws EtiquetaInvalida {
         List<Integer> indices = indiceFilas(listFilas);
-        List<Columna<?>> listaColumnasNueva = new ArrayList<Columna<?>>();
+        List<Columna<?>> listaColumnasNueva = new ArrayList<>();
 
         for (Columna<?> col : getListaColumnas()) {
             listaColumnasNueva.add(col.subColumna(indices));
         }
-        return new Tabla<K, F>(listFilas, getEtiquetas_columna(), listaColumnasNueva);
+        return new Tabla<>(listFilas, getEtiquetas_columna(), listaColumnasNueva);
     }
 
     private List<Integer> indiceFilas(List<Etiqueta<F>> listFilas) throws EtiquetaInvalida {
         List<Etiqueta<F>> etiquetasFilasOriginal = getEtiquetas_fila();
-        if (etiquetasFilasOriginal.size() == 0) throw new EtiquetaInvalida("La tabla no posee etiquetas de fila.");
-        List<Integer> indices = new ArrayList<Integer>();
+        if (etiquetasFilasOriginal.isEmpty()) throw new EtiquetaInvalida("La tabla no posee etiquetas de fila.");
+        List<Integer> indices = new ArrayList<>();
 
         for (Integer j = 0; j < listFilas.size(); j++) {
             boolean existe = false;
@@ -544,8 +541,8 @@ public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.
     }
 
     // -------------------------ELIMINACION----------------------------
-    public void eliminarColumna(String etiqueta_columna) {
-        Etiqueta<String> etiqueta = new Etiqueta<>(etiqueta_columna);
+    public void eliminarColumna(K etiqueta_columna) {
+        Etiqueta<K> etiqueta = new Etiqueta<>(etiqueta_columna);
 
         Columna<?> eliminada = tabla.remove(etiqueta);
         if (eliminada == null) {
@@ -570,13 +567,13 @@ public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.
         //FALTA MANEJO SI ETIQUETAS SON NUMEROS
         Etiqueta<F> etiqueta_fila = new Etiqueta<>((F)etiqueta);
         this.etiquetas_fila.add(etiqueta_fila);
-        agregarFila(fila);
+        agregarFilaSinEtiqueta(fila);
     }
     
     @Override
     public void agregarFila(Object[] fila) {
         try { 
-            F num = etiquetas_fila.get(etiquetas_fila.size() -1).getNombre(); // Obtengo valor de ultima etiqueta de numero
+            F num = etiquetas_fila.get(etiquetas_fila.size() -1).getNombre();
             Integer valor = (Integer) num;
             Etiqueta<Integer> etiqueta = new Etiqueta<>(valor+1);
             etiquetas_fila.add((Etiqueta<F>) etiqueta);
@@ -585,9 +582,10 @@ public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.
         catch (ClassCastException e) { 
             throw new FilaInvalida("Las etiquetas de fila son Strings, usar metodo agregarFila(String etiqueta, Object[] fila)");
         }
-        
-        
+        agregarFilaSinEtiqueta(fila);
+    }
 
+    private void agregarFilaSinEtiqueta(Object[] fila){
         if (fila.length != getCantidadColumnas()) {
             throw new FilaInvalida("La cantidad de elementos en la fila no coincide con la cantidad de columnas.");
         }
@@ -617,11 +615,20 @@ public class Tabla<K,F> implements interfaces.Agregable<Tabla<K,F>>, interfaces.
 
 
 //--------------------------------SOBREESCRITURA---------
-    public <E> void modificar(String columna, F fila, Object valor_nuevo){
+    public void modificarCelda(K columna, F fila, Object valor_nuevo){
         Etiqueta<F> etiqueta_fila = new Etiqueta<>(fila);
         Integer indice_fila = etiquetas_filas().indexOf(etiqueta_fila);
-        Etiqueta<String> etiqueta_columna = new Etiqueta<>(columna);
-        tabla.get(etiqueta_columna).modificarValorCelda(indice_fila, valor_nuevo);
+
+        if (indice_fila == -1) {
+            throw new FilaInvalida("No existe la fila " + String.valueOf(fila));
+        }
+        Etiqueta<K> etiqueta_columna = new Etiqueta<>(columna);
+        
+        try {
+            tabla.get(etiqueta_columna).modificarValorCelda(indice_fila, valor_nuevo);
+        } catch (NullPointerException e) {
+            throw new ColumnaInvalida("No existe la columna " + String.valueOf(columna));
+        }
 
     }   
 }
