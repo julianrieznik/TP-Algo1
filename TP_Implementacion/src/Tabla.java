@@ -5,6 +5,7 @@ import excepciones.FiltroInvalido;
 import excepciones.FormatoTablaInvalido;
 import excepciones.IndiceInexistente;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -364,9 +365,78 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
     }
 
     @Override
-    public Tabla<K, F> ordenar(List<Etiqueta<F>> lista, boolean asc_desc) {
-        // TODO Auto-generated method stub
-        return null;
+    public Tabla<K,F> ordenar(List<K> lista, boolean asc_desc) {
+        List<Etiqueta<K>> listEtiq = new ArrayList<>();
+        for (K elem: lista){ 
+            Etiqueta<K> etiqueta_columna = new Etiqueta<>(elem);
+            listEtiq.add(etiqueta_columna);
+        }
+        //Tabla<Etiqueta<K>, Columna<?>> tablaOriginal = new Tabla<>(this.getEtiquetas_columna(), this.getTabla());
+        //Tabla<Etiqueta<K>, Columna<?>> tablaOrdenada = new Tabla<>();
+
+        //tablaOrdenada.copiar(this);;
+        Columna<?> columna = null;
+
+        for (Map.Entry<Etiqueta<K>, Columna<?>> entrada : tabla.entrySet()) {
+            if (entrada.getKey().equals(listEtiq.get(0))){
+                columna = entrada.getValue();
+            }
+            
+        }
+        if (columna != null) {
+            // Crear una lista de índices (0, 1, 2, ...) para representar las posiciones originales
+            List<Integer> indices = new ArrayList<>();
+            for (int i = 0; i < columna.cantidadCeldas(); i++) {
+                indices.add(i);
+            }
+
+            if (asc_desc == true) {
+                if (columna.valorCelda(0) instanceof Number) {
+
+                    indices.sort((i, j) -> Double.compare(((Number)columna.valorCelda(i)).doubleValue(), ((Number)columna.valorCelda(j)).doubleValue())); //columna numérica ordenada ascendentemente. 
+
+                }else if(columna.valorCelda(0) instanceof String) {
+
+                    //pendiente de revisar. puede que tenga error. 
+                    Collections.sort(columna.obtenerValores(), (c1, c2) ->((String)c1.obtenerValor()).compareTo((String)c2.obtenerValor()));
+
+                }else if (columna.valorCelda(0) instanceof Boolean) {
+                    indices.sort((i1, i2) -> Boolean.compare(!((Boolean)columna.valorCelda(i1)), !((Boolean)columna.valorCelda(i2))));  
+                }
+
+            }else if (asc_desc == false) {
+
+                if (columna.valorCelda(0) instanceof Number) {
+
+                    indices.sort((i, j) -> Double.compare(((Number)columna.valorCelda(j)).doubleValue(), ((Number)columna.valorCelda(i)).doubleValue())); //columna numérica ordenada ascendentemente. 
+
+                }else if(columna.valorCelda(0) instanceof String) {
+
+                    //pendiente de revisar. puede que tenga error. 
+                    Collections.sort(columna.obtenerValores(), (c1, c2) -> ((String)c2.obtenerValor()).compareTo((String)c1.obtenerValor()));
+
+                }else if (columna.valorCelda(0) instanceof Boolean) {
+                    indices.sort((i1, i2) -> Boolean.compare(((Boolean)columna.valorCelda(i1)), ((Boolean)columna.valorCelda(i2))));  
+                }
+            }
+
+            List<Etiqueta<K>> listEtiquetasCol = new ArrayList<>();
+            List<Columna<?>> listColumnas = new ArrayList<>();
+            
+            // Reordenar todas las columnas usando los índices ordenados
+            for (Map.Entry<Etiqueta<K>, Columna<?>> entry : tabla.entrySet()) {
+                Columna<?> columnaSinOrden = entry.getValue();
+                listEtiquetasCol.add(entry.getKey());
+                Columna<?> columnaOrdenada = new Columna<>(new ArrayList<>(Collections.nCopies(columnaSinOrden.cantidadCeldas(), null)));
+                for (int index : indices) {
+                    columnaOrdenada.agregarValor(columnaSinOrden.obtenerCelda(index));
+                }
+                listColumnas.add(columnaOrdenada);
+                entry.setValue(columnaOrdenada);
+            }
+
+            return new Tabla<>(listEtiquetasCol, listColumnas);
+        }
     }
 
     @Override
