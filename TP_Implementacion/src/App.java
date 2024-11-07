@@ -3,79 +3,89 @@ import java.util.List;
 
 public class App {
     public static void main(String[] args) throws Exception {
-          /*
+        /*
+         * GestorCSV gestor = new GestorCSV() ;
+         * 
+         * 
+         * Tabla<String, Integer> tabla =
+         * gestor.leer("TP_Implementacion/src/prueba.csv");
+         * System.out.println(tabla.getColumna(0).tipo());
+         * 
+         * gestor.escribirCSV(tabla, "TP_Implementacion/src","Output");
+         * 
+         * List<Etiqueta<String>> list_etiq_col = new ArrayList<Etiqueta<String>>();
+         * List<Etiqueta<Integer>> list_etiq_fil = new ArrayList<Etiqueta<Integer>>();
+         * list_etiq_col.add(new Etiqueta<String>("Columna2"));
+         * list_etiq_col.add(new Etiqueta<String>("Columna3"));
+         * list_etiq_fil.add(new Etiqueta<Integer>(1));
+         * 
+         * 
+         * gestor.escribirCSV( tabla.subtabla(list_etiq_fil, list_etiq_col),
+         * "TP_Implementacion/src","SubtablaTest");
+         * gestor.escribirCSV( tabla.head(3), "TP_Implementacion/src","headTest");
+         * gestor.escribirCSV( tabla.tail(2), "TP_Implementacion/src","TailTest");
+         * 
+         * List<Etiqueta<String>> list_etiq_col = new ArrayList<Etiqueta<String>>();
+         * List<Etiqueta<String>> list_etiq_fil = new ArrayList<Etiqueta<String>>();
+         * list_etiq_col.add(new Etiqueta<String>("Apellido"));
+         * list_etiq_col.add(new Etiqueta<String>("Edad"));
+         * list_etiq_fil.add(new Etiqueta<String>("Fila 0"));
+         * list_etiq_fil.add(new Etiqueta<String>("Fila 2"));
+         * 
+         */
+        /*
+         * 
+         * // Etiquetas de filas
+         * String[] etiquetasFilas = { "Fila 0", "Fila 1", "Fila 2", "Fila 3" };
+         * 
+         * // Etiquetas de columnas
+         * String[] etiquetasColumnas = { "Nombre", "Apellido", "Edad", "Numero" };
+         * 
+         * // Datos de columnas
+         * Object[][] columnas = {
+         * { "Julian", "Pedro", "Maria", "Leandro" },
+         * { "Perez", "Sanchez", "Rodriguez", "Gutierrez" },
+         * {25,44,33,21},
+         * {2,4,3,1},
+         * };
+         * 
+         * 
+         * Tabla<String, String> nombres = new Tabla<>(etiquetasFilas,
+         * etiquetasColumnas, columnas);
+         * nombres.ver(20, 20);
+         * 
+         * Object[] filaNueva = { "Pepe", "Luis", 22, 22};
+         * nombres.agregarFila("Fila 4", filaNueva);
+         * nombres.ver(20, 20);
+         * 
+         * Object[] columnaNueva = {true, false,true,2,true};
+         * nombres.agregarColumna("boolean", columnaNueva);
+         * nombres.ver(20, 20);
+         * 
+         * 
+         * nombres.modificarCelda("Numero", "Fila 2", 333333);
+         * nombres.ver(20, 20);
+         * 
+         */
+
+         
         GestorCSV gestor = new GestorCSV() ;
-
-        
+         
+         
         Tabla<String, Integer> tabla = gestor.leer("TP_Implementacion/src/prueba.csv");
-        System.out.println(tabla.getColumna(0).tipo());
+
+        List<String> filtro = new ArrayList<String>();
         
-        gestor.escribirCSV(tabla, "TP_Implementacion/src","Output");
 
-        List<Etiqueta<String>> list_etiq_col = new ArrayList<Etiqueta<String>>();
-        List<Etiqueta<Integer>> list_etiq_fil = new ArrayList<Etiqueta<Integer>>();
-        list_etiq_col.add(new Etiqueta<String>("Columna2"));
-        list_etiq_col.add(new Etiqueta<String>("Columna3"));
-        list_etiq_fil.add(new Etiqueta<Integer>(1));
-
-
-        gestor.escribirCSV( tabla.subtabla(list_etiq_fil, list_etiq_col), "TP_Implementacion/src","SubtablaTest");
-        gestor.escribirCSV( tabla.head(3), "TP_Implementacion/src","headTest");
-        gestor.escribirCSV( tabla.tail(2), "TP_Implementacion/src","TailTest");
-
-          */
-      
-
-        // Etiquetas de filas
-        String[] etiquetasFilas = { "Fila 0", "Fila 1", "Fila 2", "Fila 3" };
+        filtro.add("Columna2");
+        filtro.add("Columna3");
         
-        // Etiquetas de columnas
-        String[] etiquetasColumnas = { "Nombre", "Apellido", "Edad", "Numero" };
-        
-        // Datos de columnas
-        Object[][] columnas = {
-            { "Julian", "Pedro", "Maria", "Leandro" },
-            { "Perez", "Sanchez", "Rodriguez", "Gutierrez" },
-            {25,44,33,21},
-            {2,4,3,1},
-        };
-       
 
-        Tabla<String, String> nombres = new Tabla<>(etiquetasFilas, etiquetasColumnas, columnas);
-        List<Etiqueta<String>> list_etiq_col = new ArrayList<Etiqueta<String>>();
-        List<Etiqueta<String>> list_etiq_fil = new ArrayList<Etiqueta<String>>();
-        list_etiq_col.add(new Etiqueta<String>("Apellido"));
-        list_etiq_col.add(new Etiqueta<String>("Edad"));
-        list_etiq_fil.add(new Etiqueta<String>("Fila 0"));
-        list_etiq_fil.add(new Etiqueta<String>("Fila 2"));
-        
-       // gestor.escribirCSV(nombres.subtabla(list_etiq_fil,list_etiq_col ), "TP_Implementacion/src");
-
-        
-        
-       
-        nombres.verFila("Fila 2", 3);
-        nombres.verColumna("Nombre");
-
-        Tabla<String, String> copianombres = new Tabla<>();
-        copianombres.copiar(nombres);
-        //nombres.ver(20,2);
-        copianombres.ver(20,4);
-        copianombres.eliminarColumna("Nombre");
-        System.out.println();
-        copianombres.ver(20,2);
-        copianombres.eliminarFila(1);
-        System.out.println();
-        copianombres.ver(20,2);
-        nombres.ver(20, 20);
-
-        Object[] filaNueva = { "Pepe", "Luis", 22.0, 22};
-        nombres.agregarFila(filaNueva);
-
-        nombres.ver(20, 20);
-        Object[] columnaNueva = {true, false,true,2,true};
-        nombres.agregarColumna("boolean", columnaNueva);
-        nombres.ver(20, 20);
-
+        Tabla<String, Integer> filtrada = tabla.filtrar("Columna3", a -> a.equals(2) );
+        //Tabla<String, Integer> filtrada = tabla.filtrar(filtro, [a,b] -> a.equals(1) && b.equals(2));
+         
+        gestor.escribirCSV(filtrada, "TP_Implementacion/src","Filtro");
+         
+         
     }
 }
