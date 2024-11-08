@@ -80,6 +80,12 @@ public class App {
          
          nombres.modificarCelda("Numero", "Fila 2", 22);
          nombres.ver(20, 20);
-         System.out.println(nombres.obtenerColumna("boolean"));
+
+         nombres.verColumna("Numero");
+         nombres.cambiarTipoColumna("Numero", Double.class);
+         nombres.verColumna("Numero");
+         nombres.cambiarTipoColumna("Numero", String.class);
+         nombres.verColumna("Numero");
+         nombres.cambiarTipoColumna("Numero", Boolean.class);
     }
 }

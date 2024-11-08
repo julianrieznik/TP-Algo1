@@ -167,8 +167,8 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
         return etiquetas_filas().size();
     }
 
-    public Columna<?> obtenerColumna(String nombreColumna) {
-        Etiqueta<String> etiqueta = new Etiqueta<>(nombreColumna);
+    public Columna<?> obtenerColumna(K nombreColumna) {
+        Etiqueta<K> etiqueta = new Etiqueta<>(nombreColumna);
     
         for (Map.Entry<Etiqueta<K>, Columna<?>> entrada : tabla.entrySet()) {
             if (entrada.getKey().equals(etiqueta)) {
@@ -177,6 +177,17 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
             }
         }
         throw new ColumnaInvalida("No existe la columna " + nombreColumna);
+    }
+
+    public Etiqueta<K> obtenerEtiqueta(K nombre){
+        Etiqueta<K> etiqueta = new Etiqueta<>(nombre);
+        List<Etiqueta<K>> lista = getEtiquetas_columna();
+        for(Etiqueta<K> eti : lista){
+            if (eti.equals(etiqueta)){
+                return eti;
+            }
+        }
+        throw new ColumnaInvalida("No existe la columna " + String.valueOf(nombre));
     }
 
     // ----------------------------------------- METODOS PRIVADOS INTERNOS
@@ -746,13 +757,14 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
         }
     }
 
-    public void cambiarTipoColumna(String nombreColumna, Class<?> clase) {
+    public void cambiarTipoColumna(K nombreColumna, Class<?> clase) {
         Columna<?> columna = obtenerColumna(nombreColumna);
         Object[] arrayObject = columna.aListaGenerica();
+        Etiqueta<K> etiqueta = obtenerEtiqueta(nombreColumna);
     
         if (Number.class.isAssignableFrom(clase)) {
             if (!esNumerica(arrayObject)) {
-                throw new TipoDeColumnaInvalido("No se puede castear la columna " + columna + " a " + String.valueOf(clase));
+                throw new TipoDeColumnaInvalido("No se puede castear la columna " + nombreColumna + " a " + String.valueOf(clase));
             }
     
             if (clase == Integer.class) {
@@ -760,6 +772,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
                                               .map(obj -> ((Number) obj).intValue())
                                               .toArray(Integer[]::new);
                 Columna<Integer> nuevaColumna = new Columna<>(nuevoArray);
+                this.tabla.put(etiqueta, nuevaColumna);
             }
     
             if (clase == Double.class) {
@@ -767,6 +780,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
                                              .map(obj -> ((Number) obj).doubleValue())
                                              .toArray(Double[]::new);
                 Columna<Double> nuevaColumna = new Columna<>(nuevoArray);
+                this.tabla.put(etiqueta, nuevaColumna);
             }
     
             if (clase == Float.class) {
@@ -774,29 +788,31 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
                                             .map(obj -> ((Number) obj).floatValue())
                                             .toArray(Float[]::new);
                 Columna<Float> nuevaColumna = new Columna<>(nuevoArray);
+                this.tabla.put(etiqueta, nuevaColumna);
             }
+            
         }
-    
-        // Manejo para tipo String
+   
         if (clase == String.class) {
             String[] nuevoArray = Arrays.stream(arrayObject)
-                                         .map(obj -> obj == null ? "" : obj.toString())  // Convierte cada elemento a String
+                                         .map(obj -> obj == null ? "" : obj.toString())  
                                          .toArray(String[]::new);
             Columna<String> nuevaColumna = new Columna<>(nuevoArray);
+            this.tabla.put(etiqueta, nuevaColumna);
         }
     
-        // Manejo para tipo Boolean
+
         if (clase == Boolean.class) {
-            // Verificamos si todos los elementos de la columna son booleanos
+
             if (!esBooleana(arrayObject)) {
-                throw new TipoDeColumnaInvalido("No se puede castear la columna " + columna + " a Boolean.");
+                throw new TipoDeColumnaInvalido("No se puede castear la columna " + nombreColumna + " a Boolean.");
             }
-    
-            // Convertimos la columna a Boolean[] si es válida
+
             Boolean[] nuevoArray = Arrays.stream(arrayObject)
-                                          .map(obj -> (Boolean) obj)  // Aseguramos que los elementos sean Boolean
+                                          .map(obj -> (Boolean) obj)  
                                           .toArray(Boolean[]::new);
             Columna<Boolean> nuevaColumna = new Columna<>(nuevoArray);
+            this.tabla.put(etiqueta, nuevaColumna);
         }
     }
 
