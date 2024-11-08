@@ -96,6 +96,10 @@ public class Columna<E> {
         return columna.get(idx);
     }
 
+    public String tipoCelda(Integer idx){
+        return columna.get(idx).tipo();
+    }
+
     public E valorCelda(Integer idx){
         return columna.get(idx).obtenerValor();
     }
@@ -164,6 +168,16 @@ public class Columna<E> {
             contador++;
         }
         return arreglo;
+    }
+
+    public List<E> aArrayList(){
+        List<E> array = new ArrayList<E>();
+        for (Celda<E> celda : this.columna){
+            E valor = celda.obtenerValor();
+            array.add(valor);
+        }
+        
+        return array;
     }
     public static void main(String[] args) {
         String[] s = { "Pepe", "Luis", "aa", " "};

@@ -1,6 +1,7 @@
 package interfaces;
 
-public interface Concatenable<T>{
+public interface Concatenable<T> {
 
-    T concatenar(T a, T b);
+    public T concatenar(T a ,T b);
+
 }

@@ -104,7 +104,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
 
     // Constructor con lista de etiqFilas, etiqColumnas y lista de Columnas. Uso
     // interno
-    public Tabla(List<Etiqueta<F>> etiquetasFilas, List<Etiqueta<K>> etiquetasColumnas, List<Columna<?>> listColumnas) {
+    private Tabla(List<Etiqueta<F>> etiquetasFilas, List<Etiqueta<K>> etiquetasColumnas, List<Columna<?>> listColumnas) {
         this();
 
         if (etiquetasColumnas.size() != listColumnas.size())
@@ -168,12 +168,12 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
         return etiquetas_filas().size();
     }
 
-    public Columna<?> obtenerColumna(K nombreColumna) {
+    public <T> Columna<T> obtenerColumna(K nombreColumna) {
         Etiqueta<K> etiqueta = new Etiqueta<>(nombreColumna);
     
         for (Map.Entry<Etiqueta<K>, Columna<?>> entrada : tabla.entrySet()) {
             if (entrada.getKey().equals(etiqueta)) {
-                Columna<?> columna = entrada.getValue();
+                Columna<T> columna = (Columna<T>) entrada.getValue();
                 return columna;
             }
         }
@@ -190,6 +190,45 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
         }
         throw new ColumnaInvalida("No existe la columna " + String.valueOf(nombre));
     }
+
+    public <T> T obtenerValorCelda(K col, F fila){
+        Integer indice = null;
+
+        for(Etiqueta<F> etiq : etiquetas_fila){
+            if(etiq.equals(new Etiqueta<F>(fila))){
+                indice = etiquetas_fila.indexOf(etiq);
+                break;
+            }
+        }
+
+        if (indice == null){
+            throw new FilaInvalida("No existe la fila " + String.valueOf(fila));
+        }
+
+        Columna<T> columna = obtenerColumna(col);
+        T valor = columna.valorCelda(indice);
+        return valor; 
+    }
+
+    public String obtenerTipoCelda(K col, F fila){
+        Integer indice = null;
+
+        for(Etiqueta<F> etiq : etiquetas_fila){
+            if(etiq.equals(new Etiqueta<F>(fila))){
+                indice = etiquetas_fila.indexOf(etiq);
+                break;
+            }
+        }
+
+        if (indice == null){
+            throw new FilaInvalida("No existe la fila " + String.valueOf(fila));
+        }
+        Columna<?> columna = obtenerColumna(col);
+        String tipo = columna.tipoCelda(indice);
+        return tipo;
+    }
+
+    
 
     // ----------------------------------------- METODOS PRIVADOS INTERNOS
     // -------------------------------------
@@ -748,12 +787,30 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
         try {
             K etiqueta_col = (K) etiq;
             Etiqueta<K> etiqueta = new Etiqueta<>(etiqueta_col);
+            if (this.tabla.containsKey(etiqueta)){
+                throw new ColumnaInvalida("La columna " + etiq + " ya existe");
+            }
             Columna<?> columnaCasteada = castearColumna(columna);
             tabla.put((Etiqueta<K>) etiqueta, columnaCasteada);
         } catch (ClassCastException e) {
             throw new EtiquetaInvalida("Etiqueta de columna invalida");
         }
     }
+
+    
+    private void agregarColumna(String etiq, Columna<?> columna) {
+        if (columna.obtenerValores().size() != getCantidadFilas()) {
+            throw new ColumnaInvalida("La columna nueva deber ser de largo " + String.valueOf(getCantidadFilas()));
+        }
+            K etiqueta_col = (K) etiq;
+            Etiqueta<K> etiqueta = new Etiqueta<>(etiqueta_col);
+            if (this.tabla.containsKey(etiqueta)){
+                throw new ColumnaInvalida("La columna " + etiq + " ya existe");
+            }
+            this.tabla.put(etiqueta, columna);
+    }
+        
+
 
     // --------------------------------SOBREESCRITURA---------
     public void modificarCelda(K columna, F fila, Object valor_nuevo) {
@@ -974,9 +1031,67 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
         HashSet<String> conjuntoActual = conjuntos.get(indice);
         for (String elemento : conjuntoActual) {
             resultado.addAll(generarCombinaciones(conjuntos, indice + 1, combinacionActual + "," + elemento));
-    }
+        }
     
     return resultado;
+    }
+
+
+//--------------------------------CONCATENACION------------------
+
+public static <K, F> Tabla<K,F> concatenar(Tabla<K, F> a, Tabla<K, F> b) {
+    if (a.getCantidadFilas() != b.getCantidadColumnas()){
+        throw new FormatoTablaInvalido("Las tablas no tienen la misma cantidad de filas"); 
+    }
+
+    List<Columna<?>> columnas = a.getListaColumnas();
+
+    for(Columna<?> col : b.getListaColumnas()){
+        columnas.add(col);
+    }
+
+    List<Etiqueta<F>> etiquetasFila = a.etiquetas_filas();
+
+    List<Etiqueta<K>> etiquetasCol = a.etiquetas_columnas();
+
+    for(Etiqueta<K> etiq : b.etiquetas_columnas()){
+        etiquetasCol.add(etiq);
+    }
+
+    return new Tabla<K,F>(etiquetasFila, etiquetasCol, columnas);
+    
 }
+
+//----------------------------------SUMARIZACION-----------------
+    public <T> Double sum(K col){
+        Columna<T> columna = obtenerColumna(col);
+        Double suma = 0.0;
+
+        if (columna.tipo().equals("String") || columna.tipo().equals("Boolean")){
+            throw new ColumnaInvalida("La columna seleccionada no es numerica");
+        }
+
+        List<T> array = columna.aArrayList();
+
+        if (columna.tipo().equals("Double")){
+            for(T valor : array){
+                suma += (Double) valor;
+            }
+        }
+                
+        if (columna.tipo().equals("Integer")){
+            for(T valor : array){
+                suma += (Integer) valor;
+            }
+        }
+        
+                
+        if (columna.tipo().equals("Float")){
+            for(T valor : array){
+                suma += (Float) valor;
+            }
+        } 
+        return suma;
+    }
 
 }
