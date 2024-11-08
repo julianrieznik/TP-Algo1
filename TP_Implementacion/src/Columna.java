@@ -117,6 +117,17 @@ public class Columna<E> {
         }
         
     }
+
+    protected Object[] aListaGenerica(){
+        Object[] arreglo = new Object[this.columna.size()];
+        int contador = 0;
+        for (Celda<E> celda : this.columna){
+            Object valor = (Object) celda.obtenerValor();
+            arreglo[contador] = valor;
+            contador++;
+        }
+        return arreglo;
+    }
     public static void main(String[] args) {
         String[] s = { "Pepe", "Luis", "aa", " "};
         Columna<String> col = new Columna<>(s);

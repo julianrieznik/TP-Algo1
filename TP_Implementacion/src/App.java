@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-import java.util.List;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -31,42 +29,8 @@ public class App {
          * list_etiq_col.add(new Etiqueta<String>("Edad"));
          * list_etiq_fil.add(new Etiqueta<String>("Fila 0"));
          * list_etiq_fil.add(new Etiqueta<String>("Fila 2"));
-         * 
-         */
-        /*
-         * 
-         * // Etiquetas de filas
-         * String[] etiquetasFilas = { "Fila 0", "Fila 1", "Fila 2", "Fila 3" };
-         * 
-         * // Etiquetas de columnas
-         * String[] etiquetasColumnas = { "Nombre", "Apellido", "Edad", "Numero" };
-         * 
-         * // Datos de columnas
-         * Object[][] columnas = {
-         * { "Julian", "Pedro", "Maria", "Leandro" },
-         * { "Perez", "Sanchez", "Rodriguez", "Gutierrez" },
-         * {25,44,33,21},
-         * {2,4,3,1},
-         * };
-         * 
-         * 
-         * Tabla<String, String> nombres = new Tabla<>(etiquetasFilas,
-         * etiquetasColumnas, columnas);
-         * nombres.ver(20, 20);
-         * 
-         * Object[] filaNueva = { "Pepe", "Luis", 22, 22};
-         * nombres.agregarFila("Fila 4", filaNueva);
-         * nombres.ver(20, 20);
-         * 
-         * Object[] columnaNueva = {true, false,true,2,true};
-         * nombres.agregarColumna("boolean", columnaNueva);
-         * nombres.ver(20, 20);
-         * 
-         * 
-         * nombres.modificarCelda("Numero", "Fila 2", 333333);
-         * nombres.ver(20, 20);
-         * 
-         */
+  
+         
 
          
         GestorCSV gestor = new GestorCSV() ;
@@ -85,7 +49,37 @@ public class App {
         //Tabla<String, Integer> filtrada = tabla.filtrar(filtro, [a,b] -> a.equals(1) && b.equals(2));
          
         gestor.escribirCSV(filtrada, "TP_Implementacion/src","Filtro");
+         */
+         // Etiquetas de filas
+         String[] etiquetasFilas = { "Fila 0", "Fila 1", "Fila 2", "Fila 3" };
+          
+         // Etiquetas de columnas
+         String[] etiquetasColumnas = { "Nombre", "Apellido", "Edad", "Numero" };
+         
+         // Datos de columnas
+         Object[][] columnas = {
+         { "Julian", "Pedro", "Maria", "Leandro" },
+         { "Perez", "Sanchez", "Rodriguez", "Gutierrez" },
+         {25,44,33,21},
+         {2,4,3,1},
+         };
          
          
+         Tabla<String, String> nombres = new Tabla<>(etiquetasFilas,
+         etiquetasColumnas, columnas);
+         nombres.ver(20, 20);
+         
+         Object[] filaNueva = { "Pepe", "Luis", 22, 22};
+         nombres.agregarFila("Fila 4", filaNueva);
+         nombres.ver(20, 20);
+         
+         Object[] columnaNueva = {true, false,true,2,true};
+         nombres.agregarColumna("boolean", columnaNueva);
+         nombres.ver(20, 20);
+         
+         
+         nombres.modificarCelda("Numero", "Fila 2", 22);
+         nombres.ver(20, 20);
+         System.out.println(nombres.obtenerColumna("boolean"));
     }
 }

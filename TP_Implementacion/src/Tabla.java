@@ -164,6 +164,18 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
         return etiquetas_filas().size();
     }
 
+    public Columna<?> obtenerColumna(String nombreColumna) {
+        Etiqueta<String> etiqueta = new Etiqueta<>(nombreColumna);
+    
+        for (Map.Entry<Etiqueta<K>, Columna<?>> entrada : tabla.entrySet()) {
+            if (entrada.getKey().equals(etiqueta)) {
+                Columna<?> columna = entrada.getValue();
+                return columna;
+            }
+        }
+        throw new ColumnaInvalida("No existe la columna " + nombreColumna);
+    }
+
     // ----------------------------------------- METODOS PRIVADOS INTERNOS
     // -------------------------------------
     private boolean chequearLargoDeColumnas(Object[][] columnas) {
@@ -729,18 +741,17 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
         } catch (NullPointerException e) {
             throw new ColumnaInvalida("No existe la columna " + String.valueOf(columna));
         }
-
     }
 
     // --------------------------------FILTRADO---------
     @Override
     public Tabla<K, F> filtrar(K etiq, Predicate<Object> criterio) throws FiltroInvalido {
-        Etiqueta<K> enueva = new Etiqueta<K>(etiq);
+        Etiqueta<K> enueva = new Etiqueta<>(etiq);
         if (!tabla.keySet().contains(enueva))
             throw new FiltroInvalido("La etiqueta " + etiq + " no se encuentra en el encabezado de la tabla.");
 
         Columna<?> colFiltrada = tabla.get(enueva);
-        List<Etiqueta<F>> eFilas = new ArrayList<Etiqueta<F>>();
+        List<Etiqueta<F>> eFilas = new ArrayList<>();
 
         for (int i = 0; i < getCantidadFilas(); i++) {
             if (criterio.test(colFiltrada.valorCelda(i)))
@@ -753,10 +764,10 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
 
     @Override
     public Tabla<K, F> filtrar(List<K> etiq, Predicate<List<Object>> criterio) throws FiltroInvalido {
-        List<Etiqueta<K>> etiquetas = new ArrayList<Etiqueta<K>>();
-        List<Columna<?>> colFiltradas = new ArrayList<Columna<?>>();
+        List<Etiqueta<K>> etiquetas = new ArrayList<>();
+        List<Columna<?>> colFiltradas = new ArrayList<>();
         for( K e : etiq){
-            Etiqueta<K> enueva = new Etiqueta<K>(e);
+            Etiqueta<K> enueva = new Etiqueta<>(e);
             if (!tabla.keySet().contains(enueva))
             throw new FiltroInvalido("La etiqueta " + e + " no se encuentra en el encabezado de la tabla.");
             etiquetas.add(enueva);
