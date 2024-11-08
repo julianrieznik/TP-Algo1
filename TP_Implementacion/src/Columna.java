@@ -15,10 +15,19 @@ public class Columna<E> {
     public Columna(E[] lista){
         List<Celda<E>> columna = generarColumna(lista);
         this.columna = columna;
-        this.tipo = columna.get(0).tipo();
+        this.tipo = "";
+
+        if (columna.size() != 0){
+            if(this.chequearTipo(columna)) {
+                this.tipo = columna.get(0).tipo();
+            }
+            else{
+                throw new ColumnaInvalida("Las celdas de una columna deben ser del mismo tipo");
+            }
+        }
     }
 
-    public Columna(List<Celda<E>> celdas){
+    /*public Columna(List<Celda<E>> celdas){
         if (celdas.size() == 0){
             throw new CeldaInvalida("Debe haber al menos un valor en cada celda");
         }
@@ -28,6 +37,20 @@ public class Columna<E> {
         }
         else{
             throw new ColumnaInvalida("Las celdas de una columna deben ser del mismo tipo");
+        }
+    }*/
+
+    public Columna(List<Celda<E>> celdas){
+        this.columna = celdas;
+        this.tipo = "";
+
+        if (celdas.size() != 0){
+            if(this.chequearTipo(celdas)) {
+                this.tipo = celdas.get(0).tipo();
+            }
+            else{
+                throw new ColumnaInvalida("Las celdas de una columna deben ser del mismo tipo");
+            }
         }
     }
     
@@ -97,7 +120,12 @@ public class Columna<E> {
         if (!columna.isEmpty() && !columna.get(0).obtenerValor().getClass().isInstance(o)) { 
             throw new ValorNoAgregable( "No se puede agregar el tipo " + o.getClass().getSimpleName() + " a una columna de tipo " + tipo() + " usar cambiarTipoColumna()") ; } 
         try { 
-            E valorCasteado = (E) o; columna.add(new Celda<>(valorCasteado));
+            E valorCasteado = (E) o; 
+            columna.add(new Celda<>(valorCasteado));
+
+            if (tipo == "") {
+                this.tipo = o.getClass().getSimpleName();
+            }
         } 
         catch (ClassCastException e) { 
             throw new ValorNoAgregable( "No se puede agregar el tipo " + o.getClass().getSimpleName() + " a una columna de tipo " + tipo() + " usar cambiarTipoColumna()"); 
