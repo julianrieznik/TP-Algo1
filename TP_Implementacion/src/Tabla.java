@@ -7,6 +7,7 @@ import excepciones.IndiceInexistente;
 import excepciones.TipoDeColumnaInvalido;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -745,18 +746,59 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
         }
     }
 
-    public void cambiarTipoColumna(String nombreColumna, Class<?> clase){
+    public void cambiarTipoColumna(String nombreColumna, Class<?> clase) {
         Columna<?> columna = obtenerColumna(nombreColumna);
         Object[] arrayObject = columna.aListaGenerica();
-
+    
         if (Number.class.isAssignableFrom(clase)) {
             if (!esNumerica(arrayObject)) {
                 throw new TipoDeColumnaInvalido("No se puede castear la columna " + columna + " a " + String.valueOf(clase));
             }
-       }
+    
+            if (clase == Integer.class) {
+                Integer[] nuevoArray = Arrays.stream(arrayObject)
+                                              .map(obj -> ((Number) obj).intValue())
+                                              .toArray(Integer[]::new);
+                Columna<Integer> nuevaColumna = new Columna<>(nuevoArray);
+            }
+    
+            if (clase == Double.class) {
+                Double[] nuevoArray = Arrays.stream(arrayObject)
+                                             .map(obj -> ((Number) obj).doubleValue())
+                                             .toArray(Double[]::new);
+                Columna<Double> nuevaColumna = new Columna<>(nuevoArray);
+            }
+    
+            if (clase == Float.class) {
+                Float[] nuevoArray = Arrays.stream(arrayObject)
+                                            .map(obj -> ((Number) obj).floatValue())
+                                            .toArray(Float[]::new);
+                Columna<Float> nuevaColumna = new Columna<>(nuevoArray);
+            }
+        }
+    
+        // Manejo para tipo String
+        if (clase == String.class) {
+            String[] nuevoArray = Arrays.stream(arrayObject)
+                                         .map(obj -> obj == null ? "" : obj.toString())  // Convierte cada elemento a String
+                                         .toArray(String[]::new);
+            Columna<String> nuevaColumna = new Columna<>(nuevoArray);
+        }
+    
+        // Manejo para tipo Boolean
+        if (clase == Boolean.class) {
+            // Verificamos si todos los elementos de la columna son booleanos
+            if (!esBooleana(arrayObject)) {
+                throw new TipoDeColumnaInvalido("No se puede castear la columna " + columna + " a Boolean.");
+            }
+    
+            // Convertimos la columna a Boolean[] si es válida
+            Boolean[] nuevoArray = Arrays.stream(arrayObject)
+                                          .map(obj -> (Boolean) obj)  // Aseguramos que los elementos sean Boolean
+                                          .toArray(Boolean[]::new);
+            Columna<Boolean> nuevaColumna = new Columna<>(nuevoArray);
+        }
     }
-
-  
 
     // --------------------------------FILTRADO---------
     @Override
