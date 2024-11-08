@@ -5,7 +5,9 @@ import excepciones.FiltroInvalido;
 import excepciones.FormatoTablaInvalido;
 import excepciones.IndiceInexistente;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -774,6 +776,47 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
     }
 
     
+    public Tabla<String,String> groupbyTabla(List<K> nombre_etiquetas , String operacion){
+        List<Etiqueta<K>> etiquetas = new ArrayList<Etiqueta<K>>();
+        List<HashSet<String>> valores = new ArrayList<HashSet<String>>();
+        for(K nombre_etiqueta : nombre_etiquetas){
+            Etiqueta<K> enueva = new Etiqueta<K>(nombre_etiqueta);
+            if (!tabla.keySet().contains(enueva))
+            throw new FiltroInvalido("La etiqueta " + nombre_etiqueta + " no se encuentra en el encabezado de la tabla.");
+            etiquetas.add(enueva);
+            HashSet<String> set = new HashSet<>();
+            for (Celda<?> c : tabla.get(enueva).obtenerValores()){
+                set.add(c.obtenerValor().toString());
+            }
+            valores.add(set);
+        }
+        List<String> valoresCombinados = generarCombinaciones(valores,0,"");
 
+        //Aplicar filtro para cada uno de los valores de valoresCombinados
+        //Obtener las columnasDeseadas (tabla.keySet() - etiquetas - columnas no numericas)
+        //Aplicar subtabla para las columnasDeseadas
+        //Realizar operaciones en tabla resultante 
+        //Formatear resultados
+        //Llamar a Constructor: Tabla(columnasDeseadas, valoresCombinados, resultados)
+
+        return null;
+
+    }
+
+    private List<String> generarCombinaciones(List<HashSet<String>> conjuntos, int indice, String combinacionActual) {
+        List<String> resultado = new ArrayList<>();
+        
+        if (indice == conjuntos.size()) {
+            resultado.add(combinacionActual.substring(1)); // Quita la coma inicial
+            return resultado;
+        }
+        
+        HashSet<String> conjuntoActual = conjuntos.get(indice);
+        for (String elemento : conjuntoActual) {
+            resultado.addAll(generarCombinaciones(conjuntos, indice + 1, combinacionActual + "," + elemento));
+    }
+    
+    return resultado;
+}
 
 }
