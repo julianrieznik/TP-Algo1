@@ -513,6 +513,14 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
             System.out.println("La tabla está vacía.");
             return;
         }
+        StringBuilder columnas = new StringBuilder();
+        columnas.append("Columnas: ");
+        for(Map.Entry<Etiqueta<K>, Columna<?>> entrada : this.tabla.entrySet()){
+            String nombre = String.valueOf(entrada.getKey().getNombre());
+            String tipo = entrada.getValue().tipo();
+            columnas.append(nombre + "[" + tipo + "] ");
+        }
+        System.out.println(columnas.toString());   
 
         imprimirEtiquetasDeColumnas(cantidad_caracteres);
 
@@ -793,7 +801,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
             
         }
    
-        if (clase == String.class) {
+        else if (clase == String.class) {
             String[] nuevoArray = Arrays.stream(arrayObject)
                                          .map(obj -> obj == null ? "" : obj.toString())  
                                          .toArray(String[]::new);
@@ -802,7 +810,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
         }
     
 
-        if (clase == Boolean.class) {
+        else if (clase == Boolean.class) {
 
             if (!esBooleana(arrayObject)) {
                 throw new TipoDeColumnaInvalido("No se puede castear la columna " + nombreColumna + " a Boolean.");
@@ -813,6 +821,10 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
                                           .toArray(Boolean[]::new);
             Columna<Boolean> nuevaColumna = new Columna<>(nuevoArray);
             this.tabla.put(etiqueta, nuevaColumna);
+        }
+
+        else {
+            throw new TipoDeColumnaInvalido("Tipos de Columna admitidos: String.class, Double.class, Float.class, Integer.class, Boolean.class");
         }
     }
 

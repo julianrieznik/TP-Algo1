@@ -73,7 +73,7 @@ public class App {
          nombres.agregarFila("Fila 4", filaNueva);
          nombres.ver(20, 20);
          
-         Object[] columnaNueva = {true, false,true,2,true};
+         Object[] columnaNueva = {true, false,true,false,true};
          nombres.agregarColumna("boolean", columnaNueva);
          nombres.ver(20, 20);
          
