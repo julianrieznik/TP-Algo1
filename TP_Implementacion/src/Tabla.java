@@ -4,6 +4,8 @@ import excepciones.FilaInvalida;
 import excepciones.FiltroInvalido;
 import excepciones.FormatoTablaInvalido;
 import excepciones.IndiceInexistente;
+import excepciones.TipoDeColumnaInvalido;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -742,6 +744,19 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
             throw new ColumnaInvalida("No existe la columna " + String.valueOf(columna));
         }
     }
+
+    public void cambiarTipoColumna(String nombreColumna, Class<?> clase){
+        Columna<?> columna = obtenerColumna(nombreColumna);
+        Object[] arrayObject = columna.aListaGenerica();
+
+        if (Number.class.isAssignableFrom(clase)) {
+            if (!esNumerica(arrayObject)) {
+                throw new TipoDeColumnaInvalido("No se puede castear la columna " + columna + " a " + String.valueOf(clase));
+            }
+       }
+    }
+
+  
 
     // --------------------------------FILTRADO---------
     @Override
