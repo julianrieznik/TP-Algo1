@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 
 public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interfaces.Copiable<Tabla<K, F>>,
         interfaces.Visualizable<Tabla<K, F>>, interfaces.Proyectable<Tabla<K, F>, Etiqueta<K>, Etiqueta<F>>,
-        interfaces.Ordenable<Tabla<K, F>, Etiqueta<F>>, interfaces.Filtrable<Tabla<K, F>, K, Object> {
+        interfaces.Ordenable<Tabla<K, F>, K>, interfaces.Filtrable<Tabla<K, F>, K, Object> {
     // GENERICS
     // K -> Etiqueta de Columna
     // F -> Etiqueta de fila
@@ -364,6 +364,14 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
         return subtablaFilas(getEtiquetas_fila().subList(getCantidadFilas() - n, getCantidadFilas()));
     }
 
+
+    //-------------------------------------ORDENAR--------------------------------------------
+    @Override
+    public Tabla<K, F> ordenar(List<K> lista, boolean asc_desc) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'ordenar'");
+    }
+    /* 
     @Override
     public Tabla<K,F> ordenar(List<K> lista, boolean asc_desc) {
         List<Etiqueta<K>> listEtiq = new ArrayList<>();
@@ -420,8 +428,8 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
                 }
             }
 
-            List<Etiqueta<K>> listEtiquetasCol = new ArrayList<>();
-            List<Columna<?>> listColumnas = new ArrayList<>();
+            List<Etiqueta<K>> listEtiquetasCol = new ArrayList<Etiqueta<K>>();
+            List<Columna<?>> listColumnas = new ArrayList<Columna<?>>();
             
             // Reordenar todas las columnas usando los índices ordenados
             for (Map.Entry<Etiqueta<K>, Columna<?>> entry : tabla.entrySet()) {
@@ -429,15 +437,16 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
                 listEtiquetasCol.add(entry.getKey());
                 Columna<?> columnaOrdenada = new Columna<>(new ArrayList<>(Collections.nCopies(columnaSinOrden.cantidadCeldas(), null)));
                 for (int index : indices) {
-                    columnaOrdenada.agregarValor(columnaSinOrden.obtenerCelda(index));
+                    //columnaOrdenada.agregarValor(columnaSinOrden.obtenerCelda(index));
                 }
                 listColumnas.add(columnaOrdenada);
                 entry.setValue(columnaOrdenada);
             }
 
-            return new Tabla<>(listEtiquetasCol, listColumnas);
+            return new Tabla<K,F>(listEtiquetasCol, listColumnas);
         }
     }
+    */
 
     @Override
     public String toString() {
@@ -756,14 +765,15 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
 
         for (int i = 0; i < getCantidadFilas(); i++) {
             List<Object> fila = new ArrayList<Object>();
-            for( int j = 0; j < colFiltradas.size(); j++){
-                fila.add(colFiltradas.get(j));
-            }
-            if (criterio.test(fila));
-                eFilas.add(etiquetas_fila.get(i));
+            //if (criterio.test(colFiltradas));
+                //eFilas.add(etiquetas_fila.get(i));
         }
         if (eFilas.isEmpty())
             throw new FiltroInvalido("El criterio de filtro no arrojó ningún resultado.");
         return subtablaFilas(eFilas);
     }
+
+    
+
+
 }
