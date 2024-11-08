@@ -734,7 +734,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
     }
 
     @Override
-    public void agregarColumna(Object etiq, Object[] columna) {
+    public void agregarColumna(String etiq, Object[] columna) {
         if (columna.length != getCantidadFilas()) {
             throw new ColumnaInvalida("La columna nueva deber ser de largo " + String.valueOf(getCantidadFilas()));
         }

@@ -27,7 +27,7 @@ public class Celda<T> {
         }
         else{
             //HACER EXEPCION PROPIA
-            throw new CeldaInvalida("El valor debe ser de tipo " + tipo());
+            throw new CeldaInvalida("El valor debe ser de tipo " + tipo() + " o usar metodo cambiarTipoColumna()");
         }
         
     }

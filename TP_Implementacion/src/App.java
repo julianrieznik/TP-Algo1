@@ -67,17 +67,20 @@ public class App {
          
          Tabla<String, String> nombres = new Tabla<>(etiquetasFilas,
          etiquetasColumnas, columnas);
-         nombres.ver(20, 20);
+         
          
          Object[] filaNueva = { "Pepe", "Luis", 22, 22};
          nombres.agregarFila("Fila 4", filaNueva);
-         nombres.ver(20, 20);
-         
+
+
          Object[] columnaNueva = {true, false,true,false,true};
          nombres.agregarColumna("boolean", columnaNueva);
          nombres.ver(20, 20);
+         //nombres.cambiarTipoColumna("boolean", String.class);
+         nombres.modificarCelda("boolean", "Fila 4", "a");
+         nombres.ver(20, 20);
          
-         
+         /* 
          nombres.modificarCelda("Numero", "Fila 2", 22);
          nombres.ver(20, 20);
 
@@ -87,5 +90,7 @@ public class App {
          nombres.cambiarTipoColumna("Numero", String.class);
          nombres.verColumna("Numero");
          nombres.cambiarTipoColumna("Numero", Boolean.class);
-    }
+         */
+        }
+
 }
