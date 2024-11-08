@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 
 public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interfaces.Copiable<Tabla<K, F>>,
         interfaces.Visualizable<Tabla<K, F>>, interfaces.Proyectable<Tabla<K, F>, Etiqueta<K>, Etiqueta<F>>,
-        interfaces.Ordenable<Tabla<K, F>, Etiqueta<F>>, interfaces.Filtrable<Tabla<K, F>, K, Object> {
+        interfaces.Ordenable<Tabla<K, F>, K>, interfaces.Filtrable<Tabla<K, F>, K, Object> {
     // GENERICS
     // K -> Etiqueta de Columna
     // F -> Etiqueta de fila
@@ -372,16 +372,16 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
             listEtiq.add(etiqueta_columna);
         }
         //Tabla<Etiqueta<K>, Columna<?>> tablaOriginal = new Tabla<>(this.getEtiquetas_columna(), this.getTabla());
-        //Tabla<Etiqueta<K>, Columna<?>> tablaOrdenada = new Tabla<>();
+        Tabla<K, F> tablaOrdenada = new Tabla<>();
 
-        //tablaOrdenada.copiar(this);;
+        
+
         Columna<?> columna = null;
 
         for (Map.Entry<Etiqueta<K>, Columna<?>> entrada : tabla.entrySet()) {
             if (entrada.getKey().equals(listEtiq.get(0))){
                 columna = entrada.getValue();
             }
-            
         }
         if (columna != null) {
             // Crear una lista de índices (0, 1, 2, ...) para representar las posiciones originales
@@ -420,22 +420,24 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
                 }
             }
 
-            List<Etiqueta<K>> listEtiquetasCol = new ArrayList<>();
-            List<Columna<?>> listColumnas = new ArrayList<>();
-            
+            //List<Etiqueta<K>> listEtiquetasCol = new ArrayList<>();
+            //List<Columna<?>> listColumnas = new ArrayList<>();
+            tablaOrdenada.copiar(this);
+
             // Reordenar todas las columnas usando los índices ordenados
-            for (Map.Entry<Etiqueta<K>, Columna<?>> entry : tabla.entrySet()) {
+            for (Map.Entry<Etiqueta<K>, Columna<?>> entry : tablaOrdenada.entrySet()) {
                 Columna<?> columnaSinOrden = entry.getValue();
-                listEtiquetasCol.add(entry.getKey());
+                //listEtiquetasCol.add(entry.getKey());
                 Columna<?> columnaOrdenada = new Columna<>(new ArrayList<>(Collections.nCopies(columnaSinOrden.cantidadCeldas(), null)));
                 for (int index : indices) {
                     columnaOrdenada.agregarValor(columnaSinOrden.obtenerCelda(index));
                 }
-                listColumnas.add(columnaOrdenada);
+                //listColumnas.add(columnaOrdenada);
                 entry.setValue(columnaOrdenada);
             }
 
-            return new Tabla<>(listEtiquetasCol, listColumnas);
+            //return new Tabla<>(listEtiquetasCol, listColumnas);
+            return tablaOrdenada;
         }
     }
 
