@@ -85,6 +85,7 @@ public class Columna<E> {
             sb.append(valor);
             sb.append("\n");
         }
+        sb.append(tipo());
         return sb.toString();
     }
 
@@ -94,12 +95,12 @@ public class Columna<E> {
 
     public void agregarValor(Object o) {
         if (!columna.isEmpty() && !columna.get(0).obtenerValor().getClass().isInstance(o)) { 
-            throw new ValorNoAgregable( "No se puede agregar el tipo " + o.getClass().getSimpleName() + " a una columna de tipo " + tipo()); } 
+            throw new ValorNoAgregable( "No se puede agregar el tipo " + o.getClass().getSimpleName() + " a una columna de tipo " + tipo() + " usar cambiarTipoColumna()") ; } 
         try { 
             E valorCasteado = (E) o; columna.add(new Celda<>(valorCasteado));
         } 
         catch (ClassCastException e) { 
-            throw new ValorNoAgregable( "No se puede agregar el tipo " + o.getClass().getSimpleName() + " a una columna de tipo " + tipo()); 
+            throw new ValorNoAgregable( "No se puede agregar el tipo " + o.getClass().getSimpleName() + " a una columna de tipo " + tipo() + " usar cambiarTipoColumna()"); 
         }
     }
 
@@ -117,9 +118,20 @@ public class Columna<E> {
             E valorCasteado = (E) valor; 
             columna.get(idx).modificar(valorCasteado);
         } catch (ClassCastException e) {
-            throw new ValorNoAgregable("El nuevo valor debe ser de tipo " + tipo());
+            throw new ValorNoAgregable("El nuevo valor debe ser de tipo " + tipo() + " o usar cambiarTipoColumna()");
         }
         
+    }
+
+    protected Object[] aListaGenerica(){
+        Object[] arreglo = new Object[this.columna.size()];
+        int contador = 0;
+        for (Celda<E> celda : this.columna){
+            Object valor = (Object) celda.obtenerValor();
+            arreglo[contador] = valor;
+            contador++;
+        }
+        return arreglo;
     }
     public static void main(String[] args) {
         String[] s = { "Pepe", "Luis", "aa", " "};

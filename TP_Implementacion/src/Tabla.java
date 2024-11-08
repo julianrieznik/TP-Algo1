@@ -4,8 +4,13 @@ import excepciones.FilaInvalida;
 import excepciones.FiltroInvalido;
 import excepciones.FormatoTablaInvalido;
 import excepciones.IndiceInexistente;
+import excepciones.TipoDeColumnaInvalido;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -160,6 +165,29 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
 
     public Integer getCantidadFilas() {
         return etiquetas_filas().size();
+    }
+
+    public Columna<?> obtenerColumna(K nombreColumna) {
+        Etiqueta<K> etiqueta = new Etiqueta<>(nombreColumna);
+    
+        for (Map.Entry<Etiqueta<K>, Columna<?>> entrada : tabla.entrySet()) {
+            if (entrada.getKey().equals(etiqueta)) {
+                Columna<?> columna = entrada.getValue();
+                return columna;
+            }
+        }
+        throw new ColumnaInvalida("No existe la columna " + nombreColumna);
+    }
+
+    public Etiqueta<K> obtenerEtiqueta(K nombre){
+        Etiqueta<K> etiqueta = new Etiqueta<>(nombre);
+        List<Etiqueta<K>> lista = getEtiquetas_columna();
+        for(Etiqueta<K> eti : lista){
+            if (eti.equals(etiqueta)){
+                return eti;
+            }
+        }
+        throw new ColumnaInvalida("No existe la columna " + String.valueOf(nombre));
     }
 
     // ----------------------------------------- METODOS PRIVADOS INTERNOS
@@ -364,6 +392,14 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
         return subtablaFilas(getEtiquetas_fila().subList(getCantidadFilas() - n, getCantidadFilas()));
     }
 
+
+    //-------------------------------------ORDENAR--------------------------------------------
+    @Override
+    public Tabla<K, F> ordenar(List<K> lista, boolean asc_desc) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'ordenar'");
+    }
+    /* 
     @Override
     public Tabla<K,F> ordenar(List<K> lista, boolean asc_desc) {
         List<Etiqueta<K>> listEtiq = new ArrayList<>();
@@ -420,26 +456,25 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
                 }
             }
 
-            //List<Etiqueta<K>> listEtiquetasCol = new ArrayList<>();
-            //List<Columna<?>> listColumnas = new ArrayList<>();
-            tablaOrdenada.copiar(this);
-
+            List<Etiqueta<K>> listEtiquetasCol = new ArrayList<Etiqueta<K>>();
+            List<Columna<?>> listColumnas = new ArrayList<Columna<?>>();
+            
             // Reordenar todas las columnas usando los índices ordenados
             for (Map.Entry<Etiqueta<K>, Columna<?>> entry : tablaOrdenada.entrySet()) {
                 Columna<?> columnaSinOrden = entry.getValue();
                 //listEtiquetasCol.add(entry.getKey());
                 Columna<?> columnaOrdenada = new Columna<>(new ArrayList<>(Collections.nCopies(columnaSinOrden.cantidadCeldas(), null)));
                 for (int index : indices) {
-                    columnaOrdenada.agregarValor(columnaSinOrden.obtenerCelda(index));
+                    //columnaOrdenada.agregarValor(columnaSinOrden.obtenerCelda(index));
                 }
                 //listColumnas.add(columnaOrdenada);
                 entry.setValue(columnaOrdenada);
             }
 
-            //return new Tabla<>(listEtiquetasCol, listColumnas);
-            return tablaOrdenada;
+            return new Tabla<K,F>(listEtiquetasCol, listColumnas);
         }
     }
+    */
 
     @Override
     public String toString() {
@@ -478,6 +513,14 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
             System.out.println("La tabla está vacía.");
             return;
         }
+        StringBuilder columnas = new StringBuilder();
+        columnas.append("Columnas: ");
+        for(Map.Entry<Etiqueta<K>, Columna<?>> entrada : this.tabla.entrySet()){
+            String nombre = String.valueOf(entrada.getKey().getNombre());
+            String tipo = entrada.getValue().tipo();
+            columnas.append(nombre + "[" + tipo + "] ");
+        }
+        System.out.println(columnas.toString());   
 
         imprimirEtiquetasDeColumnas(cantidad_caracteres);
 
@@ -691,7 +734,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
     }
 
     @Override
-    public void agregarColumna(Object etiq, Object[] columna) {
+    public void agregarColumna(String etiq, Object[] columna) {
         if (columna.length != getCantidadFilas()) {
             throw new ColumnaInvalida("La columna nueva deber ser de largo " + String.valueOf(getCantidadFilas()));
         }
@@ -720,18 +763,80 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
         } catch (NullPointerException e) {
             throw new ColumnaInvalida("No existe la columna " + String.valueOf(columna));
         }
+    }
 
+    public void cambiarTipoColumna(K nombreColumna, Class<?> clase) {
+        Columna<?> columna = obtenerColumna(nombreColumna);
+        Object[] arrayObject = columna.aListaGenerica();
+        Etiqueta<K> etiqueta = obtenerEtiqueta(nombreColumna);
+    
+        if (Number.class.isAssignableFrom(clase)) {
+            if (!esNumerica(arrayObject)) {
+                throw new TipoDeColumnaInvalido("No se puede castear la columna " + nombreColumna + " a " + String.valueOf(clase));
+            }
+    
+            if (clase == Integer.class) {
+                Integer[] nuevoArray = Arrays.stream(arrayObject)
+                                              .map(obj -> ((Number) obj).intValue())
+                                              .toArray(Integer[]::new);
+                Columna<Integer> nuevaColumna = new Columna<>(nuevoArray);
+                this.tabla.put(etiqueta, nuevaColumna);
+            }
+    
+            if (clase == Double.class) {
+                Double[] nuevoArray = Arrays.stream(arrayObject)
+                                             .map(obj -> ((Number) obj).doubleValue())
+                                             .toArray(Double[]::new);
+                Columna<Double> nuevaColumna = new Columna<>(nuevoArray);
+                this.tabla.put(etiqueta, nuevaColumna);
+            }
+    
+            if (clase == Float.class) {
+                Float[] nuevoArray = Arrays.stream(arrayObject)
+                                            .map(obj -> ((Number) obj).floatValue())
+                                            .toArray(Float[]::new);
+                Columna<Float> nuevaColumna = new Columna<>(nuevoArray);
+                this.tabla.put(etiqueta, nuevaColumna);
+            }
+            
+        }
+   
+        else if (clase == String.class) {
+            String[] nuevoArray = Arrays.stream(arrayObject)
+                                         .map(obj -> obj == null ? "" : obj.toString())  
+                                         .toArray(String[]::new);
+            Columna<String> nuevaColumna = new Columna<>(nuevoArray);
+            this.tabla.put(etiqueta, nuevaColumna);
+        }
+    
+
+        else if (clase == Boolean.class) {
+
+            if (!esBooleana(arrayObject)) {
+                throw new TipoDeColumnaInvalido("No se puede castear la columna " + nombreColumna + " a Boolean.");
+            }
+
+            Boolean[] nuevoArray = Arrays.stream(arrayObject)
+                                          .map(obj -> (Boolean) obj)  
+                                          .toArray(Boolean[]::new);
+            Columna<Boolean> nuevaColumna = new Columna<>(nuevoArray);
+            this.tabla.put(etiqueta, nuevaColumna);
+        }
+
+        else {
+            throw new TipoDeColumnaInvalido("Tipos de Columna admitidos: String.class, Double.class, Float.class, Integer.class, Boolean.class");
+        }
     }
 
     // --------------------------------FILTRADO---------
     @Override
     public Tabla<K, F> filtrar(K etiq, Predicate<Object> criterio) throws FiltroInvalido {
-        Etiqueta<K> enueva = new Etiqueta<K>(etiq);
+        Etiqueta<K> enueva = new Etiqueta<>(etiq);
         if (!tabla.keySet().contains(enueva))
             throw new FiltroInvalido("La etiqueta " + etiq + " no se encuentra en el encabezado de la tabla.");
 
         Columna<?> colFiltrada = tabla.get(enueva);
-        List<Etiqueta<F>> eFilas = new ArrayList<Etiqueta<F>>();
+        List<Etiqueta<F>> eFilas = new ArrayList<>();
 
         for (int i = 0; i < getCantidadFilas(); i++) {
             if (criterio.test(colFiltrada.valorCelda(i)))
@@ -744,10 +849,10 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
 
     @Override
     public Tabla<K, F> filtrar(List<K> etiq, Predicate<List<Object>> criterio) throws FiltroInvalido {
-        List<Etiqueta<K>> etiquetas = new ArrayList<Etiqueta<K>>();
-        List<Columna<?>> colFiltradas = new ArrayList<Columna<?>>();
+        List<Etiqueta<K>> etiquetas = new ArrayList<>();
+        List<Columna<?>> colFiltradas = new ArrayList<>();
         for( K e : etiq){
-            Etiqueta<K> enueva = new Etiqueta<K>(e);
+            Etiqueta<K> enueva = new Etiqueta<>(e);
             if (!tabla.keySet().contains(enueva))
             throw new FiltroInvalido("La etiqueta " + e + " no se encuentra en el encabezado de la tabla.");
             etiquetas.add(enueva);
@@ -758,14 +863,56 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
 
         for (int i = 0; i < getCantidadFilas(); i++) {
             List<Object> fila = new ArrayList<Object>();
-            for( int j = 0; j < colFiltradas.size(); j++){
-                fila.add(colFiltradas.get(j));
-            }
-            if (criterio.test(fila));
-                eFilas.add(etiquetas_fila.get(i));
+            //if (criterio.test(colFiltradas));
+                //eFilas.add(etiquetas_fila.get(i));
         }
         if (eFilas.isEmpty())
             throw new FiltroInvalido("El criterio de filtro no arrojó ningún resultado.");
         return subtablaFilas(eFilas);
     }
+
+    
+    public Tabla<String,String> groupbyTabla(List<K> nombre_etiquetas , String operacion){
+        List<Etiqueta<K>> etiquetas = new ArrayList<Etiqueta<K>>();
+        List<HashSet<String>> valores = new ArrayList<HashSet<String>>();
+        for(K nombre_etiqueta : nombre_etiquetas){
+            Etiqueta<K> enueva = new Etiqueta<K>(nombre_etiqueta);
+            if (!tabla.keySet().contains(enueva))
+            throw new FiltroInvalido("La etiqueta " + nombre_etiqueta + " no se encuentra en el encabezado de la tabla.");
+            etiquetas.add(enueva);
+            HashSet<String> set = new HashSet<>();
+            for (Celda<?> c : tabla.get(enueva).obtenerValores()){
+                set.add(c.obtenerValor().toString());
+            }
+            valores.add(set);
+        }
+        List<String> valoresCombinados = generarCombinaciones(valores,0,"");
+
+        //Aplicar filtro para cada uno de los valores de valoresCombinados
+        //Obtener las columnasDeseadas (tabla.keySet() - etiquetas - columnas no numericas)
+        //Aplicar subtabla para las columnasDeseadas
+        //Realizar operaciones en tabla resultante 
+        //Formatear resultados
+        //Llamar a Constructor: Tabla(columnasDeseadas, valoresCombinados, resultados)
+
+        return null;
+
+    }
+
+    private List<String> generarCombinaciones(List<HashSet<String>> conjuntos, int indice, String combinacionActual) {
+        List<String> resultado = new ArrayList<>();
+        
+        if (indice == conjuntos.size()) {
+            resultado.add(combinacionActual.substring(1)); // Quita la coma inicial
+            return resultado;
+        }
+        
+        HashSet<String> conjuntoActual = conjuntos.get(indice);
+        for (String elemento : conjuntoActual) {
+            resultado.addAll(generarCombinaciones(conjuntos, indice + 1, combinacionActual + "," + elemento));
+    }
+    
+    return resultado;
+}
+
 }
