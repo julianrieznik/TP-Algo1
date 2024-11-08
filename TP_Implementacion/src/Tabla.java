@@ -14,13 +14,14 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interfaces.Copiable<Tabla<K, F>>,
+public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfaces.Copiable<Tabla<K, F>>,
         interfaces.Visualizable<Tabla<K, F>>, interfaces.Proyectable<Tabla<K, F>, Etiqueta<K>, Etiqueta<F>>,
-        interfaces.Ordenable<Tabla<K, F>, K>, interfaces.Filtrable<Tabla<K, F>, K, Object> {
+        interfaces.Ordenable<Tabla<K, F>, K>, interfaces.Filtrable<Tabla<K, F>, K, Celda, Operacion> {
     // GENERICS
     // K -> Etiqueta de Columna
     // F -> Etiqueta de fila
@@ -698,7 +699,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
     // ----------------------------AGREGABLE----------------------
 
     @Override
-    public void agregarFila(String etiqueta, Object[] fila) {
+    public void agregarFila(F etiqueta, Object[] fila) {
         // FALTA MANEJO SI ETIQUETAS SON NUMEROS
         Etiqueta<F> etiqueta_fila = new Etiqueta<>((F) etiqueta);
         this.etiquetas_fila.add(etiqueta_fila);
@@ -830,7 +831,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
 
     // --------------------------------FILTRADO---------
     @Override
-    public Tabla<K, F> filtrar(K etiq, Predicate<Object> criterio) throws FiltroInvalido {
+    public Tabla<K, F> filtrar(K etiq, Predicate<Celda> criterio) throws FiltroInvalido {
         Etiqueta<K> enueva = new Etiqueta<>(etiq);
         if (!tabla.keySet().contains(enueva))
             throw new FiltroInvalido("La etiqueta " + etiq + " no se encuentra en el encabezado de la tabla.");
@@ -839,7 +840,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
         List<Etiqueta<F>> eFilas = new ArrayList<>();
 
         for (int i = 0; i < getCantidadFilas(); i++) {
-            if (criterio.test(colFiltrada.valorCelda(i)))
+            if (criterio.test(colFiltrada.getCelda(i)))
                 eFilas.add(etiquetas_fila.get(i));
         }
         if (eFilas.isEmpty())
@@ -848,9 +849,12 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
     }
 
     @Override
-    public Tabla<K, F> filtrar(List<K> etiq, Predicate<List<Object>> criterio) throws FiltroInvalido {
-        List<Etiqueta<K>> etiquetas = new ArrayList<>();
+    public Tabla<K, F> filtrar(List<K> etiq, List<Predicate<Celda>> criterio, Operacion operador ) throws FiltroInvalido {
+        if (etiq.size() != criterio.size()) throw new FiltroInvalido("La cantidad de columnas y cantidad de criterios debe ser la misma.");
         List<Columna<?>> colFiltradas = new ArrayList<>();
+
+        
+        List<Etiqueta<K>> etiquetas = new ArrayList<>();
         for( K e : etiq){
             Etiqueta<K> enueva = new Etiqueta<>(e);
             if (!tabla.keySet().contains(enueva))
@@ -858,19 +862,73 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>>, interface
             etiquetas.add(enueva);
             colFiltradas.add(tabla.get(enueva));
         }
+        
 
-        List<Etiqueta<F>> eFilas = new ArrayList<Etiqueta<F>>();
+        List<Tabla<K, F>> listaTablas = new ArrayList<Tabla<K, F>>();
 
-        for (int i = 0; i < getCantidadFilas(); i++) {
-            List<Object> fila = new ArrayList<Object>();
-            //if (criterio.test(colFiltradas));
-                //eFilas.add(etiquetas_fila.get(i));
+        for (int i = 0; i < colFiltradas.size(); i++) {
+            listaTablas.add(filtrar(etiq.get(i), criterio.get(i)));
         }
-        if (eFilas.isEmpty())
-            throw new FiltroInvalido("El criterio de filtro no arrojó ningún resultado.");
-        return subtablaFilas(eFilas);
+        return ConcatenarOperando(listaTablas,operador,0,new Tabla<K, F>());
+
+        
     }
 
+    private Tabla<K, F> ConcatenarOperando(List<Tabla<K, F>> listaTablas, Operacion operador , Integer indice, Tabla<K, F> resultante){
+        if(indice + 1 == listaTablas.size()){
+            return resultante;
+        }
+        
+        if (operador == Operacion.AND){
+            return ConcatenarOperando(listaTablas, operador,indice + 1, TablaAnd(listaTablas.get(indice), listaTablas.get(indice + 1)));
+        }
+        else{
+            return ConcatenarOperando(listaTablas, operador,indice + 1, TablaOr(listaTablas.get(indice), listaTablas.get(indice + 1)));
+        }
+
+    }
+
+    private Tabla<K, F> TablaAnd(Tabla<K, F> t1, Tabla<K, F> t2){
+        /*
+        List<Etiqueta<F>> filasResultantes = new ArrayList<Etiqueta<F>>();
+        for(Etiqueta<F> eFila1 : t1.etiquetas_fila){
+            for(Etiqueta<F> eFila2 : t2.etiquetas_fila)
+                if(eFila1.equals(eFila2)) filasResultantes.add(eFila1);
+        }
+        */
+
+        Set<Etiqueta<F>> eFilas1 = new HashSet<Etiqueta<F>>(t1.etiquetas_fila);
+        Set<Etiqueta<F>> eFilas2 = new HashSet<Etiqueta<F>>(t2.etiquetas_fila);
+        eFilas1.retainAll(eFilas2);
+
+        return t1.subtablaFilas(new ArrayList<Etiqueta<F>>(eFilas1));
+    }
+
+    private Tabla<K, F> TablaOr(Tabla<K, F> t1, Tabla<K, F> t2){
+
+        Set<Etiqueta<F>> cjtoFilas1 = new HashSet<Etiqueta<F>>(t1.etiquetas_fila);
+        Set<Etiqueta<F>> cjtoFilas2 = new HashSet<Etiqueta<F>>(t2.etiquetas_fila);
+        cjtoFilas1.addAll(cjtoFilas2);
+
+
+        for(Etiqueta<F> eFila : t2.etiquetas_fila){
+            if (! t1.getEtiquetas_fila().contains(eFila)){
+                Object[] fila = new Object[t1.getCantidadColumnas()];
+                Integer indice = t2.getIndiceFilas(eFila);
+                for (int i = 0 ; i < t2.getCantidadColumnas(); i++) fila[i] = t2.getListaColumnas().get(i).valorCelda(indice);
+                t1.agregarFila(eFila.nombre, fila);
+            }
+        }
+
+        return t1.subtablaFilas(new ArrayList<Etiqueta<F>>(cjtoFilas1));
+    }
+
+    public Integer getIndiceFilas(Etiqueta<F> etiqueta){
+        for (int i = 0 ; i < this.etiquetas_fila.size() ; i++){
+            if ( etiqueta.equals(etiquetas_fila.get(i))) return i;
+        }
+        return -1;
+    }
     
     public Tabla<String,String> groupbyTabla(List<K> nombre_etiquetas , String operacion){
         List<Etiqueta<K>> etiquetas = new ArrayList<Etiqueta<K>>();

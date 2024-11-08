@@ -73,6 +73,10 @@ public class Columna<E> {
         return columna.get(idx).obtenerValor();
     }
 
+    public Celda<E> getCelda(Integer indice){
+        return columna.get(indice);
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

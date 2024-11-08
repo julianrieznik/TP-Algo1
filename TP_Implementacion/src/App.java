@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -32,7 +35,8 @@ public class App {
   
          
 
-         
+        */
+        
         GestorCSV gestor = new GestorCSV() ;
          
          
@@ -41,15 +45,26 @@ public class App {
         List<String> filtro = new ArrayList<String>();
         
 
-        filtro.add("Columna2");
+        filtro.add("Columna1");
         filtro.add("Columna3");
-        
 
-        Tabla<String, Integer> filtrada = tabla.filtrar("Columna3", a -> a.equals(2) );
-        //Tabla<String, Integer> filtrada = tabla.filtrar(filtro, [a,b] -> a.equals(1) && b.equals(2));
+        Predicate<Celda> pred1 = a -> a.comparador(5) < 0;
+        Predicate<Celda> pred2 = a -> a.igual(2) ;
+
+        List<Predicate<Celda>> condiciones = new ArrayList<Predicate<Celda>>();
+        condiciones.add(pred1);
+        condiciones.add(pred2);
+        
+        Tabla<String, Integer> filtrada = tabla.filtrar(filtro, condiciones, Operacion.OR);
+
+
+
+        //Tabla<String, Integer> filtrada = tabla.filtrar(filtro, [a,b] -> a.equals(1).and() b.equals(2));
          
         gestor.escribirCSV(filtrada, "TP_Implementacion/src","Filtro");
-         */
+        
+
+        /* 
          // Etiquetas de filas
          String[] etiquetasFilas = { "Fila 0", "Fila 1", "Fila 2", "Fila 3" };
           
@@ -79,6 +94,8 @@ public class App {
          //nombres.cambiarTipoColumna("boolean", String.class);
          nombres.modificarCelda("boolean", "Fila 4", "a");
          nombres.ver(20, 20);
+
+         */
          
          /* 
          nombres.modificarCelda("Numero", "Fila 2", 22);
