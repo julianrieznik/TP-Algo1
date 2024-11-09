@@ -51,27 +51,27 @@ public class App {
          
         gestor.escribirCSV(filtrada, "TP_Implementacion/src","Filtro");
          */
-         // Etiquetas de filas
-         String[] etiquetasFilas = { "Fila 0", "Fila 1", "Fila 2", "Fila 3" };
-          
-         // Etiquetas de columnas
-         String[] etiquetasColumnas = { "Nombre", "Apellido", "Edad", "Numero" };
-         
-         // Datos de columnas
-         Object[][] columnas = {
-         { "Julian", "Pedro", "Maria", "Leandro" },
-         { "Perez", "Sanchez", "Rodriguez", "Gutierrez" },
-         {25,44,33,21},
-         {2,4,3,1},
-         };
-         
-         
-         Tabla<String, String> nombres = new Tabla<>(etiquetasFilas,
-         etiquetasColumnas, columnas);
-         
-         
-         Object[] filaNueva = { "Pepe", "Luis", 22, 22};
-         //nombres.agregarFila("Fila 4", filaNueva);
+        // Etiquetas de filas
+        String[] etiquetasFilas = { "Fila 0", "Fila 1", "Fila 2", "Fila 3" };
+        
+        // Etiquetas de columnas
+        String[] etiquetasColumnas = { "Nombre", "Apellido", "Edad", "Numero" };
+        
+        // Datos de columnas
+        Object[][] columnas = {
+        { "Julian", "Pedro", "Maria", "Leandro" },
+        { "Perez", "Sanchez", "Rodriguez", "Gutierrez" },
+        {25,44,33,21},
+        {2,4,3,1},
+        };
+        
+        
+        Tabla<String, String> nombres = new Tabla<>(etiquetasFilas,
+        etiquetasColumnas, columnas);
+        
+        
+        Object[] filaNueva = { "Pepe", "Luis", 22, 22};
+        //nombres.agregarFila("Fila 4", filaNueva);
 
 
         Object[] columnaNueva = {true, false,true,true};

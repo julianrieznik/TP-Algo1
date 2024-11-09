@@ -10,5 +10,7 @@ public interface Filtrable<T,K,V,O> {
     
     //T filtrar(BiFunction<K,V,Boolean> pred);
     T filtrar(K etiq, Predicate<V> pred);
+    T filtrar(List<K> etiq, List<Predicate<V>> preds);
     T filtrar(List<K> etiq, List<Predicate<V>> preds, O operador);
+
 }

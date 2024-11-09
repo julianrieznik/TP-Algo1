@@ -21,7 +21,7 @@ import java.util.function.Predicate;
 
 public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfaces.Copiable<Tabla<K, F>>,
         interfaces.Visualizable<Tabla<K, F>>, interfaces.Proyectable<Tabla<K, F>, Etiqueta<K>, Etiqueta<F>>,
-        interfaces.Ordenable<Tabla<K, F>, K>, interfaces.Filtrable<Tabla<K, F>, K, Celda, Operacion> {
+        interfaces.Ordenable<Tabla<K, F>, K>, interfaces.Filtrable<Tabla<K, F>, K, Celda, OperadorLogico> {
     // GENERICS
     // K -> Etiqueta de Columna
     // F -> Etiqueta de fila
@@ -912,8 +912,16 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
     }
 
     @Override
-    public Tabla<K, F> filtrar(List<K> etiq, List<Predicate<Celda>> criterio, Operacion operador ) throws FiltroInvalido {
+    public Tabla<K, F> filtrar(List<K> etiq, List<Predicate<Celda>> criterio) throws FiltroInvalido {
         if (etiq.size() != criterio.size()) throw new FiltroInvalido("La cantidad de columnas y cantidad de criterios debe ser la misma.");
+        if (etiq.size() > 1) throw new FiltroInvalido("Para filtrar por más de una columna debe proporcionar un operador lógico como tercer parámetro: filtrar(List<K>, List<Predicate<Celda>, OperadorLogico)");
+        return filtrar(etiq.get(0), criterio.get(0));
+    }
+
+    @Override
+    public Tabla<K, F> filtrar(List<K> etiq, List<Predicate<Celda>> criterio, OperadorLogico operador ) throws FiltroInvalido {
+        if (etiq.size() != criterio.size()) throw new FiltroInvalido("La cantidad de columnas y cantidad de criterios debe ser la misma.");
+        if (etiq.size() == 1) return filtrar(etiq,criterio);
         List<Columna<?>> colFiltradas = new ArrayList<>();
 
         
@@ -933,16 +941,14 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
             listaTablas.add(filtrar(etiq.get(i), criterio.get(i)));
         }
         return ConcatenarOperando(listaTablas,operador,0,new Tabla<K, F>());
-
-        
     }
 
-    private Tabla<K, F> ConcatenarOperando(List<Tabla<K, F>> listaTablas, Operacion operador , Integer indice, Tabla<K, F> resultante){
+    private Tabla<K, F> ConcatenarOperando(List<Tabla<K, F>> listaTablas, OperadorLogico operador , Integer indice, Tabla<K, F> resultante){
         if(indice + 1 == listaTablas.size()){
             return resultante;
         }
         
-        if (operador == Operacion.AND){
+        if (operador == OperadorLogico.AND){
             return ConcatenarOperando(listaTablas, operador,indice + 1, TablaAnd(listaTablas.get(indice), listaTablas.get(indice + 1)));
         }
         else{
