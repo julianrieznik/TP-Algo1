@@ -532,7 +532,6 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
     // -------------------------------------
     @Override
     public void copiar(Tabla<K, F> a_copiar) {
-
         // Copiar Etiquetas de fila
         for (Etiqueta<F> etiquetaFila : a_copiar.etiquetas_filas()) {
             this.etiquetas_fila.add(new Etiqueta<>(etiquetaFila.getNombre()));
@@ -600,12 +599,13 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
         String etiqueta = String.valueOf(etiquetas_fila.get(indice_fila).getNombre());
 
         // Agregar la etiqueta de la fila
-        sb.append(etiqueta).append(repeat(" ", 5)); // Agrego espacios iniciales dsp de etiqueta
+        Integer diferencia = etiquetaMasGrandeFila() - etiqueta.length() + 5;
+        sb.append(etiqueta).append(repeat(" ", diferencia)); // Agrego espacios iniciales dsp de etiqueta
 
         // Iterar sobre columnas para obtener el valor
         for (Columna<?> columna : this.tabla.values()) {
             String valor = "";
-            if (columna.valorCelda(indice_fila) == null) valor = "NA";
+            if (columna.valorCelda(indice_fila) == null || columna.valorCelda(indice_fila) == "null") valor = "NA";
             else valor = String.valueOf(columna.valorCelda(indice_fila));
             
 
@@ -616,8 +616,8 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
                 sb.append(repeat(" ", 2)); // 2 espacios de separacion
             } else if (valor.length() < cantidad_caracteres) {
                 sb.append(valor);
-                int diferencia = cantidad_caracteres - valor.length();
-                sb.append(repeat(" ", diferencia + 5)); // Relleno con espacios lo que falta
+                int dif = cantidad_caracteres - valor.length();
+                sb.append(repeat(" ", dif + 5)); // Relleno con espacios lo que falta
             } else {
                 sb.append(valor);
                 sb.append(repeat(" ", 5)); // Relleno con espacios lo que falta

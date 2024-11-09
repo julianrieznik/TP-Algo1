@@ -123,7 +123,8 @@ public class Columna<E> {
             sb.append(valor);
             sb.append("\n");
         }
-        sb.append(tipo());
+        
+        sb.append("\n" + tipo());
         return sb.toString();
     }
 
@@ -132,7 +133,7 @@ public class Columna<E> {
     }
 
     public void agregarValor(Object o) {
-        if (!columna.isEmpty() && !columna.get(0).obtenerValor().getClass().isInstance(o)) {
+        if (o != null && !columna.isEmpty() && !columna.get(0).obtenerValor().getClass().isInstance(o)) {
             throw new ValorNoAgregable("No se puede agregar el tipo " + o.getClass().getSimpleName()
                     + " a una columna de tipo " + tipo() + " usar cambiarTipoColumna()");
         }
@@ -191,7 +192,7 @@ public class Columna<E> {
 
     public boolean tieneNA() {
         for (Celda<E> c : columna)
-            if (c.obtenerValor() == null)
+            if (c.obtenerValor() == null || c.obtenerValor() == "null")
                 return true;
         return false;
     }

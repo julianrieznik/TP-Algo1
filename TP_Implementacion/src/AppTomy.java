@@ -6,7 +6,41 @@ import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
 
 public class AppTomy {
     public static void main(String[] args) throws Exception {
+
+        //--------------INICIALIZACION CON ARREGLOS NATIVOS DE JAVA----------------------------
+
+        String[] etiquetasFilas = { "Fila 0", "Fila 1", "Fila 2", "Fila 3" };
+        String[] etiquetasColumnas = { "Nombre", "Apellido", "Edad", "Numero" };
+        Object[][] columnas = {
+        { "Julian", "Pedro", "Maria", "Leandro" },
+        { "Perez", "Sanchez", null, "Gutierrez" },
+        {25,44,33,21},
+        {2,4,3,1},
+        };
         
+        
+        Tabla<String, String> personas = new Tabla<>(etiquetasFilas,
+        etiquetasColumnas, columnas);
+        
+        personas.ver(20, 20);
+        
+        Object[] filaNueva = { "Leon", "Martinez", null, 22};
+        personas.agregarFila("Fila nueva", filaNueva);
+
+
+        Object[] columnaNueva = {true, false,true,true,false};
+        personas.agregarColumna("Aprobado", columnaNueva);
+
+        personas.ver(20, 20);
+
+        Tabla<String, String> copiaPersonas = new Tabla<>();
+        copiaPersonas.copiar(personas);
+        
+        copiaPersonas.verFila("Fila nueva", 10);
+        copiaPersonas.eliminarFila(4);
+        copiaPersonas.verColumna("Nombre");
+
+        //----------------------INICIALIZACION DE TABLA DESDE CSV-----------------------------------
         GestorCSV gestor = new GestorCSV() ;
          
          
@@ -16,14 +50,14 @@ public class AppTomy {
         List<Predicate<Celda>> criterios = new ArrayList<Predicate<Celda>>();
         
 
-        filtro.add("Columna2");
-        filtro.add("Columna3");
+        filtro.add("y");
+        filtro.add("z");
 
         //Predicate<Celda> pred1 = a -> a.igual(7);
         //Predicate<Celda> pred2 = a -> a.igual(2);
 
-        criterios.add(new Filtrador().generadorPredicate(Operador.MAYOR, 5));
-        criterios.add(new Filtrador().generadorPredicate(Operador.IGUAL, 2));
+        criterios.add(Filtrador.generadorPredicate(Operador.MAYOR, 5));
+        criterios.add(Filtrador.generadorPredicate(Operador.IGUAL, 2));
         
         //Tabla<String, Integer> filtrada = tabla.filtrar(filtro,criterios,OperadorLogico.AND);
          
@@ -33,7 +67,7 @@ public class AppTomy {
 
 
         tabla.ver(20,100);
-        tabla.rellenarNA("Columna2", 3);
+        tabla.rellenarNA("y", 3);
         tabla.ver(20,100);
 
 
