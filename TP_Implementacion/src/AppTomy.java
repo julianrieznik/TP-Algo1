@@ -71,6 +71,14 @@ public class AppTomy {
         tabla.ver(20,100);
 
 
+        //CONCATENACION
+        System.out.println(personas.getCantidadFilas());
+        System.out.println(tabla.getCantidadFilas());
+        Tabla concat = Tabla.concatenar(personas, tabla);
+
+        concat.ver(20, 20);
+
+
     }
 
 }

@@ -1066,8 +1066,8 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
 
 //--------------------------------CONCATENACION------------------
 
-public static <K, F> Tabla<K,F> concatenar(Tabla<K, F> a, Tabla<K, F> b) {
-    if (a.getCantidadFilas() != b.getCantidadColumnas()){
+public static <K, F> Tabla<K,F> concatenar(Tabla<K, F> a, Tabla<K, ?> b) {
+    if (!(a.getCantidadFilas().equals(b.getCantidadColumnas()))){
         throw new FormatoTablaInvalido("Las tablas no tienen la misma cantidad de filas"); 
     }
 
