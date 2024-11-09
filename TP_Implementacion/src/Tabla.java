@@ -5,6 +5,7 @@ import excepciones.FiltroInvalido;
 import excepciones.FormatoTablaInvalido;
 import excepciones.IndiceInexistente;
 import excepciones.TipoDeColumnaInvalido;
+import interfaces.Rellenable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +22,7 @@ import java.util.function.Predicate;
 
 public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfaces.Copiable<Tabla<K, F>>,
         interfaces.Visualizable<Tabla<K, F>>, interfaces.Proyectable<Tabla<K, F>, Etiqueta<K>, Etiqueta<F>>,
-        interfaces.Ordenable<Tabla<K, F>, K>, interfaces.Filtrable<Tabla<K, F>, K, Celda, OperadorLogico> {
+        interfaces.Ordenable<Tabla<K, F>, K>, interfaces.Filtrable<Tabla<K, F>, K, Celda, OperadorLogico> , Rellenable<K>{
     // GENERICS
     // K -> Etiqueta de Columna
     // F -> Etiqueta de fila
@@ -603,7 +604,10 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
 
         // Iterar sobre columnas para obtener el valor
         for (Columna<?> columna : this.tabla.values()) {
-            String valor = String.valueOf(columna.valorCelda(indice_fila));
+            String valor = "";
+            if (columna.valorCelda(indice_fila) == null) valor = "NA";
+            else valor = String.valueOf(columna.valorCelda(indice_fila));
+            
 
             if (valor.length() > cantidad_caracteres) {
                 valor = valor.substring(0, cantidad_caracteres); // Cortar si es necesario
@@ -957,7 +961,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
 
     }
 
-    private Tabla<K, F> TablaAnd(Tabla<K, F> t1, Tabla<K, F> t2){
+    private Tabla<K, F> TablaAnd(Tabla<K, F> t1, Tabla<K, F> t2) throws FiltroInvalido{
         /*
         List<Etiqueta<F>> filasResultantes = new ArrayList<Etiqueta<F>>();
         for(Etiqueta<F> eFila1 : t1.etiquetas_fila){
@@ -969,6 +973,8 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
         Set<Etiqueta<F>> eFilas1 = new HashSet<Etiqueta<F>>(t1.etiquetas_fila);
         Set<Etiqueta<F>> eFilas2 = new HashSet<Etiqueta<F>>(t2.etiquetas_fila);
         eFilas1.retainAll(eFilas2);
+
+        if(eFilas1.isEmpty()) throw new FiltroInvalido("El criterio de filtro no arrojó ningún resultado.");
 
         return t1.subtablaFilas(new ArrayList<Etiqueta<F>>(eFilas1));
     }
@@ -988,6 +994,8 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
                 t1.agregarFila(eFila.nombre, fila);
             }
         }
+
+        if(cjtoFilas1.isEmpty()) throw new FiltroInvalido("El criterio de filtro no arrojó ningún resultado.");
 
         return t1.subtablaFilas(new ArrayList<Etiqueta<F>>(cjtoFilas1));
     }
@@ -1040,6 +1048,19 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
         }
     
     return resultado;
+    }
+
+
+    //--------------------------------Rellenar NA------------------
+
+    @Override
+    public void rellenarNA(K eColumna, Object valor) {
+        Etiqueta<K> enueva = new Etiqueta<>(eColumna);
+        if (!tabla.keySet().contains(enueva))
+            throw new EtiquetaInvalida("La etiqueta " + eColumna + " no se encuentra en el encabezado de la tabla.");
+        
+        tabla.get(enueva).rellenarNA(valor);
+        
     }
 
 
@@ -1099,5 +1120,7 @@ public static <K, F> Tabla<K,F> concatenar(Tabla<K, F> a, Tabla<K, F> b) {
         } 
         return suma;
     }
+
+    
 
 }

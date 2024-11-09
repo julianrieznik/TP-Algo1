@@ -8,7 +8,11 @@ public class Celda<T> implements Comparable<Celda<T>>{
         if (valor instanceof String || valor instanceof Number || valor instanceof Boolean) {
             this.valor = valor;
             this.tipo = valor.getClass().getSimpleName();  
-        } else {
+        }else if (valor == null){
+            this.valor = valor;
+            this.tipo = "Object";
+        } 
+        else {
             throw new CeldaInvalida("El valor debe ser de tipo String, Number o Boolean");
         }
     }
@@ -24,6 +28,10 @@ public class Celda<T> implements Comparable<Celda<T>>{
     public void modificar(Object valor) {
         if (chequeartipo(valor)){
             this.valor = (T) valor;
+        }
+        else if (this.valor == null){
+            this.valor = (T) valor;
+            this.tipo = valor.getClass().getSimpleName();
         }
         else{
             //HACER EXEPCION PROPIA
@@ -71,6 +79,7 @@ public class Celda<T> implements Comparable<Celda<T>>{
     }
 
     public int comparador(T v){
+        if (v == null || this.valor == null) return 0;
         return this.compareTo(new Celda<T>(v));
     }
 

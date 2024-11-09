@@ -22,12 +22,21 @@ public class AppTomy {
         //Predicate<Celda> pred1 = a -> a.igual(7);
         //Predicate<Celda> pred2 = a -> a.igual(2);
 
-        criterios.add(new Filtrador().generadorPredicate(Operador.IGUAL, 7));
+        criterios.add(new Filtrador().generadorPredicate(Operador.MAYOR, 5));
         criterios.add(new Filtrador().generadorPredicate(Operador.IGUAL, 2));
         
-        Tabla<String, Integer> filtrada = tabla.filtrar(filtro,criterios,OperadorLogico.AND);
+        //Tabla<String, Integer> filtrada = tabla.filtrar(filtro,criterios,OperadorLogico.AND);
          
-        gestor.escribirCSV(filtrada, "TP_Implementacion/src","Filtro");
+        //gestor.escribirCSV(filtrada, "TP_Implementacion/src","Filtro");
+        gestor.escribirCSV(tabla, "TP_Implementacion/src","Output");
+
+
+
+        tabla.ver(20,100);
+        tabla.rellenarNA("Columna2", 3);
+        tabla.ver(20,100);
+
+
     }
 
 }

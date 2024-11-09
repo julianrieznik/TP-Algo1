@@ -36,7 +36,8 @@ public class GestorCSV implements Lectura, Escritura<Tabla> {
                 String[] valores = linea.split(",");
                 Object[] valoresCorregidos = new Object[valores.length];
                 for (int i = 0 ; i < valores.length ; i++ ){
-                    valoresCorregidos[i] = convertirTipo(valores[i]);
+                    if (valores[i].isEmpty() || valores[i] == "NA" || valores[i] == "") valoresCorregidos[i] = null;
+                    else valoresCorregidos[i] = convertirTipo(valores[i]);
                 }
                 filasDatos.add(valoresCorregidos);
             }
@@ -74,7 +75,8 @@ public class GestorCSV implements Lectura, Escritura<Tabla> {
             for (int i = 0; i < tabla.getCantidadFilas(); i++) {
                 String fila = "";
                 for (int j = 0; j < tabla.getCantidadColumnas(); j++) {
-                    fila += lista_columnas.get(j).valorCelda(i) + ",";
+                    if (lista_columnas.get(j).valorCelda(i) == null) fila += "NA" + ",";
+                    else fila += lista_columnas.get(j).valorCelda(i) + ",";
                 }
                 contenido += "\n" + fila.substring(0, fila.length() - 1);
             }
