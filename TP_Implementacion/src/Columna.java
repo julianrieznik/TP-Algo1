@@ -198,7 +198,10 @@ public class Columna<E> {
 
     public void rellenarNA(Object valor) throws CeldaInvalida{
         Boolean distintoTipo = false;
-        if (valor instanceof Boolean) {
+
+        if (this.tipo == "Object") this.tipo = valor.getClass().getSimpleName();
+
+        else if (valor instanceof Boolean) {
             Boolean aux = true;
             if (this.tipo != aux.getClass().getSimpleName()) distintoTipo = true;
         }
