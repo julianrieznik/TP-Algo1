@@ -14,17 +14,17 @@ public class AppTomy {
         Object[][] columnas = {
         { "Julian", "Pedro", "Maria", "Leandro" },
         { "Perez", "Sanchez", null, "Gutierrez" },
-        {25,44,null,21},
+        {25,44.3,null,21},
         {2,4,3,1},
         };
         
         
         Tabla<String, String> personas = new Tabla<>(etiquetasFilas,
         etiquetasColumnas, columnas);
-
+        personas.ver(20, 20);
    
         Tabla<String, String> resumenPersonas = personas.resumen(true);
-        resumenPersonas.ver(20, 20);
+        resumenPersonas.ver(6, 20);
         /*
         personas.ver(20, 20);
         

@@ -211,125 +211,81 @@ public class Columna<E> {
                 modificarValorCelda(i, valor);
     }
 
-    public <T> Number max(Boolean omitirNulos){
+    public <T> Number max(Boolean omitirNulos) {
 
-        if(!omitirNulos && tieneNA()){
+        if (!omitirNulos && tieneNA()) {
             return null;
         }
-
+    
         List<E> array = aArrayList();
-
-        if (tipo().equals("Double")){
-            Double max = null;
-            for(E valor : array){
-                if(valor != null && (max == null || max < (Double) valor)){
-                    max = (Double) valor;
-                }
-            }
-            return max;
-        }
-                
-        if (tipo().equals("Integer")){
-            Integer max = null;
-            for(E valor : array){
-                if(valor != null && (max == null || max < (Integer) valor)){
-                    max = (Integer) valor;
-                }
-            }
-            return max;
-        }
-        
-                
-        if (tipo().equals("Float")){
-            Float maximo = null;
-            for(E valor : array){
-                if(valor != null && (maximo == null || maximo < (Double) valor))
-                maximo = (Float) valor;
-            }
-            return maximo;
-        }
-        throw new ColumnaInvalida("La columna seleccionada no es numerica"); 
-    }
-
-    public <T> Number min(Boolean omitirNulos){
-
-        if(!omitirNulos && tieneNA()){
-            return null;
-        }
-
-        List<E> array = aArrayList();
-
-        if (tipo().equals("Double")){
-            Double min = null;
-            for(E valor : array){
-                if(valor != null && (min == null || min > (Double) valor)){
-                    min = (Double) valor;
-                }
-            }
-            return min;
-        }
-                
-        if (tipo().equals("Integer")){
-            Integer min = null;
-            for(E valor : array){
-                if(valor != null && (min == null || min > (Integer) valor)){
-                    min = (Integer) valor;
-                }
-            }
-            return min;
-        }
-        
-                
-        if (tipo().equals("Float")){
-            Float minimo = null;
-            for(E valor : array){
-                if(valor != null && (minimo == null || minimo > (Double) valor))
-                minimo = (Float) valor;
-            }
-            return minimo;
-        }
-        throw new ColumnaInvalida("La columna seleccionada no es numerica"); 
-    }
-
-
-    public <T> Double sum(Boolean omitirNulos){
-        
-        if(!omitirNulos && tieneNA()){
-            return null;
-        }
-
-        Double suma = 0.0;
-
-        if (tipo().equals("String") || tipo().equals("Boolean")){
+        Double max = null;
+    
+        if (tipo().equals("String") || tipo().equals("Boolean")) {
             throw new ColumnaInvalida("La columna seleccionada no es numerica");
         }
+    
+        for (E valor : array) {
+            if (valor != null && valor instanceof Number) {
+                double valorDouble = ((Number) valor).doubleValue();
+                if (max == null || valorDouble > max) {
+                    max = valorDouble;
+                }
+            }
+        }
+    
+        return max;
+    }
+    
 
+    public <T> Number min(Boolean omitirNulos) {
+
+        if (!omitirNulos && tieneNA()) {
+            return null;
+        }
+    
         List<E> array = aArrayList();
+        Double min = null;
+    
+        if (tipo().equals("String") || tipo().equals("Boolean")) {
+            throw new ColumnaInvalida("La columna seleccionada no es numerica");
+        }
+    
+        for (E valor : array) {
+            if (valor != null && valor instanceof Number) {
+                double valorDouble = ((Number) valor).doubleValue();
+                if (min == null || valorDouble < min) {
+                    min = valorDouble;
+                }
+            }
+        }
+    
+        return min;
+    }
+    
 
-        if (tipo().equals("Double")){
-            for(E valor : array){
-                if(valor != null){
-                    suma += (Double) valor;
+
+    public <T> Double sum(Boolean omitirNulos) {
+
+        if (!omitirNulos && tieneNA()) {
+            return null;
+        }
+    
+        Double suma = 0.0;
+    
+        if (tipo().equals("String") || tipo().equals("Boolean")) {
+            throw new ColumnaInvalida("La columna seleccionada no es numerica");
+        }
+    
+        List<E> array = aArrayList();
+    
+        for (E valor : array) {
+            if (valor != null) {
+                if (valor instanceof Number) {  
+                    suma += ((Number) valor).doubleValue();  // Convierte a double de manera segura
                 }
             }
         }
-                
-        if (tipo().equals("Integer")){
-            for(E valor : array){
-                if(valor != null){
-                    suma += (Integer) valor;
-                }
-            }
-        }
-        
-                
-        if (tipo().equals("Float")){
-            for(E valor : array){
-                if(valor != null){
-                    suma += (Float) valor;
-                }
-            }
-        } 
+    
         return suma;
     }
 
@@ -360,7 +316,8 @@ public class Columna<E> {
         if (cantidad == 0){
             return 0.0;
         }
-        return suma / cantidad;
+        Double promedio = suma / cantidad;
+        return promedio;
 
     }
 
