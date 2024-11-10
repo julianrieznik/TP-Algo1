@@ -4,6 +4,7 @@ import excepciones.FilaInvalida;
 import excepciones.FiltroInvalido;
 import excepciones.FormatoTablaInvalido;
 import excepciones.IndiceInexistente;
+import excepciones.OperacionInvalida;
 import excepciones.TipoDeColumnaInvalido;
 import interfaces.Rellenable;
 
@@ -169,6 +170,17 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
         return etiquetas_filas().size();
     }
 
+    public Integer getCantidadColumnasNumericas() {
+        Integer total = 0;
+        for (Columna<?> columna : getListaColumnas()) {
+            String tipo = columna.tipo();
+            if (!tipo.equals("Object") && !tipo.equals("String") && !tipo.equals("Boolean")) {
+                total++;
+            }
+        }
+        return total;
+    }
+
     public <T> Columna<T> obtenerColumna(K nombreColumna) {
         Etiqueta<K> etiqueta = new Etiqueta<>(nombreColumna);
     
@@ -190,6 +202,21 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
             }
         }
         throw new ColumnaInvalida("No existe la columna " + String.valueOf(nombre));
+    }
+
+    public List<Etiqueta<K>> getEtiquetasColumnasNumericas() {
+        List<Etiqueta<K>> etiquetasNumericas = new ArrayList<>();
+        
+       
+        for (Map.Entry<Etiqueta<K>, Columna<?>> entry : tabla.entrySet()) {
+            Columna<?> columna = entry.getValue(); 
+
+            if (!columna.tipo().equals("String") && !columna.tipo().equals("Boolean") && !columna.tipo().equals("Object")) {
+                etiquetasNumericas.add(entry.getKey()); 
+            }
+        }
+        
+        return etiquetasNumericas; 
     }
 
     public <T> T obtenerValorCelda(K col, F fila){
@@ -262,7 +289,9 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
         for (Object elemento : columna) {
             try {
                 // Casteo a number
-                Number numero = (Number) elemento;
+                if (elemento != null){
+                    Number numero = (Number) elemento;
+                }
             } catch (ClassCastException e) {
                 // Si hay excepcion, no es Number, devuelvo false
                 return false;
@@ -275,8 +304,9 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
     private boolean esBooleana(Object[] columna) {
         for (Object elemento : columna) {
             try {
-                // Casteo a number
-                Boolean bool = (Boolean) elemento;
+                if (elemento != null){
+                    Boolean bool = (Boolean) elemento;
+                }
             } catch (ClassCastException e) {
                 // Si hay excepcion, no es Boolean, devuelvo false
                 return false;
@@ -1067,7 +1097,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
 //--------------------------------CONCATENACION------------------
 
 public static <K, F> Tabla<K,F> concatenar(Tabla<K, F> a, Tabla<K, ?> b) {
-    if (!(a.getCantidadFilas().equals(b.getCantidadColumnas()))){
+    if (!(a.getCantidadFilas().equals(b.getCantidadFilas()))){
         throw new FormatoTablaInvalido("Las tablas no tienen la misma cantidad de filas"); 
     }
 
@@ -1090,37 +1120,80 @@ public static <K, F> Tabla<K,F> concatenar(Tabla<K, F> a, Tabla<K, ?> b) {
 }
 
 //----------------------------------SUMARIZACION-----------------
-    public <T> Double sum(K col){
+    public <T> Double sum(K col, Boolean omitirNulos){
         Columna<T> columna = obtenerColumna(col);
-        Double suma = 0.0;
-
-        if (columna.tipo().equals("String") || columna.tipo().equals("Boolean")){
-            throw new ColumnaInvalida("La columna seleccionada no es numerica");
-        }
-
-        List<T> array = columna.aArrayList();
-
-        if (columna.tipo().equals("Double")){
-            for(T valor : array){
-                suma += (Double) valor;
-            }
-        }
-                
-        if (columna.tipo().equals("Integer")){
-            for(T valor : array){
-                suma += (Integer) valor;
-            }
-        }
-        
-                
-        if (columna.tipo().equals("Float")){
-            for(T valor : array){
-                suma += (Float) valor;
-            }
-        } 
+        Double suma = columna.sum(omitirNulos);
         return suma;
     }
 
-    
+    public <T> Number max(K col, Boolean omitirNulos){
+        Columna<T> columna = obtenerColumna(col);
+        Number maximo = columna.max(omitirNulos);
+        return maximo;
+    }
 
+    public <T> Number min(K col, Boolean omitirNulos){
+        Columna<T> columna = obtenerColumna(col);
+        Number minimo = columna.min(omitirNulos);
+        return minimo;
+    }
+
+    public <T> Double promedio(K col, Boolean omitirNulos){
+        Columna<T> columna = obtenerColumna(col);
+        Double promedio = columna.promedio(omitirNulos);
+        return promedio;
+    }
+
+    public Tabla<String, String> resumen(Boolean omitirNulos) {
+        Tabla<String, String> resumen = new Tabla<>();
+        int contador = 0;
+    
+        // Inicializo columnas de tabla nueva
+        Integer columnasNumericas = getCantidadColumnasNumericas();
+        Double[] sumas = new Double[columnasNumericas];
+        Number[] maximos = new Number[columnasNumericas];
+        Number[] minimos = new Number[columnasNumericas];
+        Double[] promedios = new Double[columnasNumericas];
+    
+        // Etiquetas de filas y columnas
+        List<Etiqueta<K>> etiquetasColumnas = getEtiquetasColumnasNumericas();
+        String[] arrayetiquetaFilas = new String[columnasNumericas];
+        String[] arrayetiquetasColumnas = {"Suma", "Max", "Min", "Promedio"}; // Cambié el orden para coincidir con la matriz
+    
+        // Matriz para almacenar los valores de las 4 operaciones
+        Object[][] columnas = new Object[4][columnasNumericas]; // 4 operaciones y 'columnasNumericas' columnas
+    
+        for (Columna<?> columna : getListaColumnas()) {
+            if (columna.tipo().equals("String") || columna.tipo().equals("Boolean")) {
+                continue;
+            }
+    
+            // Asignación de valores de las operacioness
+            Double sum = columna.sum(omitirNulos);
+            sumas[contador] = sum;
+            columnas[0][contador] = sum; // Suma en la fila 0
+    
+            Number max = columna.max(omitirNulos);
+            maximos[contador] = max;
+            columnas[1][contador] = max; // Max en la fila 1
+    
+            Number min = columna.min(omitirNulos);
+            minimos[contador] = min;
+            columnas[2][contador] = min; // Min en la fila 2
+    
+            Double promedio = columna.promedio(omitirNulos);
+            promedios[contador] = promedio;
+            columnas[3][contador] = promedio; // Promedio en la fila 3
+    
+            // Etiqueta de fila
+            arrayetiquetaFilas[contador] = String.valueOf(etiquetasColumnas.get(contador).getNombre());
+    
+            contador++;
+        }
+    
+        resumen = new Tabla<>(arrayetiquetaFilas, arrayetiquetasColumnas, columnas);
+    
+        return resumen;
+    }
+    
 }
