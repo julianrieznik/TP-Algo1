@@ -1144,8 +1144,13 @@ public static <K, F> Tabla<K,F> concatenar(Tabla<K, F> a, Tabla<K, ?> b) {
         return promedio;
     }
 
+    public <T> Integer count(K col){
+        Columna<T> columna = obtenerColumna(col);
+        Integer cuenta = columna.count();
+        return cuenta;
+    }
+
     public Tabla<String, String> resumen(Boolean omitirNulos) {
-        Tabla<String, String> resumen = new Tabla<>();
         int contador = 0;
     
         // Inicializo columnas de tabla nueva
@@ -1154,21 +1159,21 @@ public static <K, F> Tabla<K,F> concatenar(Tabla<K, F> a, Tabla<K, ?> b) {
         Number[] maximos = new Number[columnasNumericas];
         Number[] minimos = new Number[columnasNumericas];
         Double[] promedios = new Double[columnasNumericas];
-    
+        Integer[] cantidades = new Integer[columnasNumericas];
         // Etiquetas de filas y columnas
         List<Etiqueta<K>> etiquetasColumnas = getEtiquetasColumnasNumericas();
         String[] arrayetiquetaFilas = new String[columnasNumericas];
-        String[] arrayetiquetasColumnas = {"Suma", "Max", "Min", "Promedio"}; // Cambié el orden para coincidir con la matriz
+        String[] arrayetiquetasColumnas = {"Suma", "Max", "Min", "Promedio", "Cantidad"}; // Cambié el orden para coincidir con la matriz
     
         // Matriz para almacenar los valores de las 4 operaciones
-        Object[][] columnas = new Object[4][columnasNumericas]; // 4 operaciones y 'columnasNumericas' columnas
+        Object[][] columnas = new Object[5][columnasNumericas]; // 5 operaciones y 'columnasNumericas' columnas
     
         for (Columna<?> columna : getListaColumnas()) {
             if (columna.tipo().equals("String") || columna.tipo().equals("Boolean")) {
                 continue;
             }
     
-            // Asignación de valores de las operacioness
+            // Asignación de valores por cada columna (que pasa ser fila)
             Double sum = columna.sum(omitirNulos);
             sumas[contador] = sum;
             columnas[0][contador] = sum; // Suma en la fila 0
@@ -1184,6 +1189,10 @@ public static <K, F> Tabla<K,F> concatenar(Tabla<K, F> a, Tabla<K, ?> b) {
             Double promedio = columna.promedio(omitirNulos);
             promedios[contador] = promedio;
             columnas[3][contador] = promedio; // Promedio en la fila 3
+
+            Integer cuenta = columna.count();
+            cantidades[contador] = cuenta;
+            columnas[4][contador] = cuenta; // Cuenta en la fila 4
     
             // Etiqueta de fila
             arrayetiquetaFilas[contador] = String.valueOf(etiquetasColumnas.get(contador).getNombre());
@@ -1191,7 +1200,7 @@ public static <K, F> Tabla<K,F> concatenar(Tabla<K, F> a, Tabla<K, ?> b) {
             contador++;
         }
     
-        resumen = new Tabla<>(arrayetiquetaFilas, arrayetiquetasColumnas, columnas);
+        Tabla<String, String> resumen = new Tabla<>(arrayetiquetaFilas, arrayetiquetasColumnas, columnas);
     
         return resumen;
     }

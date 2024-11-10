@@ -33,21 +33,6 @@ public class Columna<E> {
         }
     }
 
-    /*
-     * public Columna(List<Celda<E>> celdas){
-     * if (celdas.size() == 0){
-     * throw new CeldaInvalida("Debe haber al menos un valor en cada celda");
-     * }
-     * if(this.chequearTipo(celdas)) {
-     * this.columna = celdas;
-     * this.tipo = celdas.get(0).tipo();
-     * }
-     * else{
-     * throw new
-     * ColumnaInvalida("Las celdas de una columna deben ser del mismo tipo");
-     * }
-     * }
-     */
 
     public Columna(List<Celda<E>> celdas) {
         this.columna = celdas;
@@ -377,6 +362,18 @@ public class Columna<E> {
         }
         return suma / cantidad;
 
+    }
+
+    public Integer count(){
+        List<Celda<E>> lista = obtenerValores();
+        Integer cantidad = 0;
+
+        for (Celda<E> celda : lista){
+            if(celda.obtenerValor() != null && celda.obtenerValor() != "null"){
+                cantidad++;
+            }
+        }
+        return cantidad;
     }
 
     public static void main(String[] args) {
