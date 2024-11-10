@@ -14,7 +14,7 @@ public class AppTomy {
         Object[][] columnas = {
         { "Julian", "Pedro", "Maria", "Leandro" },
         { "Perez", "Sanchez", null, "Gutierrez" },
-        {25,44,33,21},
+        {25,44,null,21},
         {2,4,3,1},
         };
         
