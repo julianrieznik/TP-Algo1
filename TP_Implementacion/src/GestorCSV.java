@@ -75,7 +75,7 @@ public class GestorCSV implements Lectura, Escritura<Tabla> {
             for (int i = 0; i < tabla.getCantidadFilas(); i++) {
                 String fila = "";
                 for (int j = 0; j < tabla.getCantidadColumnas(); j++) {
-                    if (lista_columnas.get(j).valorCelda(i) == null) fila += "NA" + ",";
+                    if (lista_columnas.get(j).valorCelda(i) == null || lista_columnas.get(j).valorCelda(i) == "null") fila += "NA" + ",";
                     else fila += lista_columnas.get(j).valorCelda(i) + ",";
                 }
                 contenido += "\n" + fila.substring(0, fila.length() - 1);
