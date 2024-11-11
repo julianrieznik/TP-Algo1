@@ -33,21 +33,6 @@ public class Columna<E> {
         }
     }
 
-    /*
-     * public Columna(List<Celda<E>> celdas){
-     * if (celdas.size() == 0){
-     * throw new CeldaInvalida("Debe haber al menos un valor en cada celda");
-     * }
-     * if(this.chequearTipo(celdas)) {
-     * this.columna = celdas;
-     * this.tipo = celdas.get(0).tipo();
-     * }
-     * else{
-     * throw new
-     * ColumnaInvalida("Las celdas de una columna deben ser del mismo tipo");
-     * }
-     * }
-     */
 
     public Columna(List<Celda<E>> celdas) {
         this.columna = celdas;
@@ -224,6 +209,128 @@ public class Columna<E> {
         for (int i = 0; i < columna.size(); i++)
             if (columna.get(i).obtenerValor() == null)
                 modificarValorCelda(i, valor);
+    }
+
+    public <T> Number max(Boolean omitirNulos) {
+
+        if (!omitirNulos && tieneNA()) {
+            return null;
+        }
+    
+        List<E> array = aArrayList();
+        Double max = null;
+    
+        if (tipo().equals("String") || tipo().equals("Boolean")) {
+            throw new ColumnaInvalida("La columna seleccionada no es numerica");
+        }
+    
+        for (E valor : array) {
+            if (valor != null && valor instanceof Number) {
+                double valorDouble = ((Number) valor).doubleValue();
+                if (max == null || valorDouble > max) {
+                    max = valorDouble;
+                }
+            }
+        }
+    
+        return max;
+    }
+    
+
+    public <T> Number min(Boolean omitirNulos) {
+
+        if (!omitirNulos && tieneNA()) {
+            return null;
+        }
+    
+        List<E> array = aArrayList();
+        Double min = null;
+    
+        if (tipo().equals("String") || tipo().equals("Boolean")) {
+            throw new ColumnaInvalida("La columna seleccionada no es numerica");
+        }
+    
+        for (E valor : array) {
+            if (valor != null && valor instanceof Number) {
+                double valorDouble = ((Number) valor).doubleValue();
+                if (min == null || valorDouble < min) {
+                    min = valorDouble;
+                }
+            }
+        }
+    
+        return min;
+    }
+    
+
+
+    public <T> Double sum(Boolean omitirNulos) {
+
+        if (!omitirNulos && tieneNA()) {
+            return null;
+        }
+    
+        Double suma = 0.0;
+    
+        if (tipo().equals("String") || tipo().equals("Boolean")) {
+            throw new ColumnaInvalida("La columna seleccionada no es numerica");
+        }
+    
+        List<E> array = aArrayList();
+    
+        for (E valor : array) {
+            if (valor != null) {
+                if (valor instanceof Number) {  
+                    suma += ((Number) valor).doubleValue();  // Convierte a double de manera segura
+                }
+            }
+        }
+    
+        return suma;
+    }
+
+    public Double promedio(Boolean omitirNulos){
+
+        if(!omitirNulos && tieneNA()){
+            return null;
+        }
+
+        if (tipo().equals("String") || tipo().equals("Boolean")){
+            throw new ColumnaInvalida("La columna seleccionada no es numerica");
+        }
+        List<E> array = aArrayList();
+        Double suma = sum(omitirNulos);
+        Integer cantidad = null;
+        if(omitirNulos && tieneNA()){
+            cantidad = 0;
+            for (E valor : array){
+                if(valor != null){
+                    cantidad++;
+                }
+            }
+        }
+        else {
+            cantidad = array.size();
+        }
+
+        if (cantidad == 0){
+            return 0.0;
+        }
+        Double promedio = suma / cantidad;
+        return promedio;
+
+    }
+
+    public Integer count(){
+        List<Celda<E>> lista = obtenerValores();
+        Integer cantidad = 0;
+
+        for (Celda<E> celda : lista){
+            if(celda.obtenerValor() != null && celda.obtenerValor() != "null"){
+                cantidad++;
+            }
+        }
+        return cantidad;
     }
 
     public static void main(String[] args) {

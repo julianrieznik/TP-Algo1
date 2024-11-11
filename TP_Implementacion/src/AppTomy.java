@@ -14,18 +14,27 @@ public class AppTomy {
         Object[][] columnas = {
         { "Julian", "Pedro", "Maria", "Leandro" },
         { "Perez", "Sanchez", null, "Gutierrez" },
-        {25,44,33,21},
+        {25,44.3,null,21},
         {2,4,3,1},
         };
         
         
         Tabla<String, String> personas = new Tabla<>(etiquetasFilas,
         etiquetasColumnas, columnas);
-        
+        personas.ver(20, 20);
+   
+        Tabla<String, String> resumenPersonas = personas.resumen(true);
+        resumenPersonas.ver(6, 20);
+        /*
         personas.ver(20, 20);
         
         Object[] filaNueva = { "Leon", "Martinez", null, 22};
         personas.agregarFila("Fila nueva", filaNueva);
+        personas.ver(20, 20);
+        System.out.println(personas.max("Edad", true));
+        System.out.println(personas.min("Edad", true));
+        System.out.println(personas.sum("Edad", true));
+        System.out.println(personas.promedio("Edad", true));
 
 
         Object[] columnaNueva = {true, false,true,true,false};
@@ -72,14 +81,14 @@ public class AppTomy {
 
 
         //CONCATENACION
-        System.out.println(personas.getCantidadFilas());
-        System.out.println(tabla.getCantidadFilas());
+
         Tabla concat = Tabla.concatenar(personas, tabla);
+        concat.ver(7, 20);
 
-        concat.ver(20, 20);
 
-
+        
     }
-
+        */
+    }
 }
 
