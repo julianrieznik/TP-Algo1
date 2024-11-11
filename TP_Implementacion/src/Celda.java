@@ -17,6 +17,11 @@ public class Celda<T> implements Comparable<Celda<T>>{
         }
     }
 
+    public Celda<T> copiaProfunda() {
+        // Crear una nueva instancia de Celda con el mismo valor y tipo
+        return new Celda<>(this.valor);
+    }
+
     public T obtenerValor() {
         return valor;
     }
@@ -39,8 +44,6 @@ public class Celda<T> implements Comparable<Celda<T>>{
         }
         
     }
-
-    
 
     @Override
     public int hashCode() {

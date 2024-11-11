@@ -1,6 +1,7 @@
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import excepciones.CeldaInvalida;
@@ -15,7 +16,6 @@ public class Columna<E> {
         List<Celda<E>> columna = generarColumna(lista);
         this.columna = columna;
         this.tipo = "";
-
         if (columna.size() != 0) {
             if (this.chequearTipo(columna)) {
                 for (int i = 0; i < columna.size(); i++) {
@@ -47,10 +47,30 @@ public class Columna<E> {
         }
     }
 
-    private boolean chequearTipo(E[] lista) {
-        return chequearTipo(generarColumna(lista));
+    public Columna<E> copiaProfunda() {
+        List<Celda<E>> copiaColumna = new ArrayList<>();
+        
+        // Iteramos sobre cada celda en la columna actual y agregamos su copia profunda
+        for (Celda<E> celda : this.columna) {
+            copiaColumna.add(celda.copiaProfunda());
+        }
+
+        // Creamos una nueva instancia de Columna usando el constructor de lista
+        Columna<E> copia = new Columna<>(copiaColumna);
+        copia.tipo = this.tipo;  // Copiar el tipo
+        return copia;
     }
 
+    public boolean todosSonNull() {
+        for (Celda<E> celda : columna) {
+            E valor = celda.obtenerValor();
+            // Verificamos si el valor es null o la cadena "null"
+            if (valor != null) {
+                return false;  // Si encontramos un valor que no es null ni "null", retornamos false
+            }
+        }
+        return true;  // Si todos los valores son null o "null", retornamos true
+    }
     private boolean chequearTipo(List<Celda<E>> lista) {
         Boolean esValida = true;
         String tipo = lista.get(0).getClass().getSimpleName();
@@ -62,6 +82,7 @@ public class Columna<E> {
         }
         return esValida;
     }
+
 
     public List<Celda<E>> generarColumna(E[] lista) {
         List<Celda<E>> columna = new ArrayList<>();
@@ -86,6 +107,15 @@ public class Columna<E> {
 
     public Celda<E> obtenerCelda(int idx) {
         return columna.get(idx);
+    }
+
+    public E obtenerValorNoNulo() {
+        for (Celda<E> celda : columna) {
+            if (celda.obtenerValor() != null && celda.obtenerValor() != "null") {
+                return celda.obtenerValor();
+            }
+        }
+        return null; // Retorna null si todos los valores son nulos
     }
 
     public String tipoCelda(Integer idx) {
@@ -207,10 +237,64 @@ public class Columna<E> {
         if(distintoTipo) throw new CeldaInvalida("El valor debe ser de tipo " + this.tipo + " para ser agregado a esta columna o usar cambiarTipoColumna()");
 
         for (int i = 0; i < columna.size(); i++)
-            if (columna.get(i).obtenerValor() == null)
+            if (columna.get(i).obtenerValor() == null || columna.get(i).obtenerValor() == "null")
                 modificarValorCelda(i, valor);
     }
 
+
+    private Class<?> getValorClase() {
+        return !columna.isEmpty() && columna.get(0).obtenerValor() != null
+            ? columna.get(0).obtenerValor().getClass()
+            : Object.class;
+    }
+
+
+    public Double maximoValorDouble() {
+        if (!(getValorClase() == Double.class)) {
+            throw new UnsupportedOperationException("La columna no es de tipo Double.");
+        }
+
+        return columna.stream()
+            .filter(c -> c.obtenerValor() != null)  // Filtra las celdas nulas
+            .map(c -> (Double) c.obtenerValor())    // Mapea los valores a Double
+            .max(Comparator.naturalOrder())          // Obtiene el valor máximo
+            .orElse(null);                          // Devuelve null si no hay valores
+    }
+
+    public Double minimoValorDouble() {
+        if (!(getValorClase() == Double.class)) {
+            throw new UnsupportedOperationException("La columna no es de tipo Double.");
+        }
+
+        return columna.stream()
+            .filter(c -> c.obtenerValor() != null)  // Filtra las celdas nulas
+            .map(c -> (Double) c.obtenerValor())    // Mapea los valores a Double
+            .min(Comparator.naturalOrder())          // Obtiene el valor mínimo
+            .orElse(null);                          // Devuelve null si no hay valores
+    }
+
+    public Integer maximoValorInteger() {
+        if (!(getValorClase() == Integer.class)) {
+            throw new UnsupportedOperationException("La columna no es de tipo Integer.");
+        }
+
+        return columna.stream()
+            .filter(c -> c.obtenerValor() != null)  // Filtra las celdas nulas
+            .map(c -> (Integer) c.obtenerValor())    // Mapea los valores a Integer
+            .max(Comparator.naturalOrder())          // Obtiene el valor máximo
+            .orElse(null);                          // Devuelve null si no hay valores
+    }
+    public Integer minimoValorInteger() {
+        if (!(getValorClase() == Integer.class)) {
+            throw new UnsupportedOperationException("La columna no es de tipo Integer.");
+        }
+
+        return columna.stream()
+            .filter(c -> c.obtenerValor() != null)  // Filtra las celdas nulas
+            .map(c -> (Integer) c.obtenerValor())    // Mapea los valores a Integer
+            .min(Comparator.naturalOrder())          // Obtiene el valor mínimo
+            .orElse(null);                          // Devuelve null si no hay valores
+    }
     public <T> Number max(Boolean omitirNulos) {
 
         if (!omitirNulos && tieneNA()) {

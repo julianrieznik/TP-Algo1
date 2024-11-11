@@ -5,6 +5,7 @@ import excepciones.FiltroInvalido;
 import excepciones.FormatoTablaInvalido;
 import excepciones.IndiceInexistente;
 import excepciones.OperacionInvalida;
+import excepciones.OrdenInvalido;
 import excepciones.TipoDeColumnaInvalido;
 import interfaces.Rellenable;
 
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -473,23 +475,58 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
     
     @Override
     public Tabla<K,F> ordenar(List<K> lista, boolean asc_desc) {
+    
         List<Etiqueta<K>> listEtiq = new ArrayList<>();
         for (K elem: lista){ 
             Etiqueta<K> etiqueta_columna = new Etiqueta<>(elem);
             listEtiq.add(etiqueta_columna);
         }
-        //Tabla<Etiqueta<K>, Columna<?>> tablaOriginal = new Tabla<>(this.getEtiquetas_columna(), this.getTabla());
-        
+
+        if (listEtiq.size() != 1) {
+            throw new IllegalArgumentException("Orden inválido. Ingresar una columna.");
+        }
+
         Columna<?> colum = null;
 
         for (Map.Entry<Etiqueta<K>, Columna<?>> entrada : tabla.entrySet()) {
             if (entrada.getKey().equals(listEtiq.get(0))){
-                colum = entrada.getValue();
+                colum = entrada.getValue().copiaProfunda();
             }
         }
+
+        //Trato los null antes de ordenar
+        if (colum.tieneNA()){
+            if (asc_desc == true){
+                if (colum.obtenerValorNoNulo() instanceof Double){
+                    Double aux = colum.maximoValorDouble();
+                    colum.rellenarNA(aux);
+                }else if(colum.obtenerValorNoNulo() instanceof Integer){
+                    Integer aux = colum.maximoValorInteger();
+                    colum.rellenarNA(aux);
+                }else if(colum.obtenerValorNoNulo() instanceof String) {
+                    colum.rellenarNA("Z");
+                }else if (colum.obtenerValorNoNulo() instanceof Boolean) {
+                    colum.rellenarNA(true); 
+                }
+            }else{
+                if (colum.obtenerValorNoNulo() instanceof Double){
+                    Number aux = colum.minimoValorDouble();
+                    colum.rellenarNA(aux);
+                }else if(colum.obtenerValorNoNulo() instanceof Integer){
+                    Number aux = colum.minimoValorInteger();
+                    colum.rellenarNA(aux);
+                }else if (colum.obtenerValorNoNulo() instanceof String) {
+                    colum.rellenarNA("A");
+                }else if (colum.obtenerValorNoNulo() instanceof Boolean) {
+                    colum.rellenarNA(false);
+                }
+            }
+            
+        }
+
         final Columna<?> columna = colum;
 
-        if (columna != null) {
+        if (!columna.todosSonNull()) {
             // Crear una lista de índices (0, 1, 2, ...) para representar las posiciones originales
             List<Integer> indices = new ArrayList<>();
             for (int i = 0; i < columna.cantidadCeldas(); i++) {
@@ -497,59 +534,54 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>,F>, interfa
             }
 
             if (asc_desc == true) {
-                if (columna.valorCelda(0) instanceof Number) {
+                if (columna.obtenerValorNoNulo() instanceof Number) {
 
                     indices.sort((i, j) -> Double.compare(((Number)columna.valorCelda(i)).doubleValue(), ((Number)columna.valorCelda(j)).doubleValue())); //columna numérica ordenada ascendentemente. 
 
-                }else if(columna.valorCelda(0) instanceof String) {
+                }else if(columna.obtenerValorNoNulo() instanceof String) {
 
-                    //pendiente de revisar. puede que tenga error. 
-                    Collections.sort(columna.obtenerValores(), (c1, c2) ->((String)c1.obtenerValor()).compareTo((String)c2.obtenerValor()));
+                    Collections.sort(indices, Comparator.comparing(index -> (String) columna.aListaGenerica()[index]));
+                    //Collections.sort(columna.obtenerValores(), (c1, c2) ->((String)c1.obtenerValor()).compareTo((String)c2.obtenerValor()));
 
-                }else if (columna.valorCelda(0) instanceof Boolean) {
-                    indices.sort((i1, i2) -> Boolean.compare(!((Boolean)columna.valorCelda(i1)), !((Boolean)columna.valorCelda(i2))));  
+                }else if (columna.obtenerValorNoNulo() instanceof Boolean) {
+                    indices.sort((i1, i2) -> Boolean.compare(((Boolean)columna.valorCelda(i1)), ((Boolean)columna.valorCelda(i2))));  
                 }
 
             }else if (asc_desc == false) {
 
-                if (columna.valorCelda(0) instanceof Number) {
+                if (columna.obtenerValorNoNulo() instanceof Number) {
 
                     indices.sort((i, j) -> Double.compare(((Number)columna.valorCelda(j)).doubleValue(), ((Number)columna.valorCelda(i)).doubleValue())); //columna numérica ordenada ascendentemente. 
 
-                }else if(columna.valorCelda(0) instanceof String) {
+                }else if(columna.obtenerValorNoNulo() instanceof String) {
 
-                    //pendiente de revisar. puede que tenga error. 
-                    Collections.sort(columna.obtenerValores(), (c1, c2) -> ((String)c2.obtenerValor()).compareTo((String)c1.obtenerValor()));
+                    Collections.sort(indices, Comparator.comparing((Integer index) -> (String) columna.aListaGenerica()[index]).reversed());
+                    //Collections.sort(columna.obtenerValores(), (c1, c2) -> ((String)c2.obtenerValor()).compareTo((String)c1.obtenerValor()));
 
-                }else if (columna.valorCelda(0) instanceof Boolean) {
-                    indices.sort((i1, i2) -> Boolean.compare(((Boolean)columna.valorCelda(i1)), ((Boolean)columna.valorCelda(i2))));  
+                }else if (columna.obtenerValorNoNulo() instanceof Boolean) {
+                    indices.sort((i1, i2) -> Boolean.compare(!((Boolean)columna.valorCelda(i1)), !((Boolean)columna.valorCelda(i2))));  
                 }
             }
 
             List<Etiqueta<K>> listEtiquetaFila = new ArrayList<>();
             List<Etiqueta<K>> listEtiquetasCol = new ArrayList<>();
             List<Columna<?>> listColumnas = new ArrayList<>();
-            //Tabla<K, F> tablaOrdenada = new Tabla<>();
-
-            //for (Etiqueta<K> etiq: this.etiquetas_fila){}
+            
             // Reordenar todas las columnas usando los índices ordenados
             for (Map.Entry<Etiqueta<K>, Columna<?>> entry : tabla.entrySet()) {
                 Columna<?> columnaSinOrden = entry.getValue();
                 listEtiquetasCol.add(entry.getKey());
                 
-                //Columna<?> columnaOrdenada = new Columna<>(new ArrayList<>(Collections.nCopies(columnaSinOrden.cantidadCeldas(), columnaSinOrden.obtenerCelda(0).tipo())));
                 Columna<?> columnaOrdenada = new Columna<>(new ArrayList<>());
                 for (int index : indices) {
                     columnaOrdenada.agregarValor(columnaSinOrden.obtenerCelda(index).obtenerValor());
                 }
                 listColumnas.add(columnaOrdenada);
-                entry.setValue(columnaOrdenada);
             }
             return new Tabla<>(this.etiquetas_fila, listEtiquetasCol,listColumnas);
         }else{
             throw new IndiceInexistente("La columna seleccionada está vacía");
         }
-        
     }
     
 
