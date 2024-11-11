@@ -218,20 +218,16 @@ public class Columna<E> {
         if (this.tipo == "Object") this.tipo = valor.getClass().getSimpleName();
 
         else if (valor instanceof Boolean) {
-            Boolean aux = true;
-            if (this.tipo != aux.getClass().getSimpleName()) distintoTipo = true;
+            if (! this.tipo.equals("Boolean")) distintoTipo = true;
         }
         else if (valor instanceof Double) {
-            Double aux = 1.5;
-            if (this.tipo != aux.getClass().getSimpleName()) distintoTipo = true;
+            if (! this.tipo.equals("Double")) distintoTipo = true;
         }
         else if (valor instanceof Integer) {
-            Integer aux = 1;
-            if (this.tipo != aux.getClass().getSimpleName()) distintoTipo = true;
+            if (! this.tipo.equals("Integer")) distintoTipo = true;
         }
         else if (valor instanceof String) {
-            String aux = "aux";
-            if (this.tipo != aux.getClass().getSimpleName()) distintoTipo = true;
+            if (! this.tipo.equals("String")) distintoTipo = true;
         }
 
         if(distintoTipo) throw new CeldaInvalida("El valor debe ser de tipo " + this.tipo + " para ser agregado a esta columna o usar cambiarTipoColumna()");

@@ -1,0 +1,6 @@
+Nombre,Apellido,Pais,Genero,Edad,Altura,Peso,Retirado?
+Lionel,Messi,Argentina,Hombre,37,1.70,72,false
+Neymar,da Silva Santos Junior,Brasil,Hombre,32,1.75,68,false
+Luciana,Aymar,Argentina,Mujer,47,1.72,,true
+Angel,Di Maria,Argentina,Hombre,36,1.78,75,false
+Daniel,Alves,Brasil,Hombre,41,1.71,81,true
