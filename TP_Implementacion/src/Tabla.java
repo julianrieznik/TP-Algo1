@@ -406,16 +406,17 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
     // -------------------------------------
     @Override
     public Tabla<K, F> subtabla(List<Etiqueta<F>> listFilas, List<Etiqueta<K>> listColumnas) {
-        if (listColumnas.isEmpty())
+        if (listColumnas == null)
             listColumnas = getEtiquetas_columna();
 
         Tabla<K, F> tablaNueva = subtablaColumnas(listColumnas);
 
-        if (listFilas.isEmpty())
+        if (listFilas == null)
             return tablaNueva;
         else
             return tablaNueva.subtablaFilas(listFilas);
     }
+
 
     @Override
     public Tabla<K, F> subtablaColumnas(List<Etiqueta<K>> listColumnas) throws EtiquetaInvalida {
@@ -498,14 +499,14 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
     // -------------------------------------ORDENAR--------------------------------------------
     /*
      * @Override
-     * public Tabla<K, F> ordenar(List<K> lista, boolean asc_desc) {
+     * public Tabla<K, F> ordenar(List<K> lista, boolean ascendente) {
      * // TODO Auto-generated method stub
      * throw new UnsupportedOperationException("Unimplemented method 'ordenar'");
      * }
      */
 
     @Override
-    public Tabla<K, F> ordenar(List<K> lista, boolean asc_desc) {
+    public Tabla<K, F> ordenar(List<K> lista, boolean ascendente) {
 
         List<Etiqueta<K>> listEtiq = new ArrayList<>();
         for (K elem : lista) {
@@ -527,7 +528,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
 
         // Trato los null antes de ordenar
         if (colum.tieneNA()) {
-            if (asc_desc == true) {
+            if (ascendente == true) {
                 if (colum.obtenerValorNoNulo() instanceof Double) {
                     Double aux = colum.maximoValorDouble();
                     colum.rellenarNA(aux);
@@ -565,7 +566,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
                 indices.add(i);
             }
 
-            if (asc_desc == true) {
+            if (ascendente == true) {
                 if (columna.obtenerValorNoNulo() instanceof Number) {
 
                     indices.sort((i, j) -> Double.compare(((Number) columna.valorCelda(i)).doubleValue(),
@@ -583,7 +584,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
                             ((Boolean) columna.valorCelda(i2))));
                 }
 
-            } else if (asc_desc == false) {
+            } else if (ascendente == false) {
 
                 if (columna.obtenerValorNoNulo() instanceof Number) {
 

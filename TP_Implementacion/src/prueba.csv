@@ -1,6 +1,31 @@
 Nombre,Apellido,Pais,Genero,Edad,Altura,Peso,Retirado?,Disciplina
-Lionel,Messi,Argentina,Hombre,37,1.70,72,false,Futbol
-Neymar,da Silva Santos Junior,Brasil,Hombre,32,1.75,68,false,Futbol
-Luciana,Aymar,Argentina,Mujer,47,1.72,,true,Hockey
-Angel,Di Maria,Argentina,Hombre,36,1.78,75,false,Futbol
-Daniel,Alves,Brasil,Hombre,41,1.71,81,true,Futbol
+Usain,Bolt,Jamaica,M,34,1.95,94,No,Atletismo
+Serena, Williams,EEUU,F,40,1.75,70,No,Tenis
+Lionel,Messi,Argentina,M,34,1.70,72,No,Fútbol
+Simone,Biles,EEUU,F,24,1.42,47,No,Gimnasia
+Roger,Federer,Suiza,M,40,,85,No,Tenis
+Michael,Phelps,EEUU,M,36,1.93,88,Retirado,Natación
+Katie,Ledecky,EEUU,F,24,1.83,73,No,Natación
+Cristiano,Ronaldo,Portugal,M,36,1.87,83,No,Fútbol
+Naomi,Osaka,Japón,F,24,1.80,69,No,Tenis
+Novak,Djokovic,Serbia,M,,1.88,77,No,Tenis
+Shaun,White,EEUU,M,35,1.73,70,Retirado,Snowboard
+Allyson,Felix,EEUU,F,35,1.68,57,No,Atletismo
+Lewis,Hamilton,Reino Unido,M,36,1.74,73,No,Fórmula 1
+Simone,Manuel,EEUU,F,25,1.80,67,No,Natación
+Kevin,Durant,EEUU,M,33,2.08,109,No,Baloncesto
+Marta,Silva,Brasil,F,35,1.63,56,No,Fútbol
+Tom,Brady,EEUU,M,44,1.93,102,No,Fútbol Americano
+Venus,Williams,EEUU,F,41,1.85,75,No,Tenis
+LeBron,James,EEUU,M,36,2.06,113,No,Baloncesto
+Katie,Taylor,Irlanda,F,35,1.65,60,No,Boxeo
+Kylian,Mbappé,Francia,M,23,1.78,73,No,Fútbol
+Gabby,Douglas,EEUU,F,26,1.57,49,No,Gimnasia
+Rafael,Nadal,España,M,35,1.85,85,No,Tenis
+Megan,Rapinoe,EEUU,F,36,1.68,60,No,Fútbol
+Stephen,Curry,EEUU,M,33,1.88,84,No,Baloncesto
+Dina,Asher-Smith,Reino Unido,F,25,1.64,58,No,Atletismo
+Conor,McGregor,Irlanda,M,33,1.75,77,No,Artes Marciales Mixtas
+Allyson,Felix,EEUU,F,35,1.68,57,No,Atletismo
+Eliud,Kipchoge,Kenya,M,37,1.67,52,No,Atletismo
+Adam,Peaty,Reino Unido,M,26,1.91,,No,Natación

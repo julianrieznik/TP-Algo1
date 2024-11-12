@@ -152,11 +152,15 @@ public class Columna<E> {
             throw new ValorNoAgregable("No se puede agregar el tipo " + o.getClass().getSimpleName()
                     + " a una columna de tipo " + tipo() + " usar cambiarTipoColumna()");
         }
+        
         try {
             E valorCasteado = (E) o;
             columna.add(new Celda<>(valorCasteado));
 
-            if (tipo == "") {
+            if (o == null){
+                this.tipo = "Object";
+            }
+            else if (tipo == "" || tipo == "Object" ) {
                 this.tipo = o.getClass().getSimpleName();
             }
         } catch (ClassCastException e) {
