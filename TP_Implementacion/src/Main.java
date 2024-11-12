@@ -22,7 +22,7 @@ public class Main {
         Tabla<String, String> nombres = new Tabla<>(etiquetasFilas, etiquetasColumnas, columnas);
         nombres.ver(20, 20);
         List<String> etiquetasOrden = new ArrayList<>();
-        etiquetasOrden.add("Nombre");
+        etiquetasOrden.add("Jota");
         //etiquetasOrden.add("Apellido");
         Tabla<String, String> nueva = nombres.ordenar(etiquetasOrden, true);
         nueva.ver(20,20);

@@ -529,6 +529,10 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
             }
         }
 
+        if (colum == null) {
+            throw new ColumnaInvalida("La etiqueta de columna ingresada no existe en la tabla.");
+        }
+
         // Trato los null antes de ordenar
         if (colum.tieneNA()) {
             if (ascendente == true) {
