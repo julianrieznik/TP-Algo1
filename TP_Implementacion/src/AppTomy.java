@@ -26,7 +26,7 @@ public class AppTomy {
         Tabla<String,String> resultante = tabla.filtrar("Retirado?",new Filtrador().generadorPredicate(Operador.IGUAL,"No")).groupbyTabla(grupos, MetodoAgregacion.Media, false).ordenar(orden, false);
         resultante.ver(10, 100);
 
-        Tabla<String,String> resultanteSinNA = tabla.filtrar("Retirado?",new Filtrador().generadorPredicate(Operador.IGUAL,"No")).groupbyTabla(grupos, MetodoAgregacion.Media, true);
+        Tabla<String,String> resultanteSinNA = tabla.filtrar("Retirado?",new Filtrador().generadorPredicate(Operador.IGUAL,"No")).groupbyTabla(grupos, MetodoAgregacion.Media, true); //.ordenar(orden, false)
         resultanteSinNA.ver(10, 100);
 
         
