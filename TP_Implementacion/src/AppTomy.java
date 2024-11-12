@@ -1,8 +1,5 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
-
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
 
 public class AppTomy {
     public static void main(String[] args) throws Exception {
@@ -25,6 +22,8 @@ public class AppTomy {
         grupos.add("Retirado?");
         System.out.println("Tabla Agrupada por : " + grupos );
         tabla.groupbyTabla(grupos, MetodoAgregacion.Max,false).ver(20,100);
+
+        tabla.resumen(true).ver(10,20);
          
 
 

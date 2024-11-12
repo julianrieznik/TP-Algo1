@@ -81,7 +81,7 @@ public class App {
         //nombres.cambiarTipoColumna("boolean", String.class);
         nombres.modificarCelda("boolean", "Fila 3", true);
         nombres.ver(20, 20);
-        Double a = nombres.sum("Edad");
+        Double a = nombres.sum("Edad", true);
         System.out.println(a);
          
          /* 

@@ -1321,14 +1321,16 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
         Number[] minimos = new Number[columnasNumericas];
         Double[] promedios = new Double[columnasNumericas];
         Integer[] cantidades = new Integer[columnasNumericas];
+        Double[] varianzas = new Double[columnasNumericas];
+        Double[] desvios = new Double[columnasNumericas];
         // Etiquetas de filas y columnas
         List<Etiqueta<K>> etiquetasColumnas = getEtiquetasColumnasNumericas();
         String[] arrayetiquetaFilas = new String[columnasNumericas];
-        String[] arrayetiquetasColumnas = { "Suma", "Max", "Min", "Promedio", "Cantidad" }; // Cambié el orden para
+        String[] arrayetiquetasColumnas = { "Suma", "Max", "Min", "Promedio", "Cantidad", "Varianza", "SD" }; // Cambié el orden para
                                                                                             // coincidir con la matriz
 
-        // Matriz para almacenar los valores de las 4 operaciones
-        Object[][] columnas = new Object[5][columnasNumericas]; // 5 operaciones y 'columnasNumericas' columnas
+        // Matriz para almacenar los valores de las 7 operaciones
+        Object[][] columnas = new Object[7][columnasNumericas]; // 7 operaciones y 'columnasNumericas' columnas
 
         for (Columna<?> columna : getListaColumnas()) {
             if (columna.tipo().equals("String") || columna.tipo().equals("Boolean")) {
@@ -1338,23 +1340,32 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
             // Asignación de valores por cada columna (que pasa ser fila)
             Double sum = columna.sum(omitirNulos);
             sumas[contador] = sum;
-            columnas[0][contador] = sum; // Suma en la fila 0
+            columnas[0][contador] = sum; // Suma en la columna 0
 
             Number max = columna.max(omitirNulos);
             maximos[contador] = max;
-            columnas[1][contador] = max; // Max en la fila 1
+            columnas[1][contador] = max; // Max en la columna 1
 
             Number min = columna.min(omitirNulos);
             minimos[contador] = min;
-            columnas[2][contador] = min; // Min en la fila 2
+            columnas[2][contador] = min; // Min en la columna 2
 
             Double promedio = columna.promedio(omitirNulos);
             promedios[contador] = promedio;
-            columnas[3][contador] = promedio; // Promedio en la fila 3
+            columnas[3][contador] = promedio; // Promedio en la columna 3
 
             Integer cuenta = columna.count();
             cantidades[contador] = cuenta;
-            columnas[4][contador] = cuenta; // Cuenta en la fila 4
+            columnas[4][contador] = cuenta; // Cuenta en la columna 4
+
+            Double varianza = columna.varianza(omitirNulos);
+            varianzas[contador] = varianza;
+            columnas[5][contador] = varianza; // Varianza en la columna 5
+
+            Double desvioEstandar = columna.desvioEstandar(omitirNulos);
+            desvios[contador] = desvioEstandar;
+            columnas[6][contador] = desvioEstandar; // Varianza en la columna 6
+
 
             // Etiqueta de fila
             arrayetiquetaFilas[contador] = String.valueOf(etiquetasColumnas.get(contador).getNombre());

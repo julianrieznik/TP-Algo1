@@ -299,8 +299,7 @@ public class Columna<E> {
     
         List<E> array = aArrayList();
         Double max = null;
-    
-        if (tipo().equals("String") || tipo().equals("Boolean")) {
+        if (tipo().equals("String") || tipo().equals("Boolean")|| tipo().equals("Object")){
             throw new ColumnaInvalida("La columna seleccionada no es numerica");
         }
     
@@ -326,7 +325,7 @@ public class Columna<E> {
         List<E> array = aArrayList();
         Double min = null;
     
-        if (tipo().equals("String") || tipo().equals("Boolean")) {
+        if (tipo().equals("String") || tipo().equals("Boolean")|| tipo().equals("Object")){
             throw new ColumnaInvalida("La columna seleccionada no es numerica");
         }
     
@@ -352,7 +351,7 @@ public class Columna<E> {
     
         Double suma = 0.0;
     
-        if (tipo().equals("String") || tipo().equals("Boolean")) {
+        if (tipo().equals("String") || tipo().equals("Boolean")|| tipo().equals("Object")){
             throw new ColumnaInvalida("La columna seleccionada no es numerica");
         }
     
@@ -375,7 +374,7 @@ public class Columna<E> {
             return null;
         }
 
-        if (tipo().equals("String") || tipo().equals("Boolean")){
+        if (tipo().equals("String") || tipo().equals("Boolean")|| tipo().equals("Object")){
             throw new ColumnaInvalida("La columna seleccionada no es numerica");
         }
         List<E> array = aArrayList();
@@ -413,6 +412,54 @@ public class Columna<E> {
         return cantidad;
     }
 
+    public Double varianza(Boolean omitirNulos){
+        
+        if(!omitirNulos && tieneNA()){
+            return null;
+        }
+
+        if (tipo().equals("String") || tipo().equals("Boolean")|| tipo().equals("Object")){
+            throw new ColumnaInvalida("La columna seleccionada no es numerica");
+        }
+        Double promedio = promedio(omitirNulos);
+    
+        // Calcular la suma de las diferencias al cuadrado
+        double sumaDiferenciasCuadradas = 0.0;
+        int count = 0;
+
+    for (Celda<E> celda : columna) {
+        E valor = celda.obtenerValor();
+        if (valor == null) {
+            if (omitirNulos) {
+                continue;
+            } else {
+                return null; 
+            }
+        }
+
+
+        Double num = ((Number) valor).doubleValue();
+        sumaDiferenciasCuadradas += Math.pow(num - promedio, 2);
+        count++;
+    }
+
+
+        return count > 0 ? sumaDiferenciasCuadradas / count : null;
+    }
+
+    public Double desvioEstandar(Boolean omitirNulos) {
+
+        Double varianza = varianza(omitirNulos);
+        
+   
+        if (varianza == null) {
+            return null;
+        }
+        
+
+        return Math.sqrt(varianza);
+    }
+    
     public static void main(String[] args) {
         String[] s = { "Pepe", "Luis", "aa", " " };
         Columna<String> col = new Columna<>(s);
