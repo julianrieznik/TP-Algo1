@@ -938,61 +938,55 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
         Columna<?> columna = obtenerColumna(nombreColumna);
         Object[] arrayObject = columna.aListaGenerica();
         Etiqueta<K> etiqueta = obtenerEtiqueta(nombreColumna);
-
+    
         if (Number.class.isAssignableFrom(clase)) {
             if (!esNumerica(arrayObject)) {
                 throw new TipoDeColumnaInvalido(
                         "No se puede castear la columna " + nombreColumna + " a " + String.valueOf(clase));
             }
-
+    
             if (clase == Integer.class) {
                 Integer[] nuevoArray = Arrays.stream(arrayObject)
-                        .map(obj -> ((Number) obj).intValue())
+                        .map(obj -> obj == null ? null : ((Number) obj).intValue())
                         .toArray(Integer[]::new);
                 Columna<Integer> nuevaColumna = new Columna<>(nuevoArray);
                 this.tabla.put(etiqueta, nuevaColumna);
             }
-
+    
             if (clase == Double.class) {
                 Double[] nuevoArray = Arrays.stream(arrayObject)
-                        .map(obj -> ((Number) obj).doubleValue())
+                        .map(obj -> obj == null ? null : ((Number) obj).doubleValue())
                         .toArray(Double[]::new);
                 Columna<Double> nuevaColumna = new Columna<>(nuevoArray);
                 this.tabla.put(etiqueta, nuevaColumna);
             }
-
+    
             if (clase == Float.class) {
                 Float[] nuevoArray = Arrays.stream(arrayObject)
-                        .map(obj -> ((Number) obj).floatValue())
+                        .map(obj -> obj == null ? null : ((Number) obj).floatValue())
                         .toArray(Float[]::new);
                 Columna<Float> nuevaColumna = new Columna<>(nuevoArray);
                 this.tabla.put(etiqueta, nuevaColumna);
             }
-
-        }
-
-        else if (clase == String.class) {
+    
+        } else if (clase == String.class) {
             String[] nuevoArray = Arrays.stream(arrayObject)
-                    .map(obj -> obj == null ? "" : obj.toString())
+                    .map(obj -> obj == null ? "null" : obj.toString())
                     .toArray(String[]::new);
             Columna<String> nuevaColumna = new Columna<>(nuevoArray);
             this.tabla.put(etiqueta, nuevaColumna);
-        }
-
-        else if (clase == Boolean.class) {
-
+        } else if (clase == Boolean.class) {
+    
             if (!esBooleana(arrayObject)) {
                 throw new TipoDeColumnaInvalido("No se puede castear la columna " + nombreColumna + " a Boolean.");
             }
-
+    
             Boolean[] nuevoArray = Arrays.stream(arrayObject)
-                    .map(obj -> (Boolean) obj)
+                    .map(obj -> obj == null ? null : (Boolean) obj)
                     .toArray(Boolean[]::new);
             Columna<Boolean> nuevaColumna = new Columna<>(nuevoArray);
             this.tabla.put(etiqueta, nuevaColumna);
-        }
-
-        else {
+        } else {
             throw new TipoDeColumnaInvalido(
                     "Tipos de Columna admitidos: String.class, Double.class, Float.class, Integer.class, Boolean.class");
         }

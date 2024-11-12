@@ -7,6 +7,7 @@ import java.util.List;
 import excepciones.CeldaInvalida;
 import excepciones.ColumnaInvalida;
 import excepciones.ValorNoAgregable;
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 
 public class Columna<E> {
     private List<Celda<E>> columna;
@@ -148,11 +149,15 @@ public class Columna<E> {
     }
 
     public void agregarValor(Object o) {
-        if (o != null && !columna.isEmpty() && !columna.get(0).obtenerValor().getClass().isInstance(o)) {
-            throw new ValorNoAgregable("No se puede agregar el tipo " + o.getClass().getSimpleName()
-                    + " a una columna de tipo " + tipo() + " usar cambiarTipoColumna()");
+        for (Celda<E> celda: columna){
+            if (celda.obtenerValor() != null && !celda.obtenerValor().equals("null")){
+                Integer indice = columna.indexOf(celda);
+                if (o != null && !columna.isEmpty() && !columna.get(indice).obtenerValor().getClass().isInstance(o)) {
+                    throw new ValorNoAgregable("No se puede agregar el tipo " + o.getClass().getSimpleName()
+                            + " a una columna de tipo " + tipo() + " usar cambiarTipoColumna()");
+                }
+            }
         }
-        
         try {
             E valorCasteado = (E) o;
             columna.add(new Celda<>(valorCasteado));
@@ -469,18 +474,5 @@ public class Columna<E> {
         
 
         return Math.sqrt(varianza);
-    }
-    
-    public static void main(String[] args) {
-        String[] s = { "Pepe", "Luis", "aa", " " };
-        Columna<String> col = new Columna<>(s);
-
-        Double[] f = { 1.2, 3.3, 4.4 };
-        Columna<Double> col1 = new Columna<>(f);
-
-        System.out.println(col.tipo());
-        System.out.println(col1.tipo());
-
-        col1.agregarValor(1);
     }
 }
