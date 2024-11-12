@@ -515,7 +515,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
         }
 
         if (listEtiq.size() != 1) {
-            throw new IllegalArgumentException("Orden inválido. Ingresar una columna.");
+            throw new OrdenInvalido("Orden inválido. Ingresar una columna.");
         }
 
         Columna<?> colum = null;
