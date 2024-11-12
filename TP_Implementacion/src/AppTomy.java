@@ -51,23 +51,24 @@ public class AppTomy {
         gestor.escribirCSV(seleccion,"TP_Implementacion/src","Resultante");
 
         
-        /*  Extra 
-        Columna<String> nombres = tabla.obtenerColumna("Nombre");
+        /*  Extra  
+        Columna<String> nombres = tabla.obtenerColumna("Nombr"); //Nombre
         String messi = nombres.valorCelda(2);
 
         System.out.println(messi);
         
         System.out.println("\n");
-        tabla.verFila(20, 10);
+        tabla.verFila(200, 10); //indice 20
 
-        Object[] fila_nueva = {"Fernando", "Gago", "Argentina", "M" , 38, 1.78, 84.4,"Retirado", "Futbol"};
+        Object[] fila_nueva = {"Fernando", "Gago", "Argentina", "M" , 38, 1.78, 84.4, "Futbol"};
         //Falta "Retirado" despues del peso
+        tabla.cambiarTipoColumna("Peso", Boolean.class);
         //tabla.cambiarTipoColumna("Peso", Double.class);
         tabla.agregarFila(fila_nueva);
 
         tabla.tail(1).ver(10,10);
+        
         */
- 
 
     }
 
