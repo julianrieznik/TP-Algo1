@@ -33,20 +33,25 @@ public class AppTomy {
         
         Tabla<String,String> noRetirados = tabla.filtrar("Retirado?",new Filtrador().generadorPredicate(Operador.IGUAL,"No")).groupbyTabla(grupos, MetodoAgregacion.Media, false).ordenar(orden, false);
         
-        noRetirados.ver(10, 10);
+        noRetirados.ver(10, 100);
         System.out.println("\n");
+        System.out.println("Rellenamos NA de Peso y mostramos top 10 \n");
         noRetirados.rellenarNA("Peso", 77);
-        noRetirados.ver(10, 3);
+        noRetirados.head(10).ver(10,100);;
         System.out.println("\n");
         
         
         
-        List<Etiqueta<String>> visualizacion = new ArrayList<Etiqueta<String>>();
-        visualizacion.add(new Etiqueta<String>("Altura"));
-        visualizacion.add(new Etiqueta<String>("Edad"));
+        List<Etiqueta<String>> visualizacionCol = new ArrayList<Etiqueta<String>>();
+        List<Etiqueta<String>> visualizacionFil = new ArrayList<Etiqueta<String>>();
+        visualizacionCol.add(new Etiqueta<String>("Altura"));
+        visualizacionCol.add(new Etiqueta<String>("Edad"));
+        visualizacionFil.add(new Etiqueta<String>("Fútbol,F"));
+        visualizacionFil.add(new Etiqueta<String>("Gimnasia,M"));
 
-        Tabla<String, String> seleccion = noRetirados.subtabla(null, visualizacion);
-        seleccion.ver(10, 5);
+        Tabla<String, String> seleccion = noRetirados.subtabla(visualizacionFil, visualizacionCol);
+        System.out.println("Hacemos un slice: \n");
+        seleccion.ver(10, 100);
         
         gestor.escribirCSV(seleccion,"TP_Implementacion/src","Resultante");
 
