@@ -291,9 +291,9 @@ public class Columna<E> {
             .min(Comparator.naturalOrder())          // Obtiene el valor mínimo
             .orElse(null);                          // Devuelve null si no hay valores
     }
-    public <T> Number max(Boolean omitirNulos) {
+    public <T> Number max(Boolean omitirNA) {
 
-        if (!omitirNulos && tieneNA()) {
+        if (!omitirNA && tieneNA()) {
             return null;
         }
     
@@ -316,9 +316,9 @@ public class Columna<E> {
     }
     
 
-    public <T> Number min(Boolean omitirNulos) {
+    public <T> Number min(Boolean omitirNA) {
 
-        if (!omitirNulos && tieneNA()) {
+        if (!omitirNA && tieneNA()) {
             return null;
         }
     
@@ -343,9 +343,9 @@ public class Columna<E> {
     
 
 
-    public <T> Double sum(Boolean omitirNulos) {
+    public <T> Double sum(Boolean omitirNA) {
 
-        if (!omitirNulos && tieneNA()) {
+        if (!omitirNA && tieneNA()) {
             return null;
         }
     
@@ -368,9 +368,9 @@ public class Columna<E> {
         return suma;
     }
 
-    public Double promedio(Boolean omitirNulos){
+    public Double promedio(Boolean omitirNA){
 
-        if(!omitirNulos && tieneNA()){
+        if(!omitirNA && tieneNA()){
             return null;
         }
 
@@ -378,9 +378,9 @@ public class Columna<E> {
             throw new ColumnaInvalida("La columna seleccionada no es numerica");
         }
         List<E> array = aArrayList();
-        Double suma = sum(omitirNulos);
+        Double suma = sum(omitirNA);
         Integer cantidad = null;
-        if(omitirNulos && tieneNA()){
+        if(omitirNA && tieneNA()){
             cantidad = 0;
             for (E valor : array){
                 if(valor != null){
@@ -412,16 +412,16 @@ public class Columna<E> {
         return cantidad;
     }
 
-    public Double varianza(Boolean omitirNulos){
+    public Double varianza(Boolean omitirNA){
         
-        if(!omitirNulos && tieneNA()){
+        if(!omitirNA && tieneNA()){
             return null;
         }
 
         if (tipo().equals("String") || tipo().equals("Boolean")|| tipo().equals("Object")){
             throw new ColumnaInvalida("La columna seleccionada no es numerica");
         }
-        Double promedio = promedio(omitirNulos);
+        Double promedio = promedio(omitirNA);
     
         // Calcular la suma de las diferencias al cuadrado
         double sumaDiferenciasCuadradas = 0.0;
@@ -430,7 +430,7 @@ public class Columna<E> {
     for (Celda<E> celda : columna) {
         E valor = celda.obtenerValor();
         if (valor == null) {
-            if (omitirNulos) {
+            if (omitirNA) {
                 continue;
             } else {
                 return null; 
@@ -447,9 +447,16 @@ public class Columna<E> {
         return count > 0 ? sumaDiferenciasCuadradas / count : null;
     }
 
-    public Double desvioEstandar(Boolean omitirNulos) {
+    public Double desvioEstandar(Boolean omitirNA) {
+        if(!omitirNA && tieneNA()){
+            return null;
+        }
 
-        Double varianza = varianza(omitirNulos);
+        if (tipo().equals("String") || tipo().equals("Boolean")){
+            throw new ColumnaInvalida("La columna seleccionada no es numerica");
+        }
+
+        Double varianza = varianza(omitirNA);
         
    
         if (varianza == null) {

@@ -1174,11 +1174,11 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
                 else if (operacion == MetodoAgregacion.Sum)
                     resultados = tablaFiltrada.sum(etiquetasNuevasColumna, omitirNulos);
                 else if (operacion == MetodoAgregacion.Media)
-                    resultados = tablaFiltrada.sum(etiquetasNuevasColumna, omitirNulos);
+                    resultados = tablaFiltrada.promedio(etiquetasNuevasColumna, omitirNulos);
                 else if (operacion == MetodoAgregacion.Varianza)
-                    resultados = tablaFiltrada.sum(etiquetasNuevasColumna, omitirNulos);
+                    resultados = tablaFiltrada.varianza(etiquetasNuevasColumna, omitirNulos);
                 else if (operacion == MetodoAgregacion.DesvioEstandar)
-                    resultados = tablaFiltrada.sum(etiquetasNuevasColumna, omitirNulos);
+                    resultados = tablaFiltrada.desvioEstandar(etiquetasNuevasColumna, omitirNulos);
 
                 for (int j = 0; j < resultados.size(); j++) {
                     columnasNuevas[j][i] = resultados.get(j);
@@ -1246,55 +1246,55 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
     }
 
     // ----------------------------------SUMARIZACION-----------------
-    public <T> Double sum(K col, Boolean omitirNulos) {
+    public <T> Double sum(K col, Boolean omitirNA) {
         Columna<T> columna = obtenerColumna(col);
-        Double suma = columna.sum(omitirNulos);
+        Double suma = columna.sum(omitirNA);
         return suma;
     }
 
-    private <T> List<Number> sum(List<Etiqueta<K>> eColumnas, Boolean omitirNulos) {
+    private <T> List<Number> sum(List<Etiqueta<K>> eColumnas, Boolean omitirNA) {
         List<Number> res = new ArrayList<Number>();
         for (Etiqueta<K> etiq : eColumnas)
-            res.add(sum(etiq.nombre, omitirNulos));
+            res.add(sum(etiq.nombre, omitirNA));
         return res;
     }
 
-    public <T> Number max(K col, Boolean omitirNulos) {
+    public <T> Number max(K col, Boolean omitirNA) {
         Columna<T> columna = obtenerColumna(col);
-        Number maximo = columna.max(omitirNulos);
+        Number maximo = columna.max(omitirNA);
         return maximo;
     }
 
-    private <T> List<Number> max(List<Etiqueta<K>> eColumnas, Boolean omitirNulos) {
+    private <T> List<Number> max(List<Etiqueta<K>> eColumnas, Boolean omitirNA) {
         List<Number> res = new ArrayList<Number>();
         for (Etiqueta<K> etiq : eColumnas)
-            res.add(max(etiq.nombre, omitirNulos));
+            res.add(max(etiq.nombre, omitirNA));
         return res;
     }
 
-    public <T> Number min(K col, Boolean omitirNulos) {
+    public <T> Number min(K col, Boolean omitirNA) {
         Columna<T> columna = obtenerColumna(col);
-        Number minimo = columna.min(omitirNulos);
+        Number minimo = columna.min(omitirNA);
         return minimo;
     }
 
-    private <T> List<Number> min(List<Etiqueta<K>> eColumnas, Boolean omitirNulos) {
+    private <T> List<Number> min(List<Etiqueta<K>> eColumnas, Boolean omitirNA) {
         List<Number> res = new ArrayList<Number>();
         for (Etiqueta<K> etiq : eColumnas)
-            res.add(min(etiq.nombre, omitirNulos));
+            res.add(min(etiq.nombre, omitirNA));
         return res;
     }
 
-    public <T> Double promedio(K col, Boolean omitirNulos) {
+    public <T> Double promedio(K col, Boolean omitirNA) {
         Columna<T> columna = obtenerColumna(col);
-        Double promedio = columna.promedio(omitirNulos);
+        Double promedio = columna.promedio(omitirNA);
         return promedio;
     }
 
-    private <T> List<Number> promedio(List<Etiqueta<K>> eColumnas, Boolean omitirNulos) {
+    private <T> List<Number> promedio(List<Etiqueta<K>> eColumnas, Boolean omitirNA) {
         List<Number> res = new ArrayList<Number>();
         for (Etiqueta<K> etiq : eColumnas)
-            res.add(promedio(etiq.nombre, omitirNulos));
+            res.add(promedio(etiq.nombre, omitirNA));
         return res;
     }
 
@@ -1311,7 +1311,33 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
         return res;
     }
 
-    public Tabla<String, String> resumen(Boolean omitirNulos) {
+    public <T> Double varianza(K col, Boolean omitirNA){
+        Columna<T> columna = obtenerColumna(col);
+        Double varianza = columna.varianza(omitirNA);
+        return varianza;
+    }
+
+    private <T> List<Number> varianza(List<Etiqueta<K>> eColumnas, Boolean omitirNA){
+        List<Number> res = new ArrayList<Number>();
+        for (Etiqueta<K> etiq : eColumnas)
+            res.add(varianza(etiq.nombre, omitirNA));
+        return res;
+    }
+
+    public <T> Double desvioEstandar(K col, Boolean omitirNA){
+        Columna<T> columna = obtenerColumna(col);
+        Double sd = columna.desvioEstandar(omitirNA);
+        return sd;
+    }
+
+    private <T> List<Number> desvioEstandar(List<Etiqueta<K>> eColumnas, Boolean omitirNA){
+        List<Number> res = new ArrayList<Number>();
+        for (Etiqueta<K> etiq : eColumnas)
+            res.add(desvioEstandar(etiq.nombre, omitirNA));
+        return res;
+    }
+
+    public Tabla<String, String> resumen(Boolean omitirNA) {
         int contador = 0;
 
         // Inicializo columnas de tabla nueva
@@ -1338,19 +1364,19 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
             }
 
             // Asignación de valores por cada columna (que pasa ser fila)
-            Double sum = columna.sum(omitirNulos);
+            Double sum = columna.sum(omitirNA);
             sumas[contador] = sum;
             columnas[0][contador] = sum; // Suma en la columna 0
 
-            Number max = columna.max(omitirNulos);
+            Number max = columna.max(omitirNA);
             maximos[contador] = max;
             columnas[1][contador] = max; // Max en la columna 1
 
-            Number min = columna.min(omitirNulos);
+            Number min = columna.min(omitirNA);
             minimos[contador] = min;
             columnas[2][contador] = min; // Min en la columna 2
 
-            Double promedio = columna.promedio(omitirNulos);
+            Double promedio = columna.promedio(omitirNA);
             promedios[contador] = promedio;
             columnas[3][contador] = promedio; // Promedio en la columna 3
 
@@ -1358,11 +1384,11 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
             cantidades[contador] = cuenta;
             columnas[4][contador] = cuenta; // Cuenta en la columna 4
 
-            Double varianza = columna.varianza(omitirNulos);
+            Double varianza = columna.varianza(omitirNA);
             varianzas[contador] = varianza;
             columnas[5][contador] = varianza; // Varianza en la columna 5
 
-            Double desvioEstandar = columna.desvioEstandar(omitirNulos);
+            Double desvioEstandar = columna.desvioEstandar(omitirNA);
             desvios[contador] = desvioEstandar;
             columnas[6][contador] = desvioEstandar; // Varianza en la columna 6
 
