@@ -15,15 +15,14 @@ public class AppTomy {
         List<String> grupos = new ArrayList<String>();
         grupos.add("Pais");
         System.out.println("Tabla Agrupada por : " + grupos );
-        tabla.groupbyTabla(grupos, MetodoAgregacion.Max,false).ver(20,100);
+        tabla.groupbyTabla(grupos, MetodoAgregacion.Max,false).ver(10,100);
         System.out.println("\n");
         
         grupos.add("Genero");
-        grupos.add("Retirado?");
         System.out.println("Tabla Agrupada por : " + grupos );
-        tabla.groupbyTabla(grupos, MetodoAgregacion.DesvioEstandar,false).ver(20,100);
+        Tabla<String,String> agrupada = tabla.groupbyTabla(grupos, MetodoAgregacion.DesvioEstandar,true);
+        agrupada.ver(10, 100);
 
-        tabla.resumen(true).ver(10,20);
          
 
 

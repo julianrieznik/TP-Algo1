@@ -1255,7 +1255,11 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
     private <T> List<Number> sum(List<Etiqueta<K>> eColumnas, Boolean omitirNA) {
         List<Number> res = new ArrayList<Number>();
         for (Etiqueta<K> etiq : eColumnas)
-            res.add(sum(etiq.nombre, omitirNA));
+            try {
+                res.add(sum(etiq.nombre, omitirNA));
+            } catch (ColumnaInvalida e) {
+                continue;
+            }
         return res;
     }
 
@@ -1268,7 +1272,11 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
     private <T> List<Number> max(List<Etiqueta<K>> eColumnas, Boolean omitirNA) {
         List<Number> res = new ArrayList<Number>();
         for (Etiqueta<K> etiq : eColumnas)
-            res.add(max(etiq.nombre, omitirNA));
+            try {
+                res.add(max(etiq.nombre, omitirNA));
+            } catch (ColumnaInvalida e) {
+                continue;
+            }
         return res;
     }
 
@@ -1281,7 +1289,11 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
     private <T> List<Number> min(List<Etiqueta<K>> eColumnas, Boolean omitirNA) {
         List<Number> res = new ArrayList<Number>();
         for (Etiqueta<K> etiq : eColumnas)
-            res.add(min(etiq.nombre, omitirNA));
+            try {
+                res.add(min(etiq.nombre, omitirNA));
+            } catch (ColumnaInvalida e) {
+                continue;
+            }
         return res;
     }
 
@@ -1294,7 +1306,11 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
     private <T> List<Number> promedio(List<Etiqueta<K>> eColumnas, Boolean omitirNA) {
         List<Number> res = new ArrayList<Number>();
         for (Etiqueta<K> etiq : eColumnas)
-            res.add(promedio(etiq.nombre, omitirNA));
+            try {
+                res.add(promedio(etiq.nombre, omitirNA));
+            } catch (ColumnaInvalida e) {
+                continue;
+            }
         return res;
     }
 
@@ -1307,33 +1323,45 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
     private <T> List<Number> count(List<Etiqueta<K>> eColumnas) {
         List<Number> res = new ArrayList<Number>();
         for (Etiqueta<K> etiq : eColumnas)
-            res.add(count(etiq.nombre));
+            try {
+                res.add(count(etiq.nombre));
+            } catch (ColumnaInvalida e) {
+                continue;
+            }
         return res;
     }
 
-    public <T> Double varianza(K col, Boolean omitirNA){
+    public <T> Double varianza(K col, Boolean omitirNA) {
         Columna<T> columna = obtenerColumna(col);
         Double varianza = columna.varianza(omitirNA);
         return varianza;
     }
 
-    private <T> List<Number> varianza(List<Etiqueta<K>> eColumnas, Boolean omitirNA){
+    private <T> List<Number> varianza(List<Etiqueta<K>> eColumnas, Boolean omitirNA) {
         List<Number> res = new ArrayList<Number>();
         for (Etiqueta<K> etiq : eColumnas)
-            res.add(varianza(etiq.nombre, omitirNA));
+            try {
+                res.add(varianza(etiq.nombre, omitirNA));
+            } catch (ColumnaInvalida e) {
+                continue;
+            }
         return res;
     }
 
-    public <T> Double desvioEstandar(K col, Boolean omitirNA){
+    public <T> Double desvioEstandar(K col, Boolean omitirNA) {
         Columna<T> columna = obtenerColumna(col);
         Double sd = columna.desvioEstandar(omitirNA);
         return sd;
     }
 
-    private <T> List<Number> desvioEstandar(List<Etiqueta<K>> eColumnas, Boolean omitirNA){
+    private <T> List<Number> desvioEstandar(List<Etiqueta<K>> eColumnas, Boolean omitirNA) {
         List<Number> res = new ArrayList<Number>();
         for (Etiqueta<K> etiq : eColumnas)
-            res.add(desvioEstandar(etiq.nombre, omitirNA));
+            try {
+                res.add(desvioEstandar(etiq.nombre, omitirNA));
+            } catch (ColumnaInvalida e) {
+                continue;
+            }
         return res;
     }
 
@@ -1352,8 +1380,11 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
         // Etiquetas de filas y columnas
         List<Etiqueta<K>> etiquetasColumnas = getEtiquetasColumnasNumericas();
         String[] arrayetiquetaFilas = new String[columnasNumericas];
-        String[] arrayetiquetasColumnas = { "Suma", "Max", "Min", "Promedio", "Cantidad", "Varianza", "SD" }; // Cambié el orden para
-                                                                                            // coincidir con la matriz
+        String[] arrayetiquetasColumnas = { "Suma", "Max", "Min", "Promedio", "Cantidad", "Varianza", "SD" }; // Cambié
+                                                                                                              // el
+                                                                                                              // orden
+                                                                                                              // para
+        // coincidir con la matriz
 
         // Matriz para almacenar los valores de las 7 operaciones
         Object[][] columnas = new Object[7][columnasNumericas]; // 7 operaciones y 'columnasNumericas' columnas
@@ -1391,7 +1422,6 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
             Double desvioEstandar = columna.desvioEstandar(omitirNA);
             desvios[contador] = desvioEstandar;
             columnas[6][contador] = desvioEstandar; // Varianza en la columna 6
-
 
             // Etiqueta de fila
             arrayetiquetaFilas[contador] = String.valueOf(etiquetasColumnas.get(contador).getNombre());
