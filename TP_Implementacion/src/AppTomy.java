@@ -31,8 +31,8 @@ public class AppTomy {
         
         System.out.println("Tabla Agrupada por : " + grupos );
         
-        Tabla<String,String> noRetirados = tabla.filtrar("Retirado?",new Filtrador().generadorPredicate(Operador.IGUAL,"No")).groupbyTabla(grupos, MetodoAgregacion.Media, false).ordenar(orden, false);
-        
+        Tabla<String,String> noRetirados = tabla.filtrar("Retirado?",new Filtrador().generadorPredicate(Operador.IGUAL,"Noo")).groupbyTabla(grupos, MetodoAgregacion.Media, false).ordenar(orden, false);
+        // "Noo"
         noRetirados.ver(10, 100);
         System.out.println("\n");
         System.out.println("Rellenamos NA de Peso y mostramos top 10 \n");
