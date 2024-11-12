@@ -36,7 +36,7 @@ public class AppTomy {
         noRetirados.ver(10, 100);
         System.out.println("\n");
         System.out.println("Rellenamos NA de Peso y mostramos top 10 \n");
-        noRetirados.rellenarNA("Peso", 77);
+        noRetirados.rellenarNA("Peso", 77.2);
         noRetirados.head(10).ver(10,100);;
         System.out.println("\n");
         

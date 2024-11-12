@@ -125,7 +125,9 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
         this.etiquetas_fila = etiquetasFilas;
 
         for (int i = 0; i < etiquetasColumnas.size(); i++) {
-            tabla.put(etiquetasColumnas.get(i), listColumnas.get(i));
+            Object[] array = listColumnas.get(i).aListaGenerica();
+            Columna<?> columna = castearColumna(array);
+            tabla.put(etiquetasColumnas.get(i), columna);
         }
 
     }
@@ -155,7 +157,8 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
 
         // Inicializar columnas asociadas a etiquetas de columnas
         for (int i = 0; i < etiquetasColumnas.size(); i++) {
-            tabla.put(etiquetasColumnas.get(i), new Columna<>(columnas[i]));
+            Columna<?> columna = castearColumna(columnas[i]);
+            tabla.put(etiquetasColumnas.get(i),columna);
         }
 
     }
