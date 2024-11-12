@@ -1117,7 +1117,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
         return -1;
     }
 
-    public Tabla<K, String> groupbyTabla(List<K> nombre_etiquetas, MetodoAgregacion operacion, Boolean omitirNulos)
+    public Tabla<K, String> groupbyTabla(List<K> nombre_etiquetas, MetodoAgregacion operacion, Boolean omitirNA)
             throws FiltroInvalido {
 
         List<Etiqueta<K>> etiquetasAFiltrar = new ArrayList<Etiqueta<K>>();
@@ -1166,19 +1166,19 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
                         OperadorLogico.AND);
 
                 if (operacion == MetodoAgregacion.Max)
-                    resultados = tablaFiltrada.max(etiquetasNuevasColumna, omitirNulos);
+                    resultados = tablaFiltrada.max(etiquetasNuevasColumna, omitirNA);
                 else if (operacion == MetodoAgregacion.Min)
-                    resultados = tablaFiltrada.min(etiquetasNuevasColumna, omitirNulos);
+                    resultados = tablaFiltrada.min(etiquetasNuevasColumna, omitirNA);
                 else if (operacion == MetodoAgregacion.Count)
                     resultados = tablaFiltrada.count(etiquetasNuevasColumna);
                 else if (operacion == MetodoAgregacion.Sum)
-                    resultados = tablaFiltrada.sum(etiquetasNuevasColumna, omitirNulos);
+                    resultados = tablaFiltrada.sum(etiquetasNuevasColumna, omitirNA);
                 else if (operacion == MetodoAgregacion.Media)
-                    resultados = tablaFiltrada.promedio(etiquetasNuevasColumna, omitirNulos);
+                    resultados = tablaFiltrada.promedio(etiquetasNuevasColumna, omitirNA);
                 else if (operacion == MetodoAgregacion.Varianza)
-                    resultados = tablaFiltrada.varianza(etiquetasNuevasColumna, omitirNulos);
+                    resultados = tablaFiltrada.varianza(etiquetasNuevasColumna, omitirNA);
                 else if (operacion == MetodoAgregacion.DesvioEstandar)
-                    resultados = tablaFiltrada.desvioEstandar(etiquetasNuevasColumna, omitirNulos);
+                    resultados = tablaFiltrada.desvioEstandar(etiquetasNuevasColumna, omitirNA);
 
                 for (int j = 0; j < resultados.size(); j++) {
                     columnasNuevas[j][i] = resultados.get(j);
