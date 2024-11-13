@@ -26,7 +26,7 @@ import java.util.function.Predicate;
 public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interfaces.Copiable<Tabla<K, F>>,
         interfaces.Visualizable<Tabla<K, F>>, interfaces.Proyectable<Tabla<K, F>, Etiqueta<K>, Etiqueta<F>>,
         interfaces.Ordenable<Tabla<K, F>, K>, interfaces.Filtrable<Tabla<K, F>, K, Celda, OperadorLogico>,
-        Rellenable<K> {
+        Rellenable<K>, Cloneable {
     // GENERICS
     // K -> Etiqueta de Columna
     // F -> Etiqueta de fila
@@ -158,9 +158,15 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
         // Inicializar columnas asociadas a etiquetas de columnas
         for (int i = 0; i < etiquetasColumnas.size(); i++) {
             Columna<?> columna = castearColumna(columnas[i]);
-            tabla.put(etiquetasColumnas.get(i),columna);
+            tabla.put(etiquetasColumnas.get(i), columna);
         }
 
+    }
+
+    private Tabla(LinkedHashMap<Etiqueta<K>, Columna<?>> tabla, List<Etiqueta<F>> etiquetas_fila){
+        this();
+        this.tabla = tabla;
+        this.etiquetas_fila = etiquetas_fila;
     }
 
     // ----------------------------------------- GETTERS
@@ -419,7 +425,6 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
         else
             return tablaNueva.subtablaFilas(listFilas);
     }
-
 
     @Override
     public Tabla<K, F> subtablaColumnas(List<Etiqueta<K>> listColumnas) throws EtiquetaInvalida {
@@ -701,6 +706,11 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
     }
 
     @Override
+    public void ver() {
+        ver(10, 10);
+    }
+
+    @Override
     public void verFila(Integer indice_fila, Integer cantidad_caracteres) {
         if (indice_fila >= etiquetas_fila.size()) {
             throw new IndiceInexistente("No existe la fila " + String.valueOf(indice_fila));
@@ -945,13 +955,13 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
         Columna<?> columna = obtenerColumna(nombreColumna);
         Object[] arrayObject = columna.aListaGenerica();
         Etiqueta<K> etiqueta = obtenerEtiqueta(nombreColumna);
-    
+
         if (Number.class.isAssignableFrom(clase)) {
             if (!esNumerica(arrayObject)) {
                 throw new TipoDeColumnaInvalido(
                         "No se puede castear la columna " + nombreColumna + " a " + String.valueOf(clase));
             }
-    
+
             if (clase == Integer.class) {
                 Integer[] nuevoArray = Arrays.stream(arrayObject)
                         .map(obj -> obj == null ? null : ((Number) obj).intValue())
@@ -959,7 +969,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
                 Columna<Integer> nuevaColumna = new Columna<>(nuevoArray);
                 this.tabla.put(etiqueta, nuevaColumna);
             }
-    
+
             if (clase == Double.class) {
                 Double[] nuevoArray = Arrays.stream(arrayObject)
                         .map(obj -> obj == null ? null : ((Number) obj).doubleValue())
@@ -967,7 +977,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
                 Columna<Double> nuevaColumna = new Columna<>(nuevoArray);
                 this.tabla.put(etiqueta, nuevaColumna);
             }
-    
+
             if (clase == Float.class) {
                 Float[] nuevoArray = Arrays.stream(arrayObject)
                         .map(obj -> obj == null ? null : ((Number) obj).floatValue())
@@ -975,7 +985,7 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
                 Columna<Float> nuevaColumna = new Columna<>(nuevoArray);
                 this.tabla.put(etiqueta, nuevaColumna);
             }
-    
+
         } else if (clase == String.class) {
             String[] nuevoArray = Arrays.stream(arrayObject)
                     .map(obj -> obj == null ? "null" : obj.toString())
@@ -983,11 +993,11 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
             Columna<String> nuevaColumna = new Columna<>(nuevoArray);
             this.tabla.put(etiqueta, nuevaColumna);
         } else if (clase == Boolean.class) {
-    
+
             if (!esBooleana(arrayObject)) {
                 throw new TipoDeColumnaInvalido("No se puede castear la columna " + nombreColumna + " a Boolean.");
             }
-    
+
             Boolean[] nuevoArray = Arrays.stream(arrayObject)
                     .map(obj -> obj == null ? null : (Boolean) obj)
                     .toArray(Boolean[]::new);
@@ -1456,4 +1466,8 @@ public class Tabla<K, F> implements interfaces.Agregable<Tabla<K, F>, F>, interf
         }
     }
 
+    @Override
+    protected Tabla<K,F> clone() throws CloneNotSupportedException {
+        return new Tabla<K,F>(this.tabla, this.etiquetas_fila);
+    }
 }

@@ -55,6 +55,10 @@ public class AppTomy {
         
         gestor.escribirCSV(seleccion,"TP_Implementacion/src","Resultante");
 
+        System.out.println("Generamos otra instancia con copia profunda: \n");
+        Tabla<String, String> copia = seleccion.clone();
+        copia.ver(10, 100);
+
         
         /*  Extra  
         Columna<String> nombres = tabla.obtenerColumna("Nombr"); //Nombre
