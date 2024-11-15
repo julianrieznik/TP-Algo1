@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class AppTomy {
+public class Demo {
     public static void main(String[] args) throws Exception {
         
         GestorCSV gestor = new GestorCSV() ;
@@ -30,18 +30,26 @@ public class AppTomy {
         orden.add("Altura");
         
         System.out.println("Tabla Agrupada por : " + grupos );
-        
-        Tabla<String,String> noRetirados = tabla.filtrar("Retirado?",new Filtrador().generadorPredicate(Operador.IGUAL,"Noo")).groupbyTabla(grupos, MetodoAgregacion.Media, false).ordenar(orden, false);
-        // "Noo"
+
+        Tabla<String, Integer> noRetirados = tabla.filtrar("Retirado?",new Filtrador().generadorPredicate(Operador.IGUAL,"Noo")); //Noo
         noRetirados.ver(10, 100);
+        
+        Tabla<String,String> noRetiradosAgrupados = noRetirados.groupbyTabla(grupos, MetodoAgregacion.Media, false);
+        noRetiradosAgrupados.ver(10, 100);
+        
+        Tabla<String,String> noRetiradosAgrupadosOrdenados = noRetiradosAgrupados.ordenar(orden, false);
+        noRetiradosAgrupadosOrdenados.ver(10, 100);
+
         System.out.println("\n");
         System.out.println("Rellenamos NA de Peso y mostramos top 10 \n");
-        noRetirados.rellenarNA("Peso", 77.2);
-        noRetirados.head(10).ver(10,100);;
+
+        noRetiradosAgrupadosOrdenados.rellenarNA("Peso", 77.2);
+        noRetiradosAgrupadosOrdenados.head(10).ver(10,100);;
         System.out.println("\n");
         
         
-        
+        System.out.println("Hacemos un slice: \n");
+
         List<Etiqueta<String>> visualizacionCol = new ArrayList<Etiqueta<String>>();
         List<Etiqueta<String>> visualizacionFil = new ArrayList<Etiqueta<String>>();
         visualizacionCol.add(new Etiqueta<String>("Altura"));
@@ -49,8 +57,8 @@ public class AppTomy {
         visualizacionFil.add(new Etiqueta<String>("Fútbol,F"));
         visualizacionFil.add(new Etiqueta<String>("Gimnasia,M"));
 
-        Tabla<String, String> seleccion = noRetirados.subtabla(visualizacionFil, visualizacionCol);
-        System.out.println("Hacemos un slice: \n");
+        Tabla<String, String> seleccion = noRetiradosAgrupadosOrdenados.subtabla(visualizacionFil, visualizacionCol);
+        
         seleccion.ver(10, 100);
         
         gestor.escribirCSV(seleccion,"TP_Implementacion/src","Resultante");
